@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Vídeos de Evolução</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .generateButton {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--neutral-white);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .generateButton:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Hero Video */
+        .heroVideo {
+            background: var(--neutral-white);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px var(--shadow-soft);
+            text-align: center;
+        }
+
+        .videoPreview {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 9/16;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .videoPreview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px var(--shadow-medium);
+        }
+
+        .videoContent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--neutral-white);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .videoIcon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .videoTitle {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .videoSubtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .playButton {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--neutral-white);
+            color: var(--primary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .playButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .heroStats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .statItem {
+            text-align: center;
+        }
+
+        .statValue {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Video Gallery */
+        .videoSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .videoGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .videoCard {
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-beige));
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .videoCard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-medium);
+        }
+
+        .videoCardContent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            color: var(--neutral-white);
+        }
+
+        .videoCardIcon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            align-self: flex-end;
+        }
+
+        .videoCardInfo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .videoCardTitle {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .videoCardDate {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .videoCardDuration {
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        /* Video Templates */
+        .templatesSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .templateGrid {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .templateCard {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .templateCard:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .templateCard.active {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .templateIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 24px;
+            margin: 0 auto 12px;
+        }
+
+        .templateTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .templateDesc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Sharing Options */
+        .sharingSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sharingOptions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 16px;
+        }
+
+        .sharingButton {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sharingButton:hover {
+            background: var(--background-lighter);
+        }
+
+        .sharingIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--neutral-white);
+        }
+
+        .instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .whatsapp { background: #25d366; }
+        .download { background: var(--primary); }
+
+        .sharingLabel {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Progress Indicators */
+        .progressSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .progressItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .progressItem:last-child {
+            border-bottom: none;
+        }
+
+        .progressIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .progressInfo {
+            flex: 1;
+        }
+
+        .progressTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .progressDesc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .progressBar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progressFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .progressPercent {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .videoGrid {
+                grid-template-columns: 1fr;
+            }
+            
+            
+            .heroStats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .sharingOptions {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .generateButton:active {
+            animation: pulse 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Vídeos de Evolução</h1>
+                <p>Sua jornada em formato cinematográfico</p>
+            </div>
+            <button class="generateButton" onclick="generateVideo()">
+                <i class="mdi mdi-video-plus"></i>
+                Novo vídeo
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Video -->
+        <div class="heroVideo">
+            <div class="videoPreview" onclick="playVideo('latest')">
+                <div class="videoContent">
+                    <div class="videoIcon">
+                        <i class="mdi mdi-play"></i>
+                    </div>
+                    <div class="videoTitle">Sua Evolução em 2024</div>
+                    <div class="videoSubtitle">68 dias de transformação</div>
+                    <button class="playButton">
+                        <i class="mdi mdi-play"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="heroStats">
+                <div class="statItem">
+                    <div class="statValue">-8.5kg</div>
+                    <div class="statLabel">Perdidos</div>
+                </div>
+                <div class="statItem">
+                    <div class="statValue">65%</div>
+                    <div class="statLabel">Meta</div>
+                </div>
+                <div class="statItem">
+                    <div class="statValue">68</div>
+                    <div class="statLabel">Dias</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Gallery -->
+        <div class="videoSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-video-vintage"></i>
+                </div>
+                Seus Vídeos
+            </div>
+            
+            <div class="videoGrid">
+                <div class="videoCard" onclick="playVideo('july')">
+                    <div class="videoCardContent">
+                        <div class="videoCardIcon">
+                            <i class="mdi mdi-play"></i>
+                        </div>
+                        <div class="videoCardInfo">
+                            <div>
+                                <div class="videoCardTitle">Julho 2024</div>
+                                <div class="videoCardDate">Mês de ouro</div>
+                            </div>
+                            <div class="videoCardDuration">0:45</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="videoCard" onclick="playVideo('june')">
+                    <div class="videoCardContent">
+                        <div class="videoCardIcon">
+                            <i class="mdi mdi-play"></i>
+                        </div>
+                        <div class="videoCardInfo">
+                            <div>
+                                <div class="videoCardTitle">Junho 2024</div>
+                                <div class="videoCardDate">Primeiro mês</div>
+                            </div>
+                            <div class="videoCardDuration">0:52</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="videoCard" onclick="playVideo('milestone')">
+                    <div class="videoCardContent">
+                        <div class="videoCardIcon">
+                            <i class="mdi mdi-trophy"></i>
+                        </div>
+                        <div class="videoCardInfo">
+                            <div>
+                                <div class="videoCardTitle">5kg Perdidos!</div>
+                                <div class="videoCardDate">Conquista</div>
+                            </div>
+                            <div class="videoCardDuration">0:30</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="videoCard" onclick="playVideo('comparison')">
+                    <div class="videoCardContent">
+                        <div class="videoCardIcon">
+                            <i class="mdi mdi-compare"></i>
+                        </div>
+                        <div class="videoCardInfo">
+                            <div>
+                                <div class="videoCardTitle">Antes vs Agora</div>
+                                <div class="videoCardDate">Comparação</div>
+                            </div>
+                            <div class="videoCardDuration">1:15</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Templates -->
+        <div class="templatesSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-spotify"></i>
+                </div>
+                Estilo Spotify Wrapped
+            </div>
+            
+            <div class="templateGrid">
+                <div class="templateCard active" onclick="selectTemplate('spotify')">
+                    <div class="templateIcon">
+                        <i class="mdi mdi-spotify"></i>
+                    </div>
+                    <div class="templateTitle">Spotify Wrapped</div>
+                    <div class="templateDesc">Experiência musical personalizada com sua evolução</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sharing Options -->
+        <div class="sharingSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-share"></i>
+                </div>
+                Compartilhar Evolução
+            </div>
+            
+            <div class="sharingOptions">
+                <button class="sharingButton" onclick="shareVideo('instagram')">
+                    <div class="sharingIcon instagram">
+                        <i class="mdi mdi-instagram"></i>
+                    </div>
+                    <div class="sharingLabel">Instagram Stories</div>
+                </button>
+                
+                <button class="sharingButton" onclick="shareVideo('whatsapp')">
+                    <div class="sharingIcon whatsapp">
+                        <i class="mdi mdi-whatsapp"></i>
+                    </div>
+                    <div class="sharingLabel">WhatsApp</div>
+                </button>
+                
+                <button class="sharingButton" onclick="downloadVideo()">
+                    <div class="sharingIcon download">
+                        <i class="mdi mdi-download"></i>
+                    </div>
+                    <div class="sharingLabel">Download</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Tracking -->
+        <div class="progressSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-chart-timeline-variant"></i>
+                </div>
+                Marcos da Jornada
+            </div>
+            
+            <div class="progressItem">
+                <div class="progressIcon">
+                    <i class="mdi mdi-flag-checkered"></i>
+                </div>
+                <div class="progressInfo">
+                    <div class="progressTitle">Início da Jornada</div>
+                    <div class="progressDesc">Primeira consulta e avaliação completa</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="progressPercent"><i class="mdi mdi-check"></i></div>
+            </div>
+            
+            <div class="progressItem">
+                <div class="progressIcon">
+                    <i class="mdi mdi-trophy"></i>
+                </div>
+                <div class="progressInfo">
+                    <div class="progressTitle">5kg Perdidos</div>
+                    <div class="progressDesc">Primeira meta importante atingida</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="progressPercent"><i class="mdi mdi-check"></i></div>
+            </div>
+            
+            <div class="progressItem">
+                <div class="progressIcon">
+                    <i class="mdi mdi-heart-pulse"></i>
+                </div>
+                <div class="progressInfo">
+                    <div class="progressTitle">Glicemia Normalizada</div>
+                    <div class="progressDesc">Valores dentro da faixa saudável</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="progressPercent"><i class="mdi mdi-check"></i></div>
+            </div>
+            
+            <div class="progressItem">
+                <div class="progressIcon">
+                    <i class="mdi mdi-target"></i>
+                </div>
+                <div class="progressInfo">
+                    <div class="progressTitle">Meta Final</div>
+                    <div class="progressDesc">65kg - O objetivo principal</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div class="progressPercent">65%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function generateVideo() {
+            // Simula geração de vídeo
+            const button = document.querySelector('.generateButton');
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Gerando...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="mdi mdi-check"></i> Pronto!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    alert('🎬 Novo vídeo de evolução gerado com sucesso!\n\nDuração: 1:23\nEstilo: Spotify Wrapped\nPronto para compartilhar!');
+                }, 1000);
+            }, 3000);
+        }
+
+        function playVideo(type) {
+            const videos = {
+                'latest': 'Reproduzindo: Sua Evolução em 2024\n\n🎬 Vídeo de 1:23 minutos\n📊 Destacando -8.5kg perdidos\n🏆 Conquistas e marcos atingidos',
+                'july': 'Reproduzindo: Julho 2024 - Mês de Ouro\n\n🎬 Vídeo de 0:45 minutos\n📈 Melhor mês do tratamento\n💪 -3.2kg perdidos em julho',
+                'june': 'Reproduzindo: Junho 2024 - Primeiro Mês\n\n🎬 Vídeo de 0:52 minutos\n🚀 Início da jornada\n📋 Primeiras conquistas',
+                'milestone': 'Reproduzindo: 5kg Perdidos!\n\n🎬 Vídeo de 0:30 minutos\n🏆 Primeira meta atingida\n🎉 Momento de celebração',
+                'comparison': 'Reproduzindo: Antes vs Agora\n\n🎬 Vídeo de 1:15 minutos\n📊 Comparação visual\n📈 Progresso impressionante'
+            };
+            
+            alert(videos[type] || 'Reproduzindo vídeo...');
+        }
+
+        function selectTemplate(template) {
+            // Spotify Wrapped sempre ativo
+            console.log('Estilo Spotify Wrapped ativo!\n\n🎵 Visual musical moderno\n🌈 Gradientes vibrantes\n📊 Estatísticas da sua evolução\n🎬 Experiência personalizada');
+        }
+
+        function shareVideo(platform) {
+            const platforms = {
+                'instagram': 'Compartilhando no Instagram Stories!\n\n📱 Formato 9:16 otimizado\n🎨 Hashtags automáticas\n📊 Link para Instituto Dutra',
+                'whatsapp': 'Compartilhando no WhatsApp!\n\n💬 Vídeo compactado\n👨‍⚕️ Mensagem do Dr. Thiago\n🔗 Link para agendamento'
+            };
+            
+            alert(platforms[platform] || 'Compartilhando vídeo...');
+        }
+
+        function downloadVideo() {
+            alert('📥 Download iniciado!\n\n🎬 Formato: MP4 (1080p)\n📱 Otimizado para mobile\n💾 Salvo na galeria');
+        }
+
+        // Inicialização
+        console.log('Vídeos de evolução carregados');
+        
+        // Animação das barras de progresso
+        setTimeout(() => {
+            document.querySelectorAll('.progressFill').forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 100);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

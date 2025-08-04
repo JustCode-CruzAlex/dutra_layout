@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="styles/global.css">
+    <script src="styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        /* .headerGradient, .headerContent, .userInfo, .userAvatar, .userGreeting, .userLevel, .notificationBtn */
+
+        /* Check-in rápido */
+        .quickCheckin {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin: -20px 20px 20px;
+            box-shadow: 0 4px 20px var(--shadow-soft);
+            position: relative;
+            z-index: 3;
+        }
+
+        .checkinTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .moodScale {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .moodButton {
+            flex: 1;
+            padding: 12px 8px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: var(--background-lighter);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .moodButton:hover,
+        .moodButton.active {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.1);
+        }
+
+        .moodEmoji {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .moodLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Container principal */
+        .mainContent {
+            padding: 0 20px;
+        }
+
+        /* Seções - usa componentes globais */
+        /* .section, .sectionHeader, .sectionTitle, .seeAllLink */
+
+        /* Cards de consultas */
+        .appointmentCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* appointmentIcon - usa .iconContainer do global */
+
+        .appointmentInfo {
+            flex: 1;
+        }
+
+        .appointmentType {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .appointmentDoctor {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .appointmentTime {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .appointmentStatus {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(154, 131, 100, 0.2);
+            color: var(--accent-beige);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Grid de serviços */
+        .servicesGrid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .serviceCard {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 70px;
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .serviceCard:hover {
+            transform: translateY(-2px);
+        }
+
+        /* serviceIcon - usa .iconContainer.large.solid do global */
+        .serviceIcon {
+            border-radius: 16px; /* Apenas esta propriedade é específica */
+            margin: 0 auto 8px;
+        }
+
+        .serviceLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Cards de evolução */
+        .evolutionGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        /* evolutionCard - usa .statCard do global (background, padding, hover, barra superior) */
+        
+        /* evolutionIcon - usa .iconContainer.small.rounded do global */
+        .evolutionIcon {
+            margin: 0 auto 12px;
+        }
+
+        /* evolutionValue, evolutionLabel, evolutionProgress - usam .statValue, .statLabel, .progressBar do global */
+
+        /* Seção do Plano */
+        .planCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            margin-bottom: 16px;
+        }
+
+        .planHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .planTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .planBadge {
+            background: var(--primary);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .planItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .planItem:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .planItemLabel {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .planItemValue {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Health Stats */
+        .healthGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .healthCard {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+            text-align: center;
+        }
+
+        .healthIcon {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .healthValue {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .healthLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Chat Channels */
+        .chatGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .chatChannel {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chatChannel:hover {
+            transform: translateY(-2px);
+        }
+
+        .chatChannel.hasNotification::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-beige);
+            border-radius: 50%;
+        }
+
+        /* chatIcon - usa .iconContainer.small do global */
+        .chatIcon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .chatLabel {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .servicesGrid {
+                gap: 12px;
+            }
+
+            .serviceCard {
+                width: 60px;
+            }
+
+            .serviceIcon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .evolutionGrid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent dashboard">
+            <div class="userInfo">
+                <div class="userAvatar">M</div>
+                <div class="userGreeting">
+                    <h1>Olá, Maria!</h1>
+                    <p>Como está se sentindo hoje?</p>
+                    <div class="userLevel" onclick="window.location.href='gamification/ranking.html'" style="cursor: pointer;">🥈 Nível Prata • 1.850 pts</div>
+                </div>
+            </div>
+            <button class="notificationBtn hasNotification" onclick="showNotifications()">
+                <i class="mdi mdi-bell-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Check-in Rápido -->
+    <div class="quickCheckin">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div class="checkinTitle" style="margin-bottom: 0;">Como se sente hoje?</div>
+            <a href="health/wellbeing.html" style="color: var(--primary); font-size: 13px; text-decoration: none; font-weight: 500;">
+                Ver detalhes
+            </a>
+        </div>
+        <div class="moodScale">
+            <div class="moodButton" onclick="selectMood(1)">
+                <span class="moodEmoji">😔</span>
+                <span class="moodLabel">Ruim</span>
+            </div>
+            <div class="moodButton" onclick="selectMood(2)">
+                <span class="moodEmoji">😐</span>
+                <span class="moodLabel">Ok</span>
+            </div>
+            <div class="moodButton" onclick="selectMood(3)">
+                <span class="moodEmoji">🙂</span>
+                <span class="moodLabel">Bem</span>
+            </div>
+            <div class="moodButton" onclick="selectMood(4)">
+                <span class="moodEmoji">😊</span>
+                <span class="moodLabel">Ótimo</span>
+            </div>
+            <div class="moodButton" onclick="selectMood(5)">
+                <span class="moodEmoji">🤩</span>
+                <span class="moodLabel">Incrível</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="mainContent">
+        <!-- Consultas de Hoje -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Consultas de Hoje</h2>
+                <a href="schedule/index.html" class="seeAllLink">Ver todas</a>
+            </div>
+            
+            <div class="appointmentCard">
+                <div class="iconContainer appointmentIcon">
+                    <i class="mdi mdi-video"></i>
+                </div>
+                <div class="appointmentInfo">
+                    <div class="appointmentType">Consulta Médica</div>
+                    <div class="appointmentDoctor">Dr. Thiago Dutra</div>
+                    <div class="appointmentTime">14:30 - 15:00</div>
+                </div>
+                <div class="appointmentStatus">Hoje</div>
+            </div>
+
+            <div class="appointmentCard">
+                <div class="iconContainer appointmentIcon">
+                    <i class="mdi mdi-food-apple"></i>
+                </div>
+                <div class="appointmentInfo">
+                    <div class="appointmentType">Acompanhamento Nutricional</div>
+                    <div class="appointmentDoctor">Nutricionista</div>
+                    <div class="appointmentTime">Amanhã 10:00</div>
+                </div>
+                <div class="appointmentStatus">Amanhã</div>
+            </div>
+        </div>
+
+        <!-- Dados de Saúde/Exercício -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Atividade Física</h2>
+                <a href="#" class="seeAllLink">Apple Health</a>
+            </div>
+            
+            <div class="healthGrid">
+                <div class="healthCard">
+                    <div class="healthIcon">👟</div>
+                    <div class="healthValue">8.520</div>
+                    <div class="healthLabel">Passos hoje</div>
+                </div>
+                <div class="healthCard">
+                    <div class="healthIcon">🏃</div>
+                    <div class="healthValue">4x</div>
+                    <div class="healthLabel">Exercícios semana</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meu Plano VIP -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Meu Plano</h2>
+                <a href="settings/plan.html" class="seeAllLink">Ver detalhes</a>
+            </div>
+            
+            <div class="planCard" onclick="window.location.href='settings/plan.html'" style="cursor: pointer;">
+                <div class="planHeader">
+                    <div class="planTitle">Plano VIP</div>
+                    <div class="planBadge">6 meses</div>
+                </div>
+                <div class="planItem">
+                    <span class="planItemLabel">Consultas</span>
+                    <span class="planItemValue">3/6 usadas</span>
+                </div>
+                <div class="planItem">
+                    <span class="planItemLabel">Mounjaro</span>
+                    <span class="planItemValue">20/24 aplicações</span>
+                </div>
+                <div class="planItem">
+                    <span class="planItemLabel">Soroterapia</span>
+                    <span class="planItemValue">10/12 sessões</span>
+                </div>
+                <div class="planItem">
+                    <span class="planItemLabel">Implante Hormonal</span>
+                    <span class="planItemValue">0/2 disponível</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat da Equipe -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Chat da Equipe</h2>
+                <a href="communication/index.html" class="seeAllLink">Ver todas</a>
+            </div>
+            
+            <div class="chatGrid">
+                <div class="chatChannel hasNotification" onclick="openChat('enfermagem')">
+                    <div class="iconContainer small chatIcon">
+                        <i class="mdi mdi-heart-pulse"></i>
+                    </div>
+                    <div class="chatLabel">Enfermagem</div>
+                </div>
+                <div class="chatChannel" onclick="openChat('dr-thiago')">
+                    <div class="iconContainer small chatIcon">
+                        <i class="mdi mdi-stethoscope"></i>
+                    </div>
+                    <div class="chatLabel">Dr. Thiago</div>
+                </div>
+                <div class="chatChannel" onclick="openChat('nutricao')">
+                    <div class="iconContainer small chatIcon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </div>
+                    <div class="chatLabel">Nutrição</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Serviços Instituto -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Serviços Instituto</h2>
+                <a href="#" class="seeAllLink">Ver todos</a>
+            </div>
+            
+            <div class="servicesGrid">
+                <div class="serviceCard" onclick="goToService('endocrinologia')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-medical-bag"></i>
+                    </div>
+                    <div class="serviceLabel">Endócrino</div>
+                </div>
+                <div class="serviceCard" onclick="goToService('nutricao')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </div>
+                    <div class="serviceLabel">Nutrição</div>
+                </div>
+                <div class="serviceCard" onclick="goToService('psicologia')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-brain"></i>
+                    </div>
+                    <div class="serviceLabel">Psicologia</div>
+                </div>
+                <div class="serviceCard" onclick="goToService('soroterapia')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-needle"></i>
+                    </div>
+                    <div class="serviceLabel">Soroterapia</div>
+                </div>
+                <div class="serviceCard" onclick="goToService('bioimpedancia')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-scale-bathroom"></i>
+                    </div>
+                    <div class="serviceLabel">Bioimpedância</div>
+                </div>
+                <div class="serviceCard" onclick="goToService('exames')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-file-document-outline"></i>
+                    </div>
+                    <div class="serviceLabel">Exames</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Educativo -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Conteúdo Educativo</h2>
+                <a href="content/blog.html" class="seeAllLink">Ver blog</a>
+            </div>
+            
+            <div class="servicesGrid">
+                <div class="serviceCard" onclick="goToContent('blog')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-text-box"></i>
+                    </div>
+                    <div class="serviceLabel">Blog</div>
+                </div>
+                <div class="serviceCard" onclick="goToContent('videos')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-play-circle"></i>
+                    </div>
+                    <div class="serviceLabel">Vídeos</div>
+                </div>
+                <div class="serviceCard" onclick="goToContent('favorites')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-bookmark"></i>
+                    </div>
+                    <div class="serviceLabel">Favoritos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minha Evolução -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Minha Evolução</h2>
+                <a href="evolution/index.html" class="seeAllLink">Ver detalhes</a>
+            </div>
+            
+            <div class="evolutionGrid">
+                <div class="statCard evolutionCard">
+                    <div class="iconContainer small rounded evolutionIcon">
+                        <i class="mdi mdi-scale-bathroom"></i>
+                    </div>
+                    <div class="statValue">-8.5kg</div>
+                    <div class="statLabel">Peso perdido</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 68%"></div>
+                    </div>
+                </div>
+                <div class="statCard evolutionCard">
+                    <div class="iconContainer small rounded evolutionIcon">
+                        <i class="mdi mdi-calculator"></i>
+                    </div>
+                    <div class="statValue">25.4</div>
+                    <div class="statLabel">IMC atual</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="statCard evolutionCard">
+                    <div class="iconContainer small rounded evolutionIcon">
+                        <i class="mdi mdi-target"></i>
+                    </div>
+                    <div class="statValue">65%</div>
+                    <div class="statLabel">Meta atingida</div>
+                    <div class="progressBar">
+                        <div class="progressFill" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gamificação & Ranking -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Gamificação & Ranking</h2>
+                <a href="gamification/ranking.html" class="seeAllLink">Ver ranking</a>
+            </div>
+            
+            <div class="servicesGrid">
+                <div class="serviceCard" onclick="window.location.href='gamification/ranking.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-podium"></i>
+                    </div>
+                    <div class="serviceLabel">Ranking</div>
+                </div>
+                <div class="serviceCard" onclick="window.location.href='gamification/achievements.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-trophy"></i>
+                    </div>
+                    <div class="serviceLabel">Conquistas</div>
+                </div>
+                <div class="serviceCard" onclick="window.location.href='gamification/perks.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-gift"></i>
+                    </div>
+                    <div class="serviceLabel">Recompensas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios & Análises -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Relatórios & Análises</h2>
+                <a href="reports/monthly.html" class="seeAllLink">Ver relatórios</a>
+            </div>
+            
+            <div class="servicesGrid">
+                <div class="serviceCard" onclick="window.location.href='reports/monthly.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-chart-line"></i>
+                    </div>
+                    <div class="serviceLabel">Resumo Mensal</div>
+                </div>
+                <div class="serviceCard" onclick="window.location.href='reports/export.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-download"></i>
+                    </div>
+                    <div class="serviceLabel">Exportar Dados</div>
+                </div>
+                <div class="serviceCard" onclick="goToReports('comparison')">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-compare"></i>
+                    </div>
+                    <div class="serviceLabel">Comparações</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configurações & Suporte -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Configurações & Suporte</h2>
+                <a href="settings/index.html" class="seeAllLink">Ver todas</a>
+            </div>
+            
+            <div class="servicesGrid">
+                <div class="serviceCard" onclick="window.location.href='settings/index.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-cog"></i>
+                    </div>
+                    <div class="serviceLabel">Configurações</div>
+                </div>
+                <div class="serviceCard" onclick="window.location.href='settings/health.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-heart-pulse"></i>
+                    </div>
+                    <div class="serviceLabel">Health</div>
+                </div>
+                <div class="serviceCard" onclick="window.location.href='settings/support.html'">
+                    <div class="iconContainer large solid serviceIcon">
+                        <i class="mdi mdi-help-circle"></i>
+                    </div>
+                    <div class="serviceLabel">Suporte</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function selectMood(mood) {
+            // Remove active de todos os botões
+            document.querySelectorAll('.moodButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Adiciona active no selecionado
+            event.target.closest('.moodButton').classList.add('active');
+            
+            // Salva o humor (simulação)
+            setTimeout(() => {
+                alert(`Humor registrado: ${mood}/5 ⭐`);
+            }, 500);
+        }
+
+        function showNotifications() {
+            alert('Central de notificações (Demo)');
+        }
+
+        function goToService(service) {
+            if (service === 'exames') {
+                window.location.href = 'health/exams.html';
+            } else if (service === 'soroterapia' || service === 'bioimpedancia') {
+                window.location.href = 'health/treatments.html';
+            } else {
+                alert(`Navegando para: ${service} (Demo)`);
+            }
+        }
+
+        function openChat(channel) {
+            // Redireciona para chat específico
+            window.location.href = `communication/chat/${channel}.html`;
+        }
+
+        function goToContent(contentType) {
+            if (contentType === 'blog') {
+                window.location.href = 'content/blog.html';
+            } else if (contentType === 'videos') {
+                window.location.href = 'content/videos.html';
+            } else if (contentType === 'favorites') {
+                window.location.href = 'content/favorites.html';
+            } else {
+                alert(`Navegando para: ${contentType} (Demo)`);
+            }
+        }
+
+        function goToReports(reportType) {
+            if (reportType === 'comparison') {
+                alert('📊 Análises Comparativas:\n\n• Comparar períodos\n• Evolução vs outros pacientes\n• Benchmarks de progresso\n• Tendências identificadas\n\n📈 Em desenvolvimento...\n(Demo)');
+            } else {
+                window.location.href = `reports/${reportType}.html`;
+            }
+        }
+
+        // Simulação de dados dinâmicos
+        function updateWelcomeMessage() {
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+            document.querySelector('.userGreeting h1').textContent = `${greeting}, Maria!`;
+        }
+
+        // Inicialização
+        updateWelcomeMessage();
+    </script>
+</body>
+</html>

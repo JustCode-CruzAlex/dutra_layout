@@ -1,0 +1,10 @@
+/* =============================================================================
+   INSTITUTO DUTRA - CSS GLOBAL
+   Importação ordenada de estilos globais
+   ============================================================================= */
+
+/* 1. Importa variáveis e design system */
+@import url('./variables.css');
+
+/* 2. Importa componentes reutilizáveis */
+@import url('./components.css');

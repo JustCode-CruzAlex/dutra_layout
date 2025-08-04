@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Meus Exames</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para exams.html */
+        .uploadActions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ocrPreview {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .loadingBar {
+            width: 100%;
+            height: 4px;
+            background: var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .loadingFill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            animation: loadingProgress 3s ease-out forwards;
+        }
+
+        @keyframes loadingProgress {
+            to { width: 100%; }
+        }
+
+        .examCategories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .categoryCard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px;
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .categoryCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .categoryCard span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            text-align: center;
+            font-weight: var(--font-weight-medium);
+        }
+
+        .examsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .examCard {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+        }
+
+        .examCard:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .examIcon {
+            margin-right: 16px;
+        }
+
+        .examInfo {
+            flex: 1;
+        }
+
+        .examInfo h3 {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .examInfo p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 8px 0;
+        }
+
+        .statusBadge {
+            font-size: 11px;
+            font-weight: var(--font-weight-medium);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ocrResults {
+            padding: 16px;
+            background: var(--neutral-white);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .examCategories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .uploadActions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Meus Exames</h1>
+                <p>Upload e gestão de exames médicos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Upload Section -->
+        <div class="section" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="card">
+                <div class="sectionHeader">
+                    <h2 class="sectionTitle">Adicionar Novo Exame</h2>
+                </div>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                    Upload via câmera ou galeria com OCR automático
+                </p>
+
+                <div class="uploadActions">
+                    <button class="btnPrimary" onclick="openCamera()">
+                        <i class="mdi mdi-camera" style="margin-right: 8px;"></i>
+                        Câmera
+                    </button>
+                    <button class="btnSecondary" onclick="openGallery()">
+                        <i class="mdi mdi-image" style="margin-right: 8px;"></i>
+                        Galeria
+                    </button>
+                </div>
+
+                <!-- OCR Preview (Hidden by default) -->
+                <div id="ocrPreview" class="ocrPreview" style="display: none;">
+                    <div class="ocrHeader">
+                        <h3 style="color: var(--text-primary); margin: 0 0 12px 0;">
+                            Processando com OCR...
+                        </h3>
+                        <div class="loadingBar">
+                            <div class="loadingFill"></div>
+                        </div>
+                    </div>
+                    <div class="ocrResults" id="ocrResults">
+                        <!-- OCR results will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Categories -->
+        <div class="section" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Tipos de Exame</h2>
+            </div>
+            
+            <div class="examCategories">
+                <div class="categoryCard" onclick="filterExams('blood')">
+                    <div class="iconContainer large" style="background: var(--accent-beige);">
+                        <i class="mdi mdi-water" style="color: white; font-size: 24px;"></i>
+                    </div>
+                    <span>Sangue</span>
+                </div>
+                <div class="categoryCard" onclick="filterExams('image')">
+                    <div class="iconContainer large" style="background: var(--primary-light);">
+                        <i class="mdi mdi-camera-image" style="color: white; font-size: 24px;"></i>
+                    </div>
+                    <span>Imagem</span>
+                </div>
+                <div class="categoryCard" onclick="filterExams('body')">
+                    <div class="iconContainer large" style="background: var(--text-secondary);">
+                        <i class="mdi mdi-human" style="color: white; font-size: 24px;"></i>
+                    </div>
+                    <span>Composição</span>
+                </div>
+                <div class="categoryCard" onclick="filterExams('heart')">
+                    <div class="iconContainer large" style="background: var(--success-color);">
+                        <i class="mdi mdi-heart-pulse" style="color: white; font-size: 24px;"></i>
+                    </div>
+                    <span>Cardíaco</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exames Recentes -->
+        <div class="section" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Exames Recentes</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="viewAllExams()">
+                    Ver todos
+                </button>
+            </div>
+
+            <div class="examsList">
+                <!-- Exame 1 -->
+                <div class="examCard">
+                    <div class="examIcon">
+                        <div class="iconContainer" style="background: var(--accent-beige);">
+                            <i class="mdi mdi-water" style="color: white;"></i>
+                        </div>
+                    </div>
+                    <div class="examInfo">
+                        <h3>Hemograma Completo</h3>
+                        <p>15 Jan 2024 • Dr. Thiago Dutra</p>
+                        <div class="examStatus">
+                            <span class="statusBadge" style="background: var(--success-color); color: white;">
+                                Processado
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btnIcon" onclick="viewExam('hemograma-jan-2024')">
+                        <i class="mdi mdi-eye"></i>
+                    </button>
+                </div>
+
+                <!-- Exame 2 -->
+                <div class="examCard">
+                    <div class="examIcon">
+                        <div class="iconContainer" style="background: var(--primary-light);">
+                            <i class="mdi mdi-camera-image" style="color: white;"></i>
+                        </div>
+                    </div>
+                    <div class="examInfo">
+                        <h3>Ultrassom Abdominal</h3>
+                        <p>08 Jan 2024 • Dr. Thiago Dutra</p>
+                        <div class="examStatus">
+                            <span class="statusBadge" style="background: var(--text-muted); color: white;">
+                                Aguardando
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btnIcon" onclick="viewExam('ultrassom-jan-2024')">
+                        <i class="mdi mdi-eye"></i>
+                    </button>
+                </div>
+
+                <!-- Exame 3 -->
+                <div class="examCard">
+                    <div class="examIcon">
+                        <div class="iconContainer" style="background: var(--text-secondary);">
+                            <i class="mdi mdi-human" style="color: white;"></i>
+                        </div>
+                    </div>
+                    <div class="examInfo">
+                        <h3>InBody - Bioimpedância</h3>
+                        <p>02 Jan 2024 • Enfermagem</p>
+                        <div class="examStatus">
+                            <span class="statusBadge" style="background: var(--success-color); color: white;">
+                                Processado
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btnIcon" onclick="viewExam('inbody-jan-2024')">
+                        <i class="mdi mdi-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('instituto-dutra-theme', newTheme);
+        }
+
+        // Upload de exames
+        function openCamera() {
+            console.log('Abrindo câmera...');
+            simulateOCR('camera');
+        }
+
+        function openGallery() {
+            console.log('Abrindo galeria...');
+            simulateOCR('gallery');
+        }
+
+        function simulateOCR(source) {
+            const preview = document.getElementById('ocrPreview');
+            const results = document.getElementById('ocrResults');
+            
+            preview.style.display = 'block';
+            
+            // Simula processamento OCR
+            setTimeout(() => {
+                results.innerHTML = `
+                    <h4 style="color: var(--text-primary); margin: 0 0 12px 0;">Texto Extraído:</h4>
+                    <div style="background: var(--background-lighter); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                        HEMOGRAMA COMPLETO<br>
+                        Data: 15/01/2024<br>
+                        Paciente: [Nome do Paciente]<br>
+                        Hemoglobina: 14.2 g/dL<br>
+                        Hematócrito: 42.5%<br>
+                        Leucócitos: 7.200/mm³
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btnPrimary btnSm" onclick="saveExam()">
+                            <i class="mdi mdi-check" style="margin-right: 4px;"></i>
+                            Salvar Exame
+                        </button>
+                        <button class="btnSecondary btnSm" onclick="editOCR()">
+                            <i class="mdi mdi-pencil" style="margin-right: 4px;"></i>
+                            Editar
+                        </button>
+                    </div>
+                `;
+            }, 3000);
+        }
+
+        function saveExam() {
+            alert('Exame salvo com sucesso!');
+            document.getElementById('ocrPreview').style.display = 'none';
+        }
+
+        function editOCR() {
+            alert('Abrindo editor de texto...');
+        }
+
+        // Filtros de categoria
+        function filterExams(category) {
+            console.log(`Filtrando exames por categoria: ${category}`);
+        }
+
+        function viewAllExams() {
+            window.location.href = 'history.html';
+        }
+
+        function viewExam(examId) {
+            console.log(`Visualizando exame: ${examId}`);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

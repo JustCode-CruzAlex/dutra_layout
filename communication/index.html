@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Chat da Equipe</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient + .backBtn do components.css */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Status Bar */
+        .statusBar {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .statusIndicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success-color);
+        }
+
+        .statusText {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .statusTime {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        /* Chat Channels */
+        .channelsSection {
+            margin-bottom: 24px;
+        }
+
+        /* .sectionTitle - agora vem do components.css */
+
+        .channelCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .channelCard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+
+        .channelCard.hasNotification::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-beige);
+            border-radius: 50%;
+        }
+
+        .channelHeader {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .channelIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .channelInfo {
+            flex: 1;
+        }
+
+        .channelName {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .channelStatus {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .onlineIndicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success-color);
+        }
+
+        .channelPreview {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .channelTime {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        /* Recent Conversations */
+        .recentSection {
+            margin-bottom: 24px;
+        }
+
+        .conversationCard {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 8px var(--shadow-soft);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .conversationCard:hover {
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .conversationHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .conversationChannel {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .conversationDate {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .conversationPreview {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        /* Quick Actions */
+        .quickActions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .actionButton {
+            background: var(--neutral-white);
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .actionButton:hover {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .actionIcon {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .actionLabel {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .header {
+                padding: 50px 16px 24px;
+            }
+
+            .mainContent {
+                padding: 16px;
+            }
+
+            .channelCard {
+                padding: 12px;
+            }
+
+            .channelIcon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Chat da Equipe</h1>
+                <p>Comunicação direta com sua equipe médica</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Status -->
+        <div class="statusBar">
+            <div class="statusIndicator"></div>
+            <span class="statusText">Equipe médica disponível</span>
+            <span class="statusTime">Online</span>
+        </div>
+
+        <!-- Chat Channels -->
+        <div class="channelsSection">
+            <h2 class="sectionTitle">Canais Disponíveis</h2>
+            
+            <div class="channelCard hasNotification" onclick="openChat('enfermagem')">
+                <div class="channelHeader">
+                    <div class="channelIcon">
+                        <i class="mdi mdi-heart-pulse"></i>
+                    </div>
+                    <div class="channelInfo">
+                        <div class="channelName">Enfermagem</div>
+                        <div class="channelStatus">
+                            <div class="onlineIndicator"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="channelTime">14:32</div>
+                </div>
+                <div class="channelPreview">
+                    Enf. Ana: Oi Maria! Como está se sentindo hoje após a aplicação do Mounjaro?
+                </div>
+            </div>
+
+            <div class="channelCard" onclick="openChat('dr-thiago')">
+                <div class="channelHeader">
+                    <div class="channelIcon">
+                        <i class="mdi mdi-stethoscope"></i>
+                    </div>
+                    <div class="channelInfo">
+                        <div class="channelName">Dr. Thiago Dutra</div>
+                        <div class="channelStatus">
+                            <div class="onlineIndicator"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="channelTime">Ontem</div>
+                </div>
+                <div class="channelPreview">
+                    Dr. Thiago: Parabéns pelos resultados! Continue seguindo o protocolo...
+                </div>
+            </div>
+
+            <div class="channelCard" onclick="openChat('nutricao')">
+                <div class="channelHeader">
+                    <div class="channelIcon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </div>
+                    <div class="channelInfo">
+                        <div class="channelName">Nutrição</div>
+                        <div class="channelStatus">
+                            <div class="onlineIndicator"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="channelTime">2 dias</div>
+                </div>
+                <div class="channelPreview">
+                    Nutricionista: Vou ajustar seu cardápio para a próxima semana...
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quickActions">
+            <div class="actionButton" style="opacity: 0.5; cursor: not-allowed;">
+                <div class="actionIcon">
+                    <i class="mdi mdi-history"></i>
+                </div>
+                <div class="actionLabel">Histórico</div>
+            </div>
+            <div class="actionButton" style="opacity: 0.5; cursor: not-allowed;">
+                <div class="actionIcon">
+                    <i class="mdi mdi-phone-alert"></i>
+                </div>
+                <div class="actionLabel">Emergência</div>
+            </div>
+        </div>
+
+        <!-- Recent Conversations -->
+        <div class="recentSection">
+            <h2 class="sectionTitle">Conversas Recentes</h2>
+            
+            <div class="conversationCard" onclick="openChat('enfermagem')">
+                <div class="conversationHeader">
+                    <span class="conversationChannel">Enfermagem</span>
+                    <span class="conversationDate">Hoje, 14:32</span>
+                </div>
+                <div class="conversationPreview">
+                    Como está se sentindo hoje após a aplicação?
+                </div>
+            </div>
+
+            <div class="conversationCard" onclick="openChat('dr-thiago')">
+                <div class="conversationHeader">
+                    <span class="conversationChannel">Dr. Thiago</span>
+                    <span class="conversationDate">Ontem, 16:45</span>
+                </div>
+                <div class="conversationPreview">
+                    Resultados dos exames estão excelentes!
+                </div>
+            </div>
+
+            <div class="conversationCard" onclick="openChat('nutricao')">
+                <div class="conversationHeader">
+                    <span class="conversationChannel">Nutrição</span>
+                    <span class="conversationDate">2 dias atrás</span>
+                </div>
+                <div class="conversationPreview">
+                    Cardápio atualizado para próxima semana
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        function openChat(channel) {
+            // Redireciona para chat específico
+            window.location.href = `chat/${channel}.html`;
+        }
+
+        // function showEmergency() {
+        //     alert('Contato de emergência:\n\nInstituto Dutra: (11) 3456-7890\nWhatsApp: (11) 99999-8888\n\nEm caso de urgência médica real, ligue 192 (SAMU)');
+        // }
+
+        // Simula atualizações de status
+        function updateOnlineStatus() {
+            const statusTime = document.querySelector('.statusTime');
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            
+            statusTime.textContent = `Atualizado ${hours}:${minutes}`;
+        }
+
+        // Atualiza status a cada minuto
+        setInterval(updateOnlineStatus, 60000);
+        updateOnlineStatus();
+    </script>
+</body>
+</html>

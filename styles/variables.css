@@ -1,0 +1,288 @@
+/* =============================================================================
+   INSTITUTO DUTRA - VARIÁVEIS CSS GLOBAIS
+   Design System completo da paleta terrosa
+   ============================================================================= */
+
+:root {
+    /* ========================================
+       🎨 SISTEMA DE TEMAS DINÂMICO
+       Valores definidos automaticamente pelo theme.js
+       Para trocar tema: edite currentTheme em theme.js
+       ======================================== */
+    
+    /* Cores Principais - Definidas dinamicamente */
+    --primary: #3A4A3A;        /* Substituído pelo theme.js */
+    --primary-light: #556B55;  /* Substituído pelo theme.js */
+    
+    /* Acentos - Definidos dinamicamente */
+    --accent-beige: #9A8364;         /* Substituído pelo theme.js */
+    
+    /* Neutros - Definidos dinamicamente */
+    --neutral-white: #F0F0EF;        /* Substituído pelo theme.js */
+    --background-light: #B5B6B1;     /* Substituído pelo theme.js */
+    --background-lighter: #E8E6E3;   /* Substituído pelo theme.js */
+    --background-gradient: #A7A49C;  /* Substituído pelo theme.js */
+    
+    /* Textos - Definidos dinamicamente */
+    --text-primary: #3A4A3A;         /* Substituído pelo theme.js */
+    --text-secondary: #556B55;       /* Substituído pelo theme.js */
+    --text-muted: #646464;           /* Substituído pelo theme.js */
+    --text-placeholder: #8A8F88;     /* Substituído pelo theme.js */
+    
+    /* Estados e Bordas - Definidos dinamicamente */
+    --border-light: #B5B6B1;         /* Substituído pelo theme.js */
+    --border-focus: #3A4A3A;         /* Substituído pelo theme.js */
+    --success-color: #9A8364;        /* Substituído pelo theme.js */
+    --error-color: #C4B9B3;          /* Substituído pelo theme.js */
+    
+    /* Mensagens - Definidas dinamicamente */
+    --message-received-bg: #E0DDD8;  /* Substituído pelo theme.js */
+    --message-sent-bg: #3A4A3A;      /* Substituído pelo theme.js */
+    
+    /* Sombras - Definidas dinamicamente */
+    --shadow-soft: rgba(58, 74, 58, 0.08);    /* Substituído pelo theme.js */
+    --shadow-medium: rgba(58, 74, 58, 0.12);  /* Substituído pelo theme.js */
+    --shadow-button: rgba(58, 74, 58, 0.3);   /* Substituído pelo theme.js */
+    --focus-ring: rgba(58, 74, 58, 0.1);      /* Substituído pelo theme.js */
+    
+    /* ========================================
+       SISTEMA DE ESPAÇAMENTOS - 8PT GRID
+       ======================================== */
+    --spacing-xs: 4px;    /* 0.5 unidades */
+    --spacing-sm: 8px;    /* 1 unidade */
+    --spacing-md: 16px;   /* 2 unidades */
+    --spacing-lg: 24px;   /* 3 unidades */
+    --spacing-xl: 32px;   /* 4 unidades */
+    --spacing-2xl: 48px;  /* 6 unidades */
+    --spacing-3xl: 64px;  /* 8 unidades */
+    
+    /* ========================================
+       TIPOGRAFIA REFINADA
+       ======================================== */
+    --font-size-xs: 12px;     /* Micro textos */
+    --font-size-sm: 14px;     /* Labels e auxiliares */
+    --font-size-base: 16px;   /* Texto padrão */
+    --font-size-lg: 18px;     /* Subtítulos */
+    --font-size-xl: 24px;     /* Títulos secundários */
+    --font-size-2xl: 28px;    /* Títulos principais mobile */
+    --font-size-3xl: 32px;    /* Títulos principais desktop */
+    
+    /* Pesos tipográficos */
+    --font-weight-light: 300;     /* Títulos elegantes */
+    --font-weight-regular: 400;   /* Texto corrido */
+    --font-weight-medium: 500;    /* Labels */
+    --font-weight-semibold: 600;  /* Botões e CTAs */
+    --font-weight-bold: 700;      /* Destaques */
+    
+    /* ========================================
+       BORDAS E RAIOS - SISTEMA MODERNO
+       ======================================== */
+    --radius-sm: 8px;      /* Elementos pequenos */
+    --radius-md: 12px;     /* Inputs e campos */
+    --radius-lg: 16px;     /* Cards pequenos */
+    --radius-xl: 24px;     /* Containers principais */
+    --radius-2xl: 32px;    /* Modais */
+    --radius-full: 50px;   /* Botões pill */
+    --radius-circle: 50%;  /* Elementos circulares */
+    
+    /* ========================================
+       SOMBRAS MODERNAS - ELEVAÇÃO
+       ======================================== */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.16);
+    
+    /* ========================================
+       TRANSIÇÕES E ANIMAÇÕES
+       ======================================== */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.6s ease-out;
+    
+    /* ========================================
+       GAMIFICAÇÃO - CORES DE NÍVEIS
+       ======================================== */
+    --level-bronze: #CD7F32;
+    --level-silver: #C0C0C0;
+    --level-gold: #FFD700;
+    --level-platinum: #E5E4E2;
+    
+    /* ========================================
+       ESPECÍFICOS DO INSTITUTO DUTRA
+       ======================================== */
+    --header-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    --card-background: var(--neutral-white);
+    --input-background: var(--background-lighter);
+    --input-focus-background: var(--neutral-white);
+    
+    /* Estados de botões */
+    --button-primary-bg: var(--primary);
+    --button-primary-hover: var(--primary-light);
+    --button-secondary-bg: var(--accent-beige);
+    --button-disabled-bg: var(--border-light);
+    
+    /* Navegação bottom */
+    --nav-background: var(--neutral-white);
+    --nav-border: var(--border-light);
+    --nav-active-bg: rgba(58, 74, 58, 0.08);
+    --nav-active-color: var(--primary);
+    --nav-inactive-color: var(--text-muted);
+}
+
+/* =============================================================================
+   CLASSES UTILITÁRIAS GLOBAIS
+   ============================================================================= */
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Tipografia base */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: var(--background-lighter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* =============================================================================
+   ANIMAÇÕES GLOBAIS
+   ============================================================================= */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* =============================================================================
+   UTILITÁRIOS DE ESPAÇAMENTO
+   ============================================================================= */
+
+.container {
+    padding: var(--spacing-md);
+    max-width: 100%;
+}
+
+.section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+/* =============================================================================
+   COMPONENTES GLOBAIS - LOGO
+   ============================================================================= */
+
+.brandLogo {
+    width: 200px;
+    height: auto;
+    margin: 0 auto 16px;
+    display: block;
+}
+
+.brandLogo img {
+    width: 100%;
+    height: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+}
+
+/* Logo em fundos claros (sem filtro) */
+.brandLogo.brandLogo--dark img {
+    filter: none;
+    opacity: 1;
+}
+
+/* =============================================================================
+   UTILITÁRIOS DE TEXTO
+   ============================================================================= */
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-light { font-weight: var(--font-weight-light); }
+.font-regular { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* =============================================================================
+   TEMA ESCURO (PREPARAÇÃO FUTURA)
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Futura implementação do tema escuro */
+        /* --primary: #4A5A4A; */
+        /* --background-lighter: #2A2A2A; */
+        /* --neutral-white: #3A3A3A; */
+    }
+}
+
+/* =============================================================================
+   RESPONSIVIDADE - BREAKPOINTS
+   ============================================================================= */
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .brandLogo {
+        width: 160px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .container {
+        padding: var(--spacing-xl);
+        max-width: 768px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+

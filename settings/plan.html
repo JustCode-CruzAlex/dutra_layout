@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Meu Plano</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Plan Overview Card */
+        .planOverview {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            color: var(--neutral-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .planOverview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .planHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .planInfo {
+            flex: 1;
+        }
+
+        .planType {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .planBadge {
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .planName {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .planDuration {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .planValidity {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .validityItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .validityItem:last-child {
+            margin-bottom: 0;
+        }
+
+        .validityLabel {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .validityValue {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progressBar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progressFill {
+            height: 100%;
+            background: var(--neutral-white);
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        /* Benefits Section */
+        .benefitsSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .benefitsList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .benefitItem {
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .benefitItem:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .benefitIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .benefitContent {
+            flex: 1;
+        }
+
+        .benefitTitle {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .benefitDescription {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .benefitUsage {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .usageText {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .usageBar {
+            flex: 1;
+            max-width: 150px;
+            height: 4px;
+            background: var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 12px;
+        }
+
+        .usageFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        .usageButton {
+            padding: 6px 14px;
+            background: var(--primary);
+            color: var(--neutral-white);
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .usageButton:hover {
+            background: var(--primary-light);
+            transform: scale(1.05);
+        }
+
+        .usageButton:disabled {
+            background: var(--border-light);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Actions Section */
+        .actionsGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .actionCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .actionCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .actionIcon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 24px;
+        }
+
+        .actionTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .actionDescription {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Payment Method */
+        .paymentSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .paymentCard {
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cardIcon {
+            width: 48px;
+            height: 32px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .cardInfo {
+            flex: 1;
+        }
+
+        .cardNumber {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .cardExpiry {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .cardAction {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cardAction:hover {
+            background: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        /* History Section */
+        .historyList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .historyItem {
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .historyInfo {
+            flex: 1;
+        }
+
+        .historyDate {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .historyDescription {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .historyAmount {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .actionsGrid {
+                grid-template-columns: 1fr;
+            }
+
+            .planName {
+                font-size: 24px;
+            }
+
+            .benefitItem {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .benefitUsage {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .usageBar {
+                max-width: 100%;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Meu Plano</h1>
+                <p>Gerencie sua assinatura e benefícios</p>
+            </div>
+            <button class="btnIcon" onclick="showPlanInfo()">
+                <i class="mdi mdi-information-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Plan Overview -->
+        <div class="planOverview" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="planHeader">
+                <div class="planInfo">
+                    <div class="planType">
+                        <span>Plano Ativo</span>
+                        <span class="planBadge">VIP</span>
+                    </div>
+                    <div class="planName">Transformação Premium</div>
+                    <div class="planDuration">Assinatura de 6 meses</div>
+                </div>
+            </div>
+            <div class="planValidity">
+                <div class="validityItem">
+                    <span class="validityLabel">Início do plano</span>
+                    <span class="validityValue">15 de junho, 2024</span>
+                </div>
+                <div class="validityItem">
+                    <span class="validityLabel">Renovação</span>
+                    <span class="validityValue">15 de dezembro, 2024</span>
+                </div>
+                <div class="validityItem">
+                    <span class="validityLabel">Dias restantes</span>
+                    <span class="validityValue">127 dias</span>
+                </div>
+                <div class="progressBar">
+                    <div class="progressFill" style="width: 48%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actionsGrid" style="animation: fadeInUp 0.8s ease-out;">
+            <a href="upgrade.html" class="actionCard">
+                <div class="actionIcon">
+                    <i class="mdi mdi-rocket-launch"></i>
+                </div>
+                <div class="actionTitle">Fazer Upgrade</div>
+                <div class="actionDescription">Melhore seu plano</div>
+            </a>
+            <a href="billing.html" class="actionCard">
+                <div class="actionIcon">
+                    <i class="mdi mdi-receipt"></i>
+                </div>
+                <div class="actionTitle">Faturas</div>
+                <div class="actionDescription">Histórico completo</div>
+            </a>
+        </div>
+
+        <!-- Benefits -->
+        <div class="benefitsSection" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-gift"></i>
+                </div>
+                Benefícios Inclusos
+            </div>
+            
+            <div class="benefitsList">
+                <!-- Consultas -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-stethoscope"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Consultas Médicas</div>
+                        <div class="benefitDescription">Consultas mensais com Dr. Thiago Dutra</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">3/6 usadas</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 50%"></div>
+                            </div>
+                            <button class="usageButton" onclick="scheduleConsultation()">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mounjaro -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-needle"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Aplicações Mounjaro</div>
+                        <div class="benefitDescription">Tratamento semanal com acompanhamento</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">20/24 aplicações</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 83%"></div>
+                            </div>
+                            <button class="usageButton" onclick="scheduleMounjaro()">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soroterapia -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-iv-bag"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Sessões de Soroterapia</div>
+                        <div class="benefitDescription">Reposição de vitaminas e minerais</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">10/12 sessões</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 83%"></div>
+                            </div>
+                            <button class="usageButton" onclick="scheduleTherapy()">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Implante Hormonal -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-chip"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Implante Hormonal</div>
+                        <div class="benefitDescription">Modulação hormonal personalizada</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">0/2 disponíveis</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 0%"></div>
+                            </div>
+                            <button class="usageButton" onclick="scheduleImplant()">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bioimpedância -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-scale-bathroom"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Análise de Bioimpedância</div>
+                        <div class="benefitDescription">Avaliação mensal de composição corporal</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">2/6 realizadas</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 33%"></div>
+                            </div>
+                            <button class="usageButton" onclick="scheduleBio()">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo Premium -->
+                <div class="benefitItem">
+                    <div class="benefitIcon">
+                        <i class="mdi mdi-crown"></i>
+                    </div>
+                    <div class="benefitContent">
+                        <div class="benefitTitle">Conteúdo Premium</div>
+                        <div class="benefitDescription">Acesso ilimitado a vídeos e artigos exclusivos</div>
+                        <div class="benefitUsage">
+                            <span class="usageText">Acesso ilimitado</span>
+                            <div class="usageBar">
+                                <div class="usageFill" style="width: 100%"></div>
+                            </div>
+                            <button class="usageButton" onclick="accessContent()">Acessar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="paymentSection" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-credit-card"></i>
+                </div>
+                Forma de Pagamento
+            </div>
+            
+            <div class="paymentCard">
+                <div class="cardIcon">VISA</div>
+                <div class="cardInfo">
+                    <div class="cardNumber">•••• •••• •••• 4532</div>
+                    <div class="cardExpiry">Expira em 08/2026</div>
+                </div>
+                <button class="cardAction" onclick="updatePayment()">Alterar</button>
+            </div>
+        </div>
+
+        <!-- Recent History -->
+        <div class="benefitsSection" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-history"></i>
+                </div>
+                Histórico Recente
+            </div>
+            
+            <div class="historyList">
+                <div class="historyItem">
+                    <div class="historyInfo">
+                        <div class="historyDate">15 de julho, 2024</div>
+                        <div class="historyDescription">Renovação mensal - Plano VIP</div>
+                    </div>
+                    <div class="historyAmount">R$ 1.200</div>
+                </div>
+                <div class="historyItem">
+                    <div class="historyInfo">
+                        <div class="historyDate">15 de junho, 2024</div>
+                        <div class="historyDescription">Renovação mensal - Plano VIP</div>
+                    </div>
+                    <div class="historyAmount">R$ 1.200</div>
+                </div>
+                <div class="historyItem">
+                    <div class="historyInfo">
+                        <div class="historyDate">15 de maio, 2024</div>
+                        <div class="historyDescription">Ativação - Plano VIP 6 meses</div>
+                    </div>
+                    <div class="historyAmount">R$ 6.480</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="animation: fadeInUp 1.6s ease-out;">
+            <button class="btnPrimary" onclick="renewPlan()">
+                Renovar Plano Antecipado
+            </button>
+            <button class="btnSecondary" style="margin-top: 12px;" onclick="cancelPlan()">
+                Gerenciar Assinatura
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        // Schedule actions
+        function scheduleConsultation() {
+            window.location.href = '../schedule/book.html';
+        }
+
+        function scheduleMounjaro() {
+            alert('Agendar Aplicação Mounjaro:\n\n• Próxima disponível: Segunda-feira, 10h\n• Local: Instituto Dutra\n• Duração: 30 minutos\n• Profissional: Enfermagem\n\nConfirmar agendamento?\n\n(Demo)');
+        }
+
+        function scheduleTherapy() {
+            alert('Agendar Soroterapia:\n\n• Próxima disponível: Terça-feira, 14h\n• Local: Instituto Dutra\n• Duração: 45 minutos\n• Tipo: Revitalizante\n\nConfirmar agendamento?\n\n(Demo)');
+        }
+
+        function scheduleImplant() {
+            alert('Agendar Implante Hormonal:\n\n• Consulta prévia necessária\n• Exames hormonais em dia\n• Procedimento: 20 minutos\n• Acompanhamento: 3 meses\n\nLigar para agendar: (11) 98765-4321\n\n(Demo)');
+        }
+
+        function scheduleBio() {
+            alert('Agendar Bioimpedância:\n\n• Próxima disponível: Quarta-feira, 9h\n• Jejum: 4 horas\n• Evitar exercícios: 12h antes\n• Duração: 15 minutos\n\nConfirmar agendamento?\n\n(Demo)');
+        }
+
+        function accessContent() {
+            window.location.href = '../content/videos.html';
+        }
+
+        // Payment actions
+        function updatePayment() {
+            alert('Alterar Forma de Pagamento:\n\n• Cartão de Crédito\n• Cartão de Débito\n• PIX Recorrente\n• Boleto Bancário\n\nPagamento seguro via PagSeguro\n\n(Demo)');
+        }
+
+        // Plan actions
+        function renewPlan() {
+            alert('Renovação Antecipada:\n\nBenefícios da renovação:\n• 10% de desconto\n• 1 mês bônus\n• Consulta extra grátis\n• Prioridade no agendamento\n\nValor: R$ 5.832 (6 meses)\nEconomia: R$ 648\n\nConfirmar renovação?\n\n(Demo)');
+        }
+
+        function cancelPlan() {
+            alert('Gerenciar Assinatura:\n\n• Pausar temporariamente\n• Alterar para plano mensal\n• Cancelar renovação automática\n• Falar com suporte\n\nWhatsApp: (11) 98765-4321\n\n(Demo)');
+        }
+
+        function showPlanInfo() {
+            alert('Sobre Seu Plano VIP:\n\nINCLUSOS:\n• 6 consultas médicas\n• 24 aplicações Mounjaro\n• 12 sessões soroterapia\n• 2 implantes hormonais\n• 6 bioimpedâncias\n• Conteúdo premium ilimitado\n\nVALOR:\n• Mensal: R$ 1.200\n• Total (6 meses): R$ 6.480\n• Economia: R$ 720\n\nVALIDADE:\n• 127 dias restantes\n• Renovação: 15/12/2024\n\n(Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Animação das barras de progresso
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.progressFill, .usageFill');
+                bars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

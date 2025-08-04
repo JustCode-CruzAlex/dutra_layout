@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Gráficos Interativos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Chart Tabs */
+        .chartTabs {
+            display: flex;
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+        }
+
+        .tabButton {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tabButton.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+            box-shadow: 0 2px 4px var(--shadow-soft);
+        }
+
+        /* Chart Section */
+        .chartSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .titleLeft {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .timeRange {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--background-lighter);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        /* Advanced Chart Container */
+        .advancedChart {
+            position: relative;
+            height: 280px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .chartArea {
+            height: 100%;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Grid Lines */
+        .chartGrid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .gridLine {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: rgba(58, 74, 58, 0.1);
+        }
+
+        .gridLine:nth-child(1) { top: 20%; }
+        .gridLine:nth-child(2) { top: 40%; }
+        .gridLine:nth-child(3) { top: 60%; }
+        .gridLine:nth-child(4) { top: 80%; }
+
+        /* Y-Axis Labels */
+        .yAxisLabels {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Multi-Line Chart */
+        .multiLineChart {
+            position: relative;
+            height: 100%;
+        }
+
+        .chartSvg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .chartPath {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .pathWeight { 
+            stroke: var(--primary);
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-out 0.5s forwards;
+        }
+        
+        .pathIMC { 
+            stroke: var(--accent-beige);
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-out 1s forwards;
+        }
+        
+        .pathFat { 
+            stroke: var(--primary-light);
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease-out 1.5s forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Data Points */
+        .dataPoints {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .dataPoint {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid var(--neutral-white);
+            box-shadow: 0 2px 4px var(--shadow-soft);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInPoint 0.6s ease-out 2s forwards;
+        }
+
+        .dataPoint:hover {
+            transform: scale(1.3);
+        }
+
+        @keyframes fadeInPoint {
+            to { opacity: 1; }
+        }
+
+        .pointWeight { background: var(--primary); }
+        .pointIMC { background: var(--accent-beige); }
+        .pointFat { background: var(--primary-light); }
+
+        /* Chart Legend */
+        .chartLegend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .legendItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .legendColor {
+            width: 16px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .legendWeight { background: var(--primary); }
+        .legendIMC { background: var(--accent-beige); }
+        .legendFat { background: var(--primary-light); }
+
+        /* X-Axis Labels */
+        .xAxisLabels {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Comparison Charts */
+        .comparisonGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .comparisonCard {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+            text-align: center;
+        }
+
+        .comparisonTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .comparisonChart {
+            position: relative;
+            height: 120px;
+            margin-bottom: 12px;
+        }
+
+        /* Circular Progress */
+        .circularProgress {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .progressBackground,
+        .progressBar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .progressBackground {
+            background: var(--border-light);
+        }
+
+        .progressBar {
+            background: conic-gradient(var(--primary) var(--progress, 0%), var(--border-light) var(--progress, 0%));
+            mask: radial-gradient(circle at center, transparent 24px, black 26px);
+            animation: fillProgress 1.5s ease-out 1s both;
+        }
+
+        @keyframes fillProgress {
+            from { --progress: 0%; }
+            to { --progress: var(--final-progress); }
+        }
+
+        .progressValue {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progressLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Trend Analysis */
+        .trendAnalysis {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .trendGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .trendItem {
+            text-align: center;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+        }
+
+        .trendIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .trendIcon.positive {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .trendIcon.negative {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        .trendValue {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .trendLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .comparisonGrid,
+            .trendGrid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chartTabs {
+                flex-direction: column;
+            }
+            
+            .advancedChart {
+                height: 240px;
+            }
+            
+            .chartLegend {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Gráficos Interativos</h1>
+                <p>Progressão temporal detalhada</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Chart Tabs -->
+        <div class="chartTabs">
+            <button class="tabButton active" onclick="switchChart('multi')">
+                <i class="mdi mdi-chart-line"></i>
+                Multi-Linhas
+            </button>
+            <button class="tabButton" onclick="switchChart('comparison')">
+                <i class="mdi mdi-chart-donut"></i>
+                Comparação
+            </button>
+            <button class="tabButton" onclick="switchChart('trend')">
+                <i class="mdi mdi-trending-up"></i>
+                Tendências
+            </button>
+        </div>
+
+        <!-- Multi-Line Chart -->
+        <div id="multiChart" class="chartSection">
+            <div class="sectionTitle">
+                <div class="titleLeft">
+                    <div class="sectionIcon">
+                        <i class="mdi mdi-chart-multiple"></i>
+                    </div>
+                    Evolução Temporal
+                </div>
+                <div class="timeRange">Últimos 6 meses</div>
+            </div>
+            
+            <div class="advancedChart">
+                <div class="chartGrid">
+                    <div class="gridLine"></div>
+                    <div class="gridLine"></div>
+                    <div class="gridLine"></div>
+                    <div class="gridLine"></div>
+                </div>
+                
+                <div class="yAxisLabels">
+                    <div>80</div>
+                    <div>70</div>
+                    <div>60</div>
+                    <div>50</div>
+                    <div>40</div>
+                </div>
+                
+                <div class="chartArea">
+                    <div class="multiLineChart">
+                        <svg class="chartSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <!-- Peso -->
+                            <path class="chartPath pathWeight" d="M 5,85 L 15,80 L 25,75 L 35,65 L 45,55 L 55,50 L 65,45 L 75,40 L 85,35 L 95,30" />
+                            <!-- IMC -->
+                            <path class="chartPath pathIMC" d="M 5,75 L 15,72 L 25,68 L 35,60 L 45,52 L 55,48 L 65,44 L 75,42 L 85,40 L 95,38" />
+                            <!-- Gordura -->
+                            <path class="chartPath pathFat" d="M 5,70 L 15,68 L 25,65 L 35,58 L 45,50 L 55,45 L 65,42 L 75,38 L 85,35 L 95,32" />
+                        </svg>
+                    </div>
+                    
+                    <div class="dataPoints">
+                        <!-- Peso points -->
+                        <div class="dataPoint pointWeight" style="bottom: 15%; left: 5%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 20%; left: 15%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 25%; left: 25%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 35%; left: 35%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 45%; left: 45%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 50%; left: 55%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 55%; left: 65%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 60%; left: 75%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 65%; left: 85%;"></div>
+                        <div class="dataPoint pointWeight" style="bottom: 70%; left: 95%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chartLegend">
+                <div class="legendItem">
+                    <div class="legendColor legendWeight"></div>
+                    <span>Peso (kg)</span>
+                </div>
+                <div class="legendItem">
+                    <div class="legendColor legendIMC"></div>
+                    <span>IMC</span>
+                </div>
+                <div class="legendItem">
+                    <div class="legendColor legendFat"></div>
+                    <span>% Gordura</span>
+                </div>
+            </div>
+            
+            <div class="xAxisLabels">
+                <span>Fev</span>
+                <span>Mar</span>
+                <span>Abr</span>
+                <span>Mai</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Ago</span>
+            </div>
+        </div>
+
+        <!-- Comparison Charts -->
+        <div id="comparisonChart" class="comparisonGrid" style="display: none;">
+            <div class="comparisonCard">
+                <div class="comparisonTitle">Meta de Peso</div>
+                <div class="comparisonChart">
+                    <div class="circularProgress">
+                        <div class="progressBackground"></div>
+                        <div class="progressBar" style="--final-progress: 65%;"></div>
+                        <div class="progressValue">65%</div>
+                    </div>
+                </div>
+                <div class="progressLabel">68.5kg / 65kg</div>
+            </div>
+            
+            <div class="comparisonCard">
+                <div class="comparisonTitle">Meta IMC</div>
+                <div class="comparisonChart">
+                    <div class="circularProgress">
+                        <div class="progressBackground"></div>
+                        <div class="progressBar" style="--final-progress: 58%;"></div>
+                        <div class="progressValue">58%</div>
+                    </div>
+                </div>
+                <div class="progressLabel">25.4 / 22.0</div>
+            </div>
+            
+            <div class="comparisonCard">
+                <div class="comparisonTitle">Meta Gordura</div>
+                <div class="comparisonChart">
+                    <div class="circularProgress">
+                        <div class="progressBackground"></div>
+                        <div class="progressBar" style="--final-progress: 72%;"></div>
+                        <div class="progressValue">72%</div>
+                    </div>
+                </div>
+                <div class="progressLabel">28.4% / 22%</div>
+            </div>
+            
+            <div class="comparisonCard">
+                <div class="comparisonTitle">Meta Músculo</div>
+                <div class="comparisonChart">
+                    <div class="circularProgress">
+                        <div class="progressBackground"></div>
+                        <div class="progressBar" style="--final-progress: 90%;"></div>
+                        <div class="progressValue">90%</div>
+                    </div>
+                </div>
+                <div class="progressLabel">28.8kg / 32kg</div>
+            </div>
+        </div>
+
+        <!-- Trend Analysis -->
+        <div id="trendChart" class="trendAnalysis" style="display: none;">
+            <div class="sectionTitle">
+                <div class="titleLeft">
+                    <div class="sectionIcon">
+                        <i class="mdi mdi-trending-up"></i>
+                    </div>
+                    Análise de Tendências
+                </div>
+            </div>
+            
+            <div class="trendGrid">
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-trending-down"></i>
+                    </div>
+                    <div class="trendValue">-2.1kg</div>
+                    <div class="trendLabel">Este Mês</div>
+                </div>
+                
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-speedometer"></i>
+                    </div>
+                    <div class="trendValue">0.5kg</div>
+                    <div class="trendLabel">Média Semanal</div>
+                </div>
+                
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-calendar-check"></i>
+                    </div>
+                    <div class="trendValue">68 dias</div>
+                    <div class="trendLabel">Consistência</div>
+                </div>
+                
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-chart-line-variant"></i>
+                    </div>
+                    <div class="trendValue">-1.2</div>
+                    <div class="trendLabel">Variação IMC</div>
+                </div>
+                
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-heart-pulse"></i>
+                    </div>
+                    <div class="trendValue">-16mg</div>
+                    <div class="trendLabel">Glicemia</div>
+                </div>
+                
+                <div class="trendItem">
+                    <div class="trendIcon positive">
+                        <i class="mdi mdi-target"></i>
+                    </div>
+                    <div class="trendValue">65%</div>
+                    <div class="trendLabel">Meta Global</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function switchChart(chartType) {
+            // Update tab buttons
+            document.querySelectorAll('.tabButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide all charts
+            document.getElementById('multiChart').style.display = 'none';
+            document.getElementById('comparisonChart').style.display = 'none';
+            document.getElementById('trendChart').style.display = 'none';
+
+            // Show selected chart
+            switch(chartType) {
+                case 'multi':
+                    document.getElementById('multiChart').style.display = 'block';
+                    break;
+                case 'comparison':
+                    document.getElementById('comparisonChart').style.display = 'grid';
+                    // Reinicia animações dos círculos
+                    setTimeout(() => {
+                        document.querySelectorAll('.progressBar').forEach(bar => {
+                            bar.style.animation = 'none';
+                            setTimeout(() => {
+                                bar.style.animation = 'fillProgress 1.5s ease-out both';
+                            }, 100);
+                        });
+                    }, 100);
+                    break;
+                case 'trend':
+                    document.getElementById('trendChart').style.display = 'block';
+                    break;
+            }
+
+            console.log(`Gráfico alterado para: ${chartType}`);
+        }
+
+        // Data point hover effects
+        document.querySelectorAll('.dataPoint').forEach(point => {
+            point.addEventListener('mouseenter', function() {
+                // Simula tooltip
+                console.log('Mostrar dados do ponto');
+            });
+        });
+
+        // Inicialização
+        console.log('Gráficos interativos carregados');
+    </script>
+</body>
+</html>

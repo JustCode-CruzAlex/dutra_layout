@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Conquistas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .levelBadge {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--neutral-white);
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Player Stats */
+        .playerStats {
+            background: var(--neutral-white);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .playerLevel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .levelCircle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .levelBackground,
+        .levelProgress {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .levelBackground {
+            background: var(--border-light);
+        }
+
+        .levelProgress {
+            background: conic-gradient(var(--accent-beige) 68%, var(--border-light) 68%);
+            mask: radial-gradient(circle at center, transparent 35px, black 37px);
+        }
+
+        .levelNumber {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .levelTitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .levelSubtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .statCard {
+            text-align: center;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+        }
+
+        .statValue {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Recent Achievements */
+        .achievementsSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .achievementsList {
+            display: grid;
+            gap: 16px;
+        }
+
+        .achievementItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--background-lighter);
+            border-radius: 16px;
+            border-left: 4px solid var(--success-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .achievementItem:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .achievementItem.locked {
+            opacity: 0.6;
+            border-left-color: var(--border-light);
+        }
+
+        .achievementIcon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .achievementIcon.unlocked {
+            background: linear-gradient(135deg, #CD7F32, #DAA520) !important;
+            color: #F0F0EF !important;
+        }
+
+        .achievementIcon.locked {
+            background: var(--border-light);
+            color: var(--text-muted);
+        }
+
+        .achievementIcon::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--neutral-white);
+            font-family: "Material Design Icons";
+        }
+
+        .achievementIcon.unlocked::after {
+            content: "\F012C";
+            font-family: "Material Design Icons";
+        }
+
+        .achievementIcon.locked::after {
+            content: "\F033E";
+            background: var(--text-muted);
+            font-family: "Material Design Icons";
+        }
+
+        .achievementContent {
+            flex: 1;
+        }
+
+        .achievementTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .achievementDesc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .achievementReward {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .achievementDate {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Badge Categories */
+        .badgeCategories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .categoryTab {
+            background: var(--background-lighter);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .categoryTab.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        /* Badges Grid */
+        .badgesGrid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .badgeCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .badgeCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .badgeCard.locked {
+            opacity: 0.5;
+        }
+
+        .badgeIcon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .badgeIcon.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: var(--neutral-white);
+        }
+
+        .badgeIcon.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: var(--neutral-white);
+        }
+
+        .badgeIcon.bronze {
+            background: linear-gradient(135deg, #CD7F32, #A0522D);
+            color: var(--neutral-white);
+        }
+
+        .badgeIcon.locked {
+            background: var(--border-light);
+            color: var(--text-muted);
+        }
+
+        .badgeTitle {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .badgeProgress {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Progress Section */
+        .progressSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nextGoal {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(58, 74, 58, 0.05), rgba(154, 131, 100, 0.05));
+            border-radius: 16px;
+            border: 2px dashed var(--primary);
+        }
+
+        .goalIcon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--neutral-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .goalContent {
+            flex: 1;
+        }
+
+        .goalTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .goalDesc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .goalProgress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .goalBar {
+            flex: 1;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .goalFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .goalPercent {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Quick Actions */
+        .quickActions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .actionCard {
+            flex: 1;
+            background: var(--neutral-white);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .actionCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .actionIcon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+        }
+
+        .actionLabel {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .statsGrid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .badgesGrid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .achievementItem {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nextGoal {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .quickActions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes levelPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .levelCircle:hover {
+            animation: levelPulse 0.6s ease-in-out;
+        }
+
+        @keyframes badgeEarn {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .badgeCard.new-badge {
+            animation: badgeEarn 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Conquistas</h1>
+                <p>Marcos da sua jornada</p>
+            </div>
+            <div class="levelBadge">
+                <i class="mdi mdi-trophy"></i>
+                Nível 5
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Player Stats -->
+        <div class="playerStats">
+            <div class="playerLevel">
+                <div class="levelCircle">
+                    <div class="levelBackground"></div>
+                    <div class="levelProgress"></div>
+                    <div class="levelNumber">5</div>
+                </div>
+                <div class="levelTitle">Guerreiro da Transformação</div>
+                <div class="levelSubtitle">400 XP para o próximo nível</div>
+            </div>
+            
+            <div class="statsGrid">
+                <div class="statCard">
+                    <div class="statValue">1.850</div>
+                    <div class="statLabel">Pontos XP</div>
+                </div>
+                <div class="statCard">
+                    <div class="statValue">12</div>
+                    <div class="statLabel">Conquistas</div>
+                </div>
+                <div class="statCard">
+                    <div class="statValue">45</div>
+                    <div class="statLabel">Dias ativos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quickActions">
+            <div class="actionCard" onclick="goToRanking()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-podium"></i>
+                </div>
+                <div class="actionLabel">Ranking</div>
+            </div>
+            <div class="actionCard" onclick="goToPerks()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-gift"></i>
+                </div>
+                <div class="actionLabel">Recompensas</div>
+            </div>
+            <div class="actionCard" onclick="shareAchievements()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-share"></i>
+                </div>
+                <div class="actionLabel">Compartilhar</div>
+            </div>
+        </div>
+
+        <!-- Recent Achievements -->
+        <div class="achievementsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-medal"></i>
+                </div>
+                Conquistas Recentes
+            </div>
+            
+            <div class="achievementsList">
+                <div class="achievementItem unlocked" onclick="showAchievement('weight5kg')">
+                    <div class="achievementIcon unlocked">
+                        <i class="mdi mdi-trophy"></i>
+                    </div>
+                    <div class="achievementContent">
+                        <div class="achievementTitle">5kg Perdidos!</div>
+                        <div class="achievementDesc">Primeira meta importante conquistada</div>
+                        <div class="achievementReward">
+                            <i class="mdi mdi-star"></i>
+                            +200 XP • Badge Dourado
+                        </div>
+                        <div class="achievementDate">15 de julho, 2024</div>
+                    </div>
+                </div>
+                
+                <div class="achievementItem unlocked" onclick="showAchievement('consistency')">
+                    <div class="achievementIcon unlocked">
+                        <i class="mdi mdi-calendar-check"></i>
+                    </div>
+                    <div class="achievementContent">
+                        <div class="achievementTitle">Streak de 30 Dias</div>
+                        <div class="achievementDesc">30 check-ins consecutivos completados</div>
+                        <div class="achievementReward">
+                            <i class="mdi mdi-star"></i>
+                            +150 XP • Badge Disciplina
+                        </div>
+                        <div class="achievementDate">12 de julho, 2024</div>
+                    </div>
+                </div>
+                
+                <div class="achievementItem unlocked" onclick="showAchievement('social')">
+                    <div class="achievementIcon unlocked">
+                        <i class="mdi mdi-share"></i>
+                    </div>
+                    <div class="achievementContent">
+                        <div class="achievementTitle">Primeira Postagem</div>
+                        <div class="achievementDesc">Compartilhou sua evolução nas redes sociais</div>
+                        <div class="achievementReward">
+                            <i class="mdi mdi-star"></i>
+                            +100 XP • Badge Social
+                        </div>
+                        <div class="achievementDate">8 de julho, 2024</div>
+                    </div>
+                </div>
+                
+                <div class="achievementItem locked" onclick="showAchievement('weight10kg')">
+                    <div class="achievementIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="achievementContent">
+                        <div class="achievementTitle">10kg Perdidos</div>
+                        <div class="achievementDesc">Progresso: 8.5kg / 10kg</div>
+                        <div class="achievementReward">
+                            <i class="mdi mdi-star"></i>
+                            +300 XP • Badge Platina
+                        </div>
+                        <div class="achievementDate">Faltam apenas 1.5kg!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Badge Collection -->
+        <div class="achievementsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-shield-star"></i>
+                </div>
+                Coleção de Badges
+            </div>
+            
+            <div class="badgeCategories">
+                <button class="categoryTab active" onclick="filterBadges('all')">Todos</button>
+                <button class="categoryTab" onclick="filterBadges('weight')">Peso</button>
+                <button class="categoryTab" onclick="filterBadges('health')">Saúde</button>
+                <button class="categoryTab" onclick="filterBadges('activity')">Atividade</button>
+                <button class="categoryTab" onclick="filterBadges('social')">Social</button>
+                <button class="categoryTab" onclick="filterBadges('consistency')">Consistência</button>
+            </div>
+            
+            <div class="badgesGrid">
+                <!-- Weight Badges -->
+                <div class="badgeCard" data-category="weight" onclick="showBadge('firstKg')">
+                    <div class="badgeIcon bronze">
+                        <i class="mdi mdi-numeric-1"></i>
+                    </div>
+                    <div class="badgeTitle">Primeiro Kg</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="weight" onclick="showBadge('weight5kg')">
+                    <div class="badgeIcon gold">
+                        <i class="mdi mdi-trophy"></i>
+                    </div>
+                    <div class="badgeTitle">5kg Perdidos</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="weight" onclick="showBadge('weight10kg')">
+                    <div class="badgeIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="badgeTitle">10kg Perdidos</div>
+                    <div class="badgeProgress">85% completo</div>
+                </div>
+
+                <!-- Health Badges -->
+                <div class="badgeCard" data-category="health" onclick="showBadge('glucose')">
+                    <div class="badgeIcon silver">
+                        <i class="mdi mdi-heart-pulse"></i>
+                    </div>
+                    <div class="badgeTitle">Glicemia OK</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="health" onclick="showBadge('bmi')">
+                    <div class="badgeIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="badgeTitle">IMC Ideal</div>
+                    <div class="badgeProgress">58% completo</div>
+                </div>
+
+                <div class="badgeCard" data-category="health" onclick="showBadge('pressure')">
+                    <div class="badgeIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="badgeTitle">Pressão Normal</div>
+                    <div class="badgeProgress">25% completo</div>
+                </div>
+
+                <!-- Activity Badges -->
+                <div class="badgeCard" data-category="activity" onclick="showBadge('steps')">
+                    <div class="badgeIcon bronze">
+                        <i class="mdi mdi-run"></i>
+                    </div>
+                    <div class="badgeTitle">8K Passos</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="activity" onclick="showBadge('workout')">
+                    <div class="badgeIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="badgeTitle">Atleta</div>
+                    <div class="badgeProgress">25% completo</div>
+                </div>
+
+                <!-- Social Badges -->
+                <div class="badgeCard" data-category="social" onclick="showBadge('share')">
+                    <div class="badgeIcon bronze">
+                        <i class="mdi mdi-share"></i>
+                    </div>
+                    <div class="badgeTitle">Influenciador</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="social" onclick="showBadge('inspire')">
+                    <div class="badgeIcon locked">
+                        <i class="mdi mdi-lock"></i>
+                    </div>
+                    <div class="badgeTitle">Inspirador</div>
+                    <div class="badgeProgress">33% completo</div>
+                </div>
+
+                <!-- Consistency Badges -->
+                <div class="badgeCard" data-category="consistency" onclick="showBadge('week1')">
+                    <div class="badgeIcon bronze">
+                        <i class="mdi mdi-calendar-week"></i>
+                    </div>
+                    <div class="badgeTitle">7 Dias</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+                
+                <div class="badgeCard" data-category="consistency" onclick="showBadge('month1')">
+                    <div class="badgeIcon silver">
+                        <i class="mdi mdi-calendar-month"></i>
+                    </div>
+                    <div class="badgeTitle">30 Dias</div>
+                    <div class="badgeProgress">Conquistado</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Goal -->
+        <div class="progressSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-target"></i>
+                </div>
+                Próxima Conquista
+            </div>
+            
+            <div class="nextGoal">
+                <div class="goalIcon">
+                    <i class="mdi mdi-scale-bathroom"></i>
+                </div>
+                <div class="goalContent">
+                    <div class="goalTitle">10kg Perdidos</div>
+                    <div class="goalDesc">Você está quase lá! Apenas 1.5kg para conquistar esta medalha épica.</div>
+                    <div class="goalProgress">
+                        <div class="goalBar">
+                            <div class="goalFill" style="width: 85%;"></div>
+                        </div>
+                        <div class="goalPercent">85%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Quick Actions
+        function goToRanking() {
+            window.location.href = 'ranking.html';
+        }
+
+        function goToPerks() {
+            window.location.href = 'perks.html';
+        }
+
+        function shareAchievements() {
+            alert('📤 Compartilhar Conquistas:\n\n🏆 5 conquistas desbloqueadas\n⭐ 1.850 pontos XP\n🥇 Nível 5 - Guerreiro da Transformação\n\n"Conquistando metas no Instituto Dutra! 💪"\n\n📱 Instagram Stories otimizado\n📋 Copiar para WhatsApp\n(Demo)');
+        }
+
+        // Achievement details
+        function showAchievement(id) {
+            const achievements = {
+                'weight5kg': '🏆 5kg Perdidos!\n\nParabéns! Você conquistou sua primeira meta importante.\n\n🎁 Recompensas:\n• +200 XP\n• Badge Dourado\n• Acesso a conteúdo exclusivo',
+                'consistency': '📅 Streak de 30 Dias!\n\n30 check-ins consecutivos de dedicação.\n\n🎁 Recompensas:\n• +150 XP\n• Badge Disciplina\n• Desconto em consultas',
+                'social': '📱 Primeira Postagem!\n\nCompartilhou sua evolução pela primeira vez.\n\n🎁 Recompensas:\n• +100 XP\n• Badge Social\n• Função de compartilhamento avançada',
+                'weight10kg': '🔒 10kg Perdidos (Bloqueado)\n\nProgresso atual: 8.5kg / 10kg\nVocê está a apenas 1.5kg desta conquista épica!\n\n🎁 Recompensas ao desbloquear:\n• +300 XP\n• Badge Platina\n• Sessão de fotos gratuita'
+            };
+            
+            alert(achievements[id] || 'Conquista selecionada!');
+        }
+
+        function showBadge(id) {
+            const badges = {
+                'firstKg': '🥉 Primeiro Kg (Bronze)\n\nO primeiro passo da sua jornada!\nConquistado em 12 de junho, 2024',
+                'weight5kg': '🥇 5kg Perdidos (Ouro)\n\nMeta importante conquistada!\nConquistado em 15 de julho, 2024',
+                'weight10kg': '🔒 10kg Perdidos (Bloqueado)\n\nProgresso: 85% completo\nFaltam apenas 1.5kg!',
+                'glucose': '🥈 Glicemia OK (Prata)\n\nSaúde em primeiro lugar!\nConquistado em 12 de julho, 2024',
+                'bmi': '🔒 IMC Ideal (Bloqueado)\n\nProgresso: 58% completo\nIMC atual: 25.4 / Meta: 22.0',
+                'pressure': '🔒 Pressão Normal (Bloqueado)\n\nMantenha pressão saudável por 30 dias\nProgresso: 25% completo (7/30 dias)',
+                'steps': '🥉 8K Passos (Bronze)\n\nAtividade física diária!\nConquistado em 10 de julho, 2024',
+                'workout': '🔒 Atleta (Bloqueado)\n\n30 dias de exercícios consecutivos\nProgresso: 25% completo (7/30 dias)',
+                'share': '🥉 Influenciador (Bronze)\n\nPrimeira postagem nas redes!\nConquistado em 8 de julho, 2024',
+                'inspire': '🔒 Inspirador (Bloqueado)\n\nReceba 10 curtidas em suas postagens\nProgresso: 33% completo (3/10 curtidas)',
+                'week1': '🥉 7 Dias (Bronze)\n\nPrimeira semana de consistência!\nConquistado em 18 de junho, 2024',
+                'month1': '🥈 30 Dias (Prata)\n\nUm mês de dedicação total!\nConquistado em 12 de julho, 2024'
+            };
+            
+            alert(badges[id] || 'Badge selecionado!');
+        }
+
+        function filterBadges(category) {
+            // Update active tab
+            document.querySelectorAll('.categoryTab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter badges
+            const badges = document.querySelectorAll('.badgeCard');
+            badges.forEach(badge => {
+                const badgeCategory = badge.getAttribute('data-category');
+                if (category === 'all' || badgeCategory === category) {
+                    badge.style.display = 'block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+
+            console.log(`Filtrando badges: ${category}`);
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Animação da barra de progresso da próxima meta
+            setTimeout(() => {
+                const goalFill = document.querySelector('.goalFill');
+                const width = goalFill.style.width;
+                goalFill.style.width = '0%';
+                setTimeout(() => {
+                    goalFill.style.width = width;
+                }, 100);
+            }, 1000);
+
+            // Simula nova conquista (para demo)
+            setTimeout(() => {
+                if (Math.random() > 0.7) {
+                    document.querySelector('.badgesGrid .badgeCard').classList.add('new-badge');
+                    setTimeout(() => {
+                        alert('🎉 Nova conquista desbloqueada!\n\n🏆 Badge "Primeiro Kg"\n+50 XP adicionados!');
+                    }, 800);
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

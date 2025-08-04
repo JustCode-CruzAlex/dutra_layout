@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Resumo Mensal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Period Selector */
+        .periodSelector {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+            display: flex;
+        }
+
+        .periodButton {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .periodButton.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+            box-shadow: 0 2px 4px var(--shadow-soft);
+        }
+
+        /* Summary Cards */
+        .summaryGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summaryCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summaryCard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .summaryIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 24px;
+            margin: 0 auto 16px;
+        }
+
+        .summaryValue {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .summaryLabel {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .summaryChange {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .summaryChange.positive {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .summaryChange.negative {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Detailed Metrics */
+        .metricsSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Progress Chart */
+        .progressChart {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chartTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .monthlyBars {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            height: 120px;
+            margin-bottom: 16px;
+        }
+
+        .monthBar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--primary-light));
+            margin: 0 4px;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .monthBar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .monthBar:hover {
+            transform: scale(1.05);
+        }
+
+        .monthLabels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Metrics Grid */
+        .metricsGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .metricItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .metricInfo h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .metricInfo p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .metricValue {
+            text-align: right;
+        }
+
+        .metricValue .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .metricValue .unit {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Activities List */
+        .activitiesList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activityItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .activityItem:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-soft);
+        }
+
+        .activityIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .activityContent {
+            flex: 1;
+        }
+
+        .activityTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activityDescription {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .activityDate {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .activityValue {
+            text-align: right;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Quick Actions */
+        .quickActions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .actionButton {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--neutral-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .actionButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-soft);
+            border-color: var(--primary);
+        }
+
+        .actionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .actionContent h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .actionContent p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .summaryGrid,
+            .metricsGrid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quickActions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+        .container > *:nth-child(6) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Resumo Mensal</h1>
+                <p>Progresso consolidado e análises mensais</p>
+            </div>
+            <button class="btnIcon" onclick="shareReport()">
+                <i class="mdi mdi-share-variant"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Period Selector -->
+        <div class="periodSelector">
+            <button class="periodButton" onclick="setPeriod('janeiro')">Janeiro</button>
+            <button class="periodButton active" onclick="setPeriod('fevereiro')">Fevereiro</button>
+            <button class="periodButton" onclick="setPeriod('marco')">Março</button>
+            <button class="periodButton" onclick="setPeriod('abril')">Abril</button>
+        </div>
+
+        <!-- Summary Overview -->
+        <div class="summaryGrid">
+            <div class="summaryCard">
+                <div class="summaryIcon">
+                    <i class="mdi mdi-scale-bathroom"></i>
+                </div>
+                <div class="summaryValue">-3.2kg</div>
+                <div class="summaryLabel">Peso Perdido</div>
+                <div class="summaryChange positive">
+                    <i class="mdi mdi-trending-down"></i>
+                    Meta: -3.0kg
+                </div>
+            </div>
+            
+            <div class="summaryCard">
+                <div class="summaryIcon">
+                    <i class="mdi mdi-target"></i>
+                </div>
+                <div class="summaryValue">87%</div>
+                <div class="summaryLabel">Meta Atingida</div>
+                <div class="summaryChange positive">
+                    <i class="mdi mdi-trending-up"></i>
+                    +22% vs mês anterior
+                </div>
+            </div>
+            
+            <div class="summaryCard">
+                <div class="summaryIcon">
+                    <i class="mdi mdi-calendar-check"></i>
+                </div>
+                <div class="summaryValue">26 dias</div>
+                <div class="summaryLabel">Consistência</div>
+                <div class="summaryChange positive">
+                    <i class="mdi mdi-check-circle"></i>
+                    93% dos dias
+                </div>
+            </div>
+            
+            <div class="summaryCard">
+                <div class="summaryIcon">
+                    <i class="mdi mdi-heart-pulse"></i>
+                </div>
+                <div class="summaryValue">Excelente</div>
+                <div class="summaryLabel">Saúde Geral</div>
+                <div class="summaryChange positive">
+                    <i class="mdi mdi-arrow-up"></i>
+                    Melhorou 15%
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Progress Chart -->
+        <div class="metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-chart-bar"></i>
+                </div>
+                Progresso Semanal - Fevereiro
+            </div>
+            
+            <div class="progressChart">
+                <div class="chartTitle">Peso Corporal (kg)</div>
+                <div class="monthlyBars">
+                    <div class="monthBar" style="height: 90%;" data-value="71.2kg"></div>
+                    <div class="monthBar" style="height: 85%;" data-value="70.8kg"></div>
+                    <div class="monthBar" style="height: 78%;" data-value="70.1kg"></div>
+                    <div class="monthBar" style="height: 70%;" data-value="69.5kg"></div>
+                    <div class="monthBar" style="height: 65%;" data-value="68.9kg"></div>
+                </div>
+                <div class="monthLabels">
+                    <span>Sem 1</span>
+                    <span>Sem 2</span>
+                    <span>Sem 3</span>
+                    <span>Sem 4</span>
+                    <span>Atual</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-chart-line"></i>
+                </div>
+                Métricas Detalhadas
+            </div>
+            
+            <div class="metricsGrid">
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>IMC</h4>
+                        <p>Índice massa corporal</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">25.6</span>
+                        <span class="unit">kg/m²</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>% Gordura</h4>
+                        <p>Composição corporal</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">29.2</span>
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Massa Muscular</h4>
+                        <p>Músculos esquelético</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">27.8</span>
+                        <span class="unit">kg</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Metabolismo</h4>
+                        <p>Taxa metabólica basal</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">1.485</span>
+                        <span class="unit">kcal</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Glicemia</h4>
+                        <p>Média mensal</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">92</span>
+                        <span class="unit">mg/dL</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Pressão Arterial</h4>
+                        <p>Média sistólica/diastólica</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">118/78</span>
+                        <span class="unit">mmHg</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Activities -->
+        <div class="metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-history"></i>
+                </div>
+                Principais Atividades do Mês
+            </div>
+            
+            <div class="activitiesList">
+                <div class="activityItem">
+                    <div class="activityIcon">
+                        <i class="mdi mdi-stethoscope"></i>
+                    </div>
+                    <div class="activityContent">
+                        <div class="activityTitle">Consulta Médica Mensal</div>
+                        <div class="activityDescription">Acompanhamento com Dr. Thiago Dutra</div>
+                        <div class="activityDate">15 de Fevereiro, 2024</div>
+                    </div>
+                    <div class="activityValue">✓</div>
+                </div>
+                
+                <div class="activityItem">
+                    <div class="activityIcon">
+                        <i class="mdi mdi-needle"></i>
+                    </div>
+                    <div class="activityContent">
+                        <div class="activityTitle">Aplicações Mounjaro</div>
+                        <div class="activityDescription">4 aplicações semanais realizadas</div>
+                        <div class="activityDate">Semanas 1-4, Fevereiro</div>
+                    </div>
+                    <div class="activityValue">4/4</div>
+                </div>
+                
+                <div class="activityItem">
+                    <div class="activityIcon">
+                        <i class="mdi mdi-file-document"></i>
+                    </div>
+                    <div class="activityContent">
+                        <div class="activityTitle">Exames Laboratoriais</div>
+                        <div class="activityDescription">Hemograma completo e glicemia</div>
+                        <div class="activityDate">8 de Fevereiro, 2024</div>
+                    </div>
+                    <div class="activityValue">✓</div>
+                </div>
+                
+                <div class="activityItem">
+                    <div class="activityIcon">
+                        <i class="mdi mdi-scale-bathroom"></i>
+                    </div>
+                    <div class="activityContent">
+                        <div class="activityTitle">Bioimpedância</div>
+                        <div class="activityDescription">Análise de composição corporal</div>
+                        <div class="activityDate">22 de Fevereiro, 2024</div>
+                    </div>
+                    <div class="activityValue">✓</div>
+                </div>
+                
+                <div class="activityItem">
+                    <div class="activityIcon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </div>
+                    <div class="activityContent">
+                        <div class="activityTitle">Acompanhamento Nutricional</div>
+                        <div class="activityDescription">2 consultas com nutricionista</div>
+                        <div class="activityDate">9 e 23 de Fevereiro, 2024</div>
+                    </div>
+                    <div class="activityValue">2/2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quickActions">
+            <button class="actionButton" onclick="exportReport()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-download"></i>
+                </div>
+                <div class="actionContent">
+                    <h4>Exportar Relatório</h4>
+                    <p>PDF completo para médicos</p>
+                </div>
+            </button>
+            
+            <button class="actionButton" onclick="shareWithDoctor()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-doctor"></i>
+                </div>
+                <div class="actionContent">
+                    <h4>Compartilhar</h4>
+                    <p>Enviar para equipe médica</p>
+                </div>
+            </button>
+            
+            <button class="actionButton" onclick="viewComparison()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-chart-line-variant"></i>
+                </div>
+                <div class="actionContent">
+                    <h4>Comparar Meses</h4>
+                    <p>Análise comparativa</p>
+                </div>
+            </button>
+            
+            <button class="actionButton" onclick="scheduleConsultation()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-calendar-plus"></i>
+                </div>
+                <div class="actionContent">
+                    <h4>Agendar Consulta</h4>
+                    <p>Nova consulta médica</p>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        // Period Selection
+        function setPeriod(period) {
+            // Update active button
+            document.querySelectorAll('.periodButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            console.log(`Período selecionado: ${period}`);
+            
+            // Simulate data update
+            updateReportData(period);
+        }
+
+        function updateReportData(period) {
+            // Animate bars with new data
+            const bars = document.querySelectorAll('.monthBar');
+            bars.forEach(bar => {
+                bar.style.opacity = '0.3';
+                setTimeout(() => {
+                    // Simulate new data based on period
+                    const randomHeight = Math.floor(Math.random() * 40) + 60;
+                    bar.style.height = randomHeight + '%';
+                    bar.style.opacity = '1';
+                }, 300);
+            });
+            
+            // Update summary cards with animation
+            const summaryCards = document.querySelectorAll('.summaryCard');
+            summaryCards.forEach(card => {
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+
+        // Actions
+        function shareReport() {
+            alert('📤 Compartilhar Relatório:\n\n• WhatsApp\n• Email\n• Link compartilhável\n• Cópia para área de transferência\n\n📊 Dados sempre atualizados\n(Demo)');
+        }
+
+        function exportReport() {
+            window.location.href = 'export.html';
+        }
+
+        function shareWithDoctor() {
+            alert('👩‍⚕️ Compartilhar com Equipe Médica:\n\n• Dr. Thiago Dutra\n• Nutricionista\n• Enfermagem\n\n📧 Enviado por email automaticamente\n✅ Notificação de leitura\n(Demo)');
+        }
+
+        function viewComparison() {
+            alert('📊 Análise Comparativa:\n\n• Últimos 6 meses\n• Evolução por métricas\n• Tendências identificadas\n• Projeções futuras\n\n📈 Gráficos interativos disponíveis\n(Demo)');
+        }
+
+        function scheduleConsultation() {
+            window.location.href = '../schedule/book.html';
+        }
+
+        // Chart interactions
+        document.querySelectorAll('.monthBar').forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+            
+            bar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            bar.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                alert(`📊 Detalhes da semana:\n\nPeso: ${value}\nVariação: -0.4kg vs semana anterior\nMeta: Atingida ✅\n\n(Demo)`);
+            });
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            console.log('Resumo mensal carregado');
+        });
+    </script>
+</body>
+</html>

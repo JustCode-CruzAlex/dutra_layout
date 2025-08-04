@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Recompensas & Benefícios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* My Points Card */
+        .pointsCard {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            color: var(--neutral-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pointsCard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .pointsHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .pointsTitle {
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .pointsIcon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .pointsValue {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pointsSubtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Quick Actions */
+        .quickActions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .actionCard {
+            flex: 1;
+            background: var(--neutral-white);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .actionCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .actionIcon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+        }
+
+        .actionLabel {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Category Tabs */
+        .categoryTabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .categoryTab {
+            background: var(--neutral-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .categoryTab.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        /* Perks List */
+        .perksList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .perkCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perkCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .perkCard.available {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .perkCard.locked {
+            opacity: 0.6;
+            border-left: 4px solid var(--border-light);
+        }
+
+        .perkCard.claimed {
+            border-left: 4px solid var(--accent-beige);
+            background: rgba(154, 131, 100, 0.05);
+        }
+
+        .perkHeader {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .perkIcon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .perkIcon.available {
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--primary) 100%);
+            color: var(--neutral-white);
+        }
+
+        .perkIcon.locked {
+            background: var(--border-light);
+            color: var(--text-muted);
+        }
+
+        .perkIcon.claimed {
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+            color: var(--neutral-white);
+        }
+
+        .perkInfo {
+            flex: 1;
+        }
+
+        .perkTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .perkDescription {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .perkCategory {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .perkFooter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .perkCost {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .perkButton {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .perkButton.available {
+            background: var(--success-color);
+            color: var(--neutral-white);
+        }
+
+        .perkButton.available:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .perkButton.locked {
+            background: var(--border-light);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .perkButton.claimed {
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            cursor: default;
+        }
+
+        .perkBadge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .perkBadge.new {
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+        }
+
+        .perkBadge.limited {
+            background: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        /* Featured Perk */
+        .featuredPerk {
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+            color: var(--neutral-white);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .featuredPerk::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .featuredPerk .perkTitle,
+        .featuredPerk .perkDescription,
+        .featuredPerk .perkCategory {
+            color: var(--neutral-white);
+        }
+
+        .featuredPerk .perkIcon {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--neutral-white);
+        }
+
+        .featuredPerk .perkCost {
+            color: var(--neutral-white);
+        }
+
+        .featuredPerk .perkButton {
+            background: var(--neutral-white);
+            color: var(--primary);
+        }
+
+        .featuredPerk .perkButton:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
+        }
+
+        /* Progress Indicator */
+        .progressIndicator {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .progressTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .progressBar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progressFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .progressText {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* History Section */
+        .historyList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .historyItem {
+            background: var(--neutral-white);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-xs);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .historyIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--background-lighter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .historyContent {
+            flex: 1;
+        }
+
+        .historyTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .historyDate {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .historyPoints {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-beige);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .quickActions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .perkHeader {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .perkFooter {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .perkButton {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Recompensas & Benefícios</h1>
+                <p>Troque seus pontos por vantagens exclusivas</p>
+            </div>
+            <button class="btnIcon" onclick="showPerksInfo()">
+                <i class="mdi mdi-information-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- My Points -->
+        <div class="pointsCard" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="pointsHeader">
+                <div class="pointsTitle">Meus Pontos XP</div>
+                <div class="pointsIcon">
+                    <i class="mdi mdi-star"></i>
+                </div>
+            </div>
+            <div class="pointsValue">1.850</div>
+            <div class="pointsSubtitle">Disponíveis para troca</div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quickActions" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="actionCard" onclick="goToRanking()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-podium"></i>
+                </div>
+                <div class="actionLabel">Ranking</div>
+            </div>
+            <div class="actionCard" onclick="goToAchievements()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-trophy"></i>
+                </div>
+                <div class="actionLabel">Conquistas</div>
+            </div>
+            <div class="actionCard" onclick="showHistory()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-history"></i>
+                </div>
+                <div class="actionLabel">Histórico</div>
+            </div>
+        </div>
+
+        <!-- Featured Perk -->
+        <div class="featuredPerk perkCard" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="perkBadge limited">Limitado</div>
+            <div class="perkHeader">
+                <div class="perkIcon">
+                    <i class="mdi mdi-camera"></i>
+                </div>
+                <div class="perkInfo">
+                    <div class="perkCategory">Benefício Especial</div>
+                    <div class="perkTitle">Sessão de Fotos Profissional</div>
+                    <div class="perkDescription">Sessão de fotos profissional para registrar sua transformação com fotógrafo especializado.</div>
+                </div>
+            </div>
+            <div class="perkFooter">
+                <div class="perkCost">
+                    <i class="mdi mdi-star"></i>
+                    2.500 XP
+                </div>
+                <button class="perkButton locked" onclick="claimPerk('photo-session')">
+                    Resgatar
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress to Next Level -->
+        <div class="progressIndicator" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="progressTitle">Progresso para Nível 6</div>
+            <div class="progressBar">
+                <div class="progressFill" style="width: 68%"></div>
+            </div>
+            <div class="progressText">
+                <span>1.850 / 2.250 XP</span>
+                <span>400 XP restantes</span>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="categoryTabs" style="animation: fadeInUp 1.4s ease-out;">
+            <button class="categoryTab active" onclick="filterPerks('all')">Todos</button>
+            <button class="categoryTab" onclick="filterPerks('health')">Saúde</button>
+            <button class="categoryTab" onclick="filterPerks('wellness')">Bem-estar</button>
+            <button class="categoryTab" onclick="filterPerks('social')">Social</button>
+            <button class="categoryTab" onclick="filterPerks('premium')">Premium</button>
+        </div>
+
+        <!-- Perks List -->
+        <div class="section" style="animation: fadeInUp 1.6s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Benefícios Disponíveis</h2>
+                <button class="btnPrimary btnXs btnInline" onclick="refreshPerks()">
+                    Atualizar
+                </button>
+            </div>
+
+            <div class="perksList" id="perksList">
+                <!-- Available Perks -->
+                <div class="perkCard available" data-category="health">
+                    <div class="perkBadge new">Novo</div>
+                    <div class="perkHeader">
+                        <div class="perkIcon available">
+                            <i class="mdi mdi-percent"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Saúde</div>
+                            <div class="perkTitle">15% Desconto em Consultas</div>
+                            <div class="perkDescription">Desconto especial na próxima consulta médica ou nutricional.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            500 XP
+                        </div>
+                        <button class="perkButton available" onclick="claimPerk('discount-consultation')">
+                            Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="perkCard available" data-category="wellness">
+                    <div class="perkHeader">
+                        <div class="perkIcon available">
+                            <i class="mdi mdi-spa"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Bem-estar</div>
+                            <div class="perkTitle">Sessão de Soroterapia Grátis</div>
+                            <div class="perkDescription">Uma sessão gratuita de soroterapia revitalizante no instituto.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            800 XP
+                        </div>
+                        <button class="perkButton available" onclick="claimPerk('free-therapy')">
+                            Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="perkCard available" data-category="social">
+                    <div class="perkHeader">
+                        <div class="perkIcon available">
+                            <i class="mdi mdi-crown"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Social</div>
+                            <div class="perkTitle">Badge Exclusivo "VIP"</div>
+                            <div class="perkDescription">Badge especial que aparece no seu perfil e ranking.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            300 XP
+                        </div>
+                        <button class="perkButton available" onclick="claimPerk('vip-badge')">
+                            Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Claimed Perks -->
+                <div class="perkCard claimed" data-category="health">
+                    <div class="perkHeader">
+                        <div class="perkIcon claimed">
+                            <i class="mdi mdi-check"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Saúde</div>
+                            <div class="perkTitle">Relatório Detalhado de Evolução</div>
+                            <div class="perkDescription">Relatório completo com gráficos e análises da sua evolução.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            400 XP
+                        </div>
+                        <button class="perkButton claimed" onclick="viewClaimedPerk('evolution-report')">
+                            Resgatado
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Locked Perks -->
+                <div class="perkCard locked" data-category="premium">
+                    <div class="perkHeader">
+                        <div class="perkIcon locked">
+                            <i class="mdi mdi-lock"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Premium</div>
+                            <div class="perkTitle">Plano VIP por 1 Mês</div>
+                            <div class="perkDescription">Acesso completo ao plano VIP com todos os benefícios por 30 dias.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            3.000 XP
+                        </div>
+                        <button class="perkButton locked" onclick="showLockedPerk('vip-month')">
+                            Bloqueado
+                        </button>
+                    </div>
+                </div>
+
+                <div class="perkCard locked" data-category="wellness">
+                    <div class="perkHeader">
+                        <div class="perkIcon locked">
+                            <i class="mdi mdi-lock"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Bem-estar</div>
+                            <div class="perkTitle">Consulta Nutricional Premium</div>
+                            <div class="perkDescription">Consulta de 90 minutos com plano alimentar personalizado e receitas.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            1.200 XP
+                        </div>
+                        <button class="perkButton locked" onclick="showLockedPerk('premium-nutrition')">
+                            Bloqueado
+                        </button>
+                    </div>
+                </div>
+
+                <div class="perkCard locked" data-category="social">
+                    <div class="perkHeader">
+                        <div class="perkIcon locked">
+                            <i class="mdi mdi-lock"></i>
+                        </div>
+                        <div class="perkInfo">
+                            <div class="perkCategory">Social</div>
+                            <div class="perkTitle">Grupo Exclusivo de Mentoria</div>
+                            <div class="perkDescription">Acesso ao grupo VIP com Dr. Thiago e outros pacientes de elite.</div>
+                        </div>
+                    </div>
+                    <div class="perkFooter">
+                        <div class="perkCost">
+                            <i class="mdi mdi-star"></i>
+                            2.000 XP
+                        </div>
+                        <button class="perkButton locked" onclick="showLockedPerk('mentorship-group')">
+                            Bloqueado
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        let currentPoints = 1850;
+        let currentCategory = 'all';
+
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Quick Actions
+        function goToRanking() {
+            window.location.href = 'ranking.html';
+        }
+
+        function goToAchievements() {
+            window.location.href = 'achievements.html';
+        }
+
+        function showHistory() {
+            alert('📊 Histórico de Pontos:\n\n• 15 Jul: +200 XP (5kg perdidos)\n• 12 Jul: +150 XP (Glicemia normalizada)\n• 8 Jul: +100 XP (30 dias consecutivos)\n• 5 Jul: -500 XP (Resgatou desconto)\n• 3 Jul: +50 XP (Check-in diário)\n\n💰 Total acumulado: 2.850 XP\n💸 Total gasto: 500 XP\n💳 Saldo atual: 1.850 XP\n\n(Demo)');
+        }
+
+        // Filter perks by category
+        function filterPerks(category) {
+            // Update active tab
+            document.querySelectorAll('.categoryTab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            currentCategory = category;
+            console.log(`Filtrando benefícios: ${category}`);
+
+            // Filter perks
+            const perks = document.querySelectorAll('.perkCard[data-category]');
+            perks.forEach(perk => {
+                const perkCategory = perk.getAttribute('data-category');
+                if (category === 'all' || perkCategory === category) {
+                    perk.style.display = 'block';
+                } else {
+                    perk.style.display = 'none';
+                }
+            });
+        }
+
+        // Claim perk
+        function claimPerk(perkId) {
+            const perks = {
+                'discount-consultation': { cost: 500, name: '15% Desconto em Consultas' },
+                'free-therapy': { cost: 800, name: 'Sessão de Soroterapia Grátis' },
+                'vip-badge': { cost: 300, name: 'Badge Exclusivo "VIP"' },
+                'photo-session': { cost: 2500, name: 'Sessão de Fotos Profissional' }
+            };
+
+            const perk = perks[perkId];
+            if (!perk) return;
+
+            if (currentPoints >= perk.cost) {
+                const confirmed = confirm(`💰 Resgatar Benefício\n\n"${perk.name}"\n\nCusto: ${perk.cost} XP\nSaldo atual: ${currentPoints} XP\nSaldo após resgate: ${currentPoints - perk.cost} XP\n\nConfirma o resgate?`);
+                
+                if (confirmed) {
+                    currentPoints -= perk.cost;
+                    updatePointsDisplay();
+                    
+                    // Simulate perk claimed
+                    setTimeout(() => {
+                        alert(`🎉 Benefício Resgatado!\n\n"${perk.name}"\n\n✅ ${perk.cost} XP deduzidos\n💳 Novo saldo: ${currentPoints} XP\n\n📧 Instruções enviadas por email\n📱 Código de resgate: #${Math.random().toString(36).substr(2, 8).toUpperCase()}\n\n(Demo)`);
+                    }, 500);
+                }
+            } else {
+                alert(`❌ Pontos Insuficientes\n\nVocê precisa de ${perk.cost} XP\nSaldo atual: ${currentPoints} XP\nFaltam: ${perk.cost - currentPoints} XP\n\n💡 Continue conquistando metas para ganhar mais pontos!`);
+            }
+        }
+
+        function viewClaimedPerk(perkId) {
+            alert('✅ Benefício Já Resgatado\n\n"Relatório Detalhado de Evolução"\n\nResgatado em: 5 de julho, 2024\nCódigo: #REP4T8K9\n\n📥 Baixar relatório\n📧 Reenviar por email\n\n(Demo)');
+        }
+
+        function showLockedPerk(perkId) {
+            const lockedPerks = {
+                'vip-month': { cost: 3000, requirement: 'Alcance o Nível 8' },
+                'premium-nutrition': { cost: 1200, requirement: 'Complete 5 conquistas de saúde' },
+                'mentorship-group': { cost: 2000, requirement: 'Alcance o Top 10 do ranking' }
+            };
+
+            const perk = lockedPerks[perkId];
+            if (perk) {
+                alert(`🔒 Benefício Bloqueado\n\nRequisito: ${perk.requirement}\nCusto: ${perk.cost} XP\n\n💪 Continue sua jornada para desbloquear!\n\n(Demo)`);
+            }
+        }
+
+        function updatePointsDisplay() {
+            document.querySelector('.pointsValue').textContent = currentPoints.toLocaleString();
+        }
+
+        // Other actions
+        function refreshPerks() {
+            alert('🔄 Atualizando Benefícios...\n\n• Verificando novos benefícios\n• Atualizando preços\n• Checando requisitos\n\n✅ Lista atualizada!\n\n🆕 2 novos benefícios disponíveis\n💰 Desconto de 10% em alguns itens\n\n(Demo)');
+        }
+
+        function showPerksInfo() {
+            alert('ℹ️ Como Funcionam os Benefícios:\n\n💰 GANHAR PONTOS:\n• Check-in diário: +10 XP\n• Meta atingida: +50 XP\n• Conquista desbloqueada: +100-300 XP\n• Ranking semanal: +25-150 XP\n\n🎁 RESGATAR BENEFÍCIOS:\n• Descontos em serviços\n• Sessões gratuitas\n• Conteúdo exclusivo\n• Badges especiais\n\n🔓 DESBLOQUEIO:\n• Alguns benefícios têm requisitos\n• Nível mínimo ou conquistas\n• Posição no ranking\n\n💡 Dica: Economize para benefícios premium!\n\n(Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Animação da barra de progresso
+            setTimeout(() => {
+                const progressFill = document.querySelector('.progressFill');
+                const width = progressFill.style.width;
+                progressFill.style.width = '0%';
+                setTimeout(() => {
+                    progressFill.style.width = width;
+                }, 100);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

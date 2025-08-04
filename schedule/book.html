@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Agendar Consulta</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+
+        body {
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        /* Header - agora usa .headerGradient + .backBtn */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        /* Doctor Profile */
+        .doctorProfile {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: -20px 20px 20px;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+            position: relative;
+            z-index: 3;
+        }
+
+        .doctorHeader {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .doctorAvatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .doctorInfo h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .doctorSpecialty {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .doctorRating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stars {
+            color: var(--accent-beige);
+            font-size: 14px;
+        }
+
+        .ratingText {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .doctorStats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .statItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .statIcon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 12px;
+        }
+
+        .statText {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .statValue {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        /* Schedule Days */
+        .scheduleWeek {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        .dayButton {
+            min-width: 48px;
+            height: 64px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: var(--neutral-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .dayButton:hover {
+            border-color: var(--primary);
+        }
+
+        .dayButton.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        .dayName {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .dayNumber {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Time Slots */
+        .timeSlots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .timeButton {
+            padding: 12px 8px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: var(--neutral-white);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .timeButton:hover {
+            border-color: var(--primary);
+        }
+
+        .timeButton.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        .timeButton.unavailable {
+            background: var(--background-light);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Consultation Types */
+        .consultationTypes {
+            margin-bottom: 32px;
+        }
+
+        .typeOption {
+            background: var(--neutral-white);
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .typeOption:hover {
+            border-color: var(--primary);
+        }
+
+        .typeOption.selected {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .typeContent {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .typeIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .typeInfo {
+            flex: 1;
+        }
+
+        .typeName {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .typeDescription {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .typePrice {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .typeRadio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .typeOption.selected .typeRadio {
+            border-color: var(--primary);
+        }
+
+        .typeOption.selected .typeRadio::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Book Button */
+        .bookButton {
+            width: 100%;
+            background: var(--primary);
+            color: var(--neutral-white);
+            border: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 24px;
+        }
+
+        .bookButton:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-button);
+        }
+
+        .bookButton:disabled {
+            background: var(--border-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .header {
+                padding: 50px 16px 24px;
+            }
+
+            .mainContent {
+                padding: 0 16px;
+            }
+
+            .doctorProfile {
+                margin: -20px 16px 20px;
+                padding: 16px;
+            }
+
+            .doctorAvatar {
+                width: 64px;
+                height: 64px;
+                font-size: 24px;
+            }
+
+            .timeSlots {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Agendar Consulta</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Profile -->
+    <div class="doctorProfile">
+        <div class="doctorHeader">
+            <div class="doctorAvatar">TD</div>
+            <div class="doctorInfo">
+                <h2>Dr. Thiago Dutra</h2>
+                <div class="doctorSpecialty">Endocrinologista</div>
+                <div class="doctorRating">
+                    <div class="stars">★★★★★</div>
+                    <span class="ratingText">4.9 (127 avaliações)</span>
+                </div>
+            </div>
+        </div>
+        <div class="doctorStats">
+            <div class="statItem">
+                <div class="statIcon">
+                    <i class="mdi mdi-certificate"></i>
+                </div>
+                <div>
+                    <div class="statText">Experiência</div>
+                    <div class="statValue">12 Anos</div>
+                </div>
+            </div>
+            <div class="statItem">
+                <div class="statIcon">
+                    <i class="mdi mdi-account-group"></i>
+                </div>
+                <div>
+                    <div class="statText">Pacientes</div>
+                    <div class="statValue">850+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Schedule Section -->
+        <div class="section">
+            <h3 class="sectionTitle">Escolher Data</h3>
+            <div class="scheduleWeek">
+                <div class="dayButton" onclick="selectDay(this, 'seg')" data-date="05/08">
+                    <div class="dayName">Seg</div>
+                    <div class="dayNumber">05</div>
+                </div>
+                <div class="dayButton" onclick="selectDay(this, 'ter')" data-date="06/08">
+                    <div class="dayName">Ter</div>
+                    <div class="dayNumber">06</div>
+                </div>
+                <div class="dayButton selected" onclick="selectDay(this, 'qua')" data-date="07/08">
+                    <div class="dayName">Qua</div>
+                    <div class="dayNumber">07</div>
+                </div>
+                <div class="dayButton" onclick="selectDay(this, 'qui')" data-date="08/08">
+                    <div class="dayName">Qui</div>
+                    <div class="dayNumber">08</div>
+                </div>
+                <div class="dayButton" onclick="selectDay(this, 'sex')" data-date="09/08">
+                    <div class="dayName">Sex</div>
+                    <div class="dayNumber">09</div>
+                </div>
+                <div class="dayButton" onclick="selectDay(this, 'sab')" data-date="10/08">
+                    <div class="dayName">Sáb</div>
+                    <div class="dayNumber">10</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Selection -->
+        <div class="section">
+            <h3 class="sectionTitle">Escolher Horário</h3>
+            <div class="timeSlots">
+                <div class="timeButton" onclick="selectTime(this, '08:30')">08:30</div>
+                <div class="timeButton unavailable">09:00</div>
+                <div class="timeButton" onclick="selectTime(this, '10:30')">10:30</div>
+                <div class="timeButton selected" onclick="selectTime(this, '13:00')">13:00</div>
+                <div class="timeButton" onclick="selectTime(this, '14:30')">14:30</div>
+                <div class="timeButton" onclick="selectTime(this, '15:00')">15:00</div>
+                <div class="timeButton" onclick="selectTime(this, '16:30')">16:30</div>
+                <div class="timeButton unavailable">17:00</div>
+            </div>
+        </div>
+
+        <!-- Consultation Type -->
+        <div class="section">
+            <h3 class="sectionTitle">Tipo de Consulta</h3>
+            <div class="consultationTypes">
+                <div class="typeOption" onclick="selectType(this, 'video')">
+                    <div class="typeContent">
+                        <div class="typeIcon">
+                            <i class="mdi mdi-video"></i>
+                        </div>
+                        <div class="typeInfo">
+                            <div class="typeName">Videochamada</div>
+                            <div class="typeDescription">Consulta online com Dr. Thiago</div>
+                        </div>
+                        <div class="typePrice">R$ 280</div>
+                        <div class="typeRadio"></div>
+                    </div>
+                </div>
+
+                <div class="typeOption selected" onclick="selectType(this, 'presencial')">
+                    <div class="typeContent">
+                        <div class="typeIcon">
+                            <i class="mdi mdi-hospital-building"></i>
+                        </div>
+                        <div class="typeInfo">
+                            <div class="typeName">Presencial</div>
+                            <div class="typeDescription">Consulta no Instituto Dutra</div>
+                        </div>
+                        <div class="typePrice">R$ 320</div>
+                        <div class="typeRadio"></div>
+                    </div>
+                </div>
+
+                <div class="typeOption" onclick="selectType(this, 'retorno')">
+                    <div class="typeContent">
+                        <div class="typeIcon">
+                            <i class="mdi mdi-calendar-check"></i>
+                        </div>
+                        <div class="typeInfo">
+                            <div class="typeName">Retorno</div>
+                            <div class="typeDescription">Consulta de acompanhamento</div>
+                        </div>
+                        <div class="typePrice">R$ 180</div>
+                        <div class="typeRadio"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Button -->
+        <button class="bookButton" onclick="bookAppointment()" id="bookBtn">
+            Agendar Consulta
+        </button>
+    </div>
+
+    <script>
+        let selectedDay = 'qua';
+        let selectedTime = '13:00';
+        let selectedType = 'presencial';
+        let selectedPrice = 'R$ 320';
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function selectDay(element, day) {
+            // Remove seleção anterior
+            document.querySelectorAll('.dayButton').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Adiciona seleção atual
+            element.classList.add('selected');
+            selectedDay = day;
+            
+            // Simula atualização de horários disponíveis
+            updateAvailableTimes(day);
+            updateBookButton();
+        }
+
+        function selectTime(element, time) {
+            if (element.classList.contains('unavailable')) return;
+            
+            // Remove seleção anterior
+            document.querySelectorAll('.timeButton').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Adiciona seleção atual
+            element.classList.add('selected');
+            selectedTime = time;
+            updateBookButton();
+        }
+
+        function selectType(element, type) {
+            // Remove seleção anterior
+            document.querySelectorAll('.typeOption').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Adiciona seleção atual
+            element.classList.add('selected');
+            selectedType = type;
+            
+            // Atualiza preço
+            selectedPrice = element.querySelector('.typePrice').textContent;
+            updateBookButton();
+        }
+
+        function updateAvailableTimes(day) {
+            // Simula horários indisponíveis por dia
+            const unavailableByDay = {
+                'seg': ['09:00', '16:30'],
+                'ter': ['10:30', '17:00'],
+                'qua': ['09:00', '17:00'],
+                'qui': ['08:30', '15:00'],
+                'sex': ['13:00', '16:30'],
+                'sab': ['14:30', '15:00', '16:30', '17:00']
+            };
+            
+            document.querySelectorAll('.timeButton').forEach(btn => {
+                const time = btn.textContent;
+                if (unavailableByDay[day]?.includes(time)) {
+                    btn.classList.add('unavailable');
+                    btn.classList.remove('selected');
+                } else {
+                    btn.classList.remove('unavailable');
+                }
+            });
+        }
+
+        function updateBookButton() {
+            const btn = document.getElementById('bookBtn');
+            const dayNames = {
+                'seg': 'Segunda',
+                'ter': 'Terça', 
+                'qua': 'Quarta',
+                'qui': 'Quinta',
+                'sex': 'Sexta',
+                'sab': 'Sábado'
+            };
+            
+            btn.textContent = `Agendar para ${dayNames[selectedDay]} ${selectedTime} - ${selectedPrice}`;
+        }
+
+        function bookAppointment() {
+            const dayNames = {
+                'seg': 'Segunda-feira',
+                'ter': 'Terça-feira', 
+                'qua': 'Quarta-feira',
+                'qui': 'Quinta-feira',
+                'sex': 'Sexta-feira',
+                'sab': 'Sábado'
+            };
+            
+            const typeNames = {
+                'video': 'Videochamada',
+                'presencial': 'Presencial',
+                'retorno': 'Retorno'
+            };
+            
+            alert(`✅ Consulta agendada com sucesso!\n\n📅 ${dayNames[selectedDay]} às ${selectedTime}\n👨‍⚕️ Dr. Thiago Dutra\n🏥 ${typeNames[selectedType]}\n💰 ${selectedPrice}\n\n(Redirecionando para agenda...)`);
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+
+        // Inicialização
+        updateBookButton();
+    </script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Prontuário Digital</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Patient Info */
+        .patientInfo {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .patientHeader {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .patientAvatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent-beige);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .patientDetails h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .patientId {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .patientStatus {
+            background: var(--success-color);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .vitalStats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .vitalCard {
+            text-align: center;
+            padding: 12px;
+            background: rgba(58, 74, 58, 0.04);
+            border-radius: 12px;
+        }
+
+        .vitalValue {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .vitalLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Medical History */
+        .medicalSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-light);
+        }
+
+        .timelineItem {
+            position: relative;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+        }
+
+        .timelineItem:last-child {
+            margin-bottom: 0;
+        }
+
+        .timelineMark {
+            position: absolute;
+            left: -28px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--neutral-white);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timelineDate {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .timelineContent {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .timelineTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .timelineDesc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .timelineDoctor {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .timelineTags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .timelineTag {
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Prescription Card */
+        .prescriptionCard {
+            background: rgba(154, 131, 100, 0.08);
+            border: 1px solid var(--accent-beige);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .prescriptionHeader {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .prescriptionIcon {
+            color: var(--accent-beige);
+            font-size: 16px;
+        }
+
+        .prescriptionTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .medicationList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .medicationItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(154, 131, 100, 0.2);
+        }
+
+        .medicationItem:last-child {
+            border-bottom: none;
+        }
+
+        .medicationName {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .medicationDose {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .vitalStats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .vitalCard {
+                padding: 8px 6px;
+            }
+            
+            .timeline {
+                padding-left: 32px;
+            }
+            
+            .timeline::before {
+                left: 16px;
+            }
+            
+            .timelineMark {
+                left: -22px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Prontuário Digital</h1>
+                <p>Histórico médico completo</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Patient Info -->
+        <div class="patientInfo">
+            <div class="patientHeader">
+                <div class="patientAvatar">MJ</div>
+                <div class="patientDetails">
+                    <h2>Maria José Silva</h2>
+                    <div class="patientId">ID: #PAC-2024-001</div>
+                    <div class="patientStatus">Paciente Ativo</div>
+                </div>
+            </div>
+            
+            <div class="vitalStats">
+                <div class="vitalCard">
+                    <div class="vitalValue">68.5</div>
+                    <div class="vitalLabel">Peso (kg)</div>
+                </div>
+                <div class="vitalCard">
+                    <div class="vitalValue">25.4</div>
+                    <div class="vitalLabel">IMC</div>
+                </div>
+                <div class="vitalCard">
+                    <div class="vitalValue">12</div>
+                    <div class="vitalLabel">Consultas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Consultations -->
+        <div class="medicalSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-stethoscope"></i>
+                </div>
+                Consultas Recentes
+            </div>
+            
+            <div class="timeline">
+                <div class="timelineItem">
+                    <div class="timelineMark"></div>
+                    <div class="timelineDate">15 de julho, 2024</div>
+                    <div class="timelineContent">
+                        <div class="timelineTitle">Consulta Endocrinológica</div>
+                        <div class="timelineDesc">
+                            Excelente evolução no tratamento. Paciente apresenta redução de 2,5kg desde a última consulta. 
+                            Glicemia em 92 mg/dL (excelente). TSH normalizado. Mantém protocolo atual.
+                        </div>
+                        <div class="timelineDoctor">Dr. Thiago Dutra - Endocrinologista</div>
+                        <div class="timelineTags">
+                            <span class="timelineTag">Mounjaro</span>
+                            <span class="timelineTag">Evolução</span>
+                        </div>
+                        
+                        <div class="prescriptionCard">
+                            <div class="prescriptionHeader">
+                                <i class="mdi mdi-pill prescriptionIcon"></i>
+                                <span class="prescriptionTitle">Prescrição Médica</span>
+                            </div>
+                            <ul class="medicationList">
+                                <li class="medicationItem">
+                                    <div>
+                                        <div class="medicationName">Mounjaro 5mg</div>
+                                        <div class="medicationDose">1x por semana</div>
+                                    </div>
+                                </li>
+                                <li class="medicationItem">
+                                    <div>
+                                        <div class="medicationName">Vitamina D3</div>
+                                        <div class="medicationDose">2000 UI - 1x ao dia</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timelineItem">
+                    <div class="timelineMark"></div>
+                    <div class="timelineDate">28 de junho, 2024</div>
+                    <div class="timelineContent">
+                        <div class="timelineTitle">Avaliação Nutricional</div>
+                        <div class="timelineDesc">
+                            Cardápio ajustado conforme evolução. Introdução de mais proteínas magras. 
+                            Paciente relatou boa adaptação ao protocolo anterior. Meta: -3kg até próxima consulta.
+                        </div>
+                        <div class="timelineDoctor">Nutricionista - Instituto Dutra</div>
+                        <div class="timelineTags">
+                            <span class="timelineTag">Cardápio</span>
+                            <span class="timelineTag">Proteínas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timelineItem">
+                    <div class="timelineMark"></div>
+                    <div class="timelineDate">10 de junho, 2024</div>
+                    <div class="timelineContent">
+                        <div class="timelineTitle">Primeira Consulta</div>
+                        <div class="timelineDesc">
+                            Avaliação inicial completa. Histórico de obesidade grau II. Exames laboratoriais alterados: 
+                            glicemia 108 mg/dL, TSH 4.2. Iniciado tratamento com Mounjaro e acompanhamento nutricional.
+                        </div>
+                        <div class="timelineDoctor">Dr. Thiago Dutra - Endocrinologista</div>
+                        <div class="timelineTags">
+                            <span class="timelineTag">Avaliação</span>
+                            <span class="timelineTag">Início</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lab Results -->
+        <div class="medicalSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-flask"></i>
+                </div>
+                Exames Laboratoriais
+            </div>
+            
+            <div class="timeline">
+                <div class="timelineItem">
+                    <div class="timelineMark"></div>
+                    <div class="timelineDate">12 de julho, 2024</div>
+                    <div class="timelineContent">
+                        <div class="timelineTitle">Exames de Controle</div>
+                        <div class="timelineDesc">
+                            <strong>Glicemia:</strong> 92 mg/dL (Normal)<br>
+                            <strong>TSH:</strong> 2.1 mUI/L (Normal)<br>
+                            <strong>Colesterol Total:</strong> 185 mg/dL (Normal)<br>
+                            <strong>Triglicerídeos:</strong> 120 mg/dL (Normal)
+                        </div>
+                        <div class="timelineDoctor">Lab. São Marcos</div>
+                        <div class="timelineTags">
+                            <span class="timelineTag">Normais</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timelineItem">
+                    <div class="timelineMark"></div>
+                    <div class="timelineDate">8 de junho, 2024</div>
+                    <div class="timelineContent">
+                        <div class="timelineTitle">Exames Iniciais</div>
+                        <div class="timelineDesc">
+                            <strong>Glicemia:</strong> 108 mg/dL (Alterado)<br>
+                            <strong>TSH:</strong> 4.2 mUI/L (Alterado)<br>
+                            <strong>Colesterol Total:</strong> 220 mg/dL (Alterado)<br>
+                            <strong>Hemoglobina Glicada:</strong> 6.1% (Pré-diabetes)
+                        </div>
+                        <div class="timelineDoctor">Lab. São Marcos</div>
+                        <div class="timelineTags">
+                            <span class="timelineTag">Pré-diabetes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Inicialização
+        console.log('Prontuário digital carregado');
+    </script>
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Meu Perfil</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        
+        /* Cards precisam de espaçamento */
+        .card {
+            margin-bottom: 20px;
+        }
+        
+        /* Quick Stats - layout específico (1 card com 3 stats inline) */
+        .quickStats {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .statItem {
+            text-align: center;
+        }
+
+        .statNumber {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Profile Photo Section */
+        .profilePhotoSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            text-align: center;
+        }
+
+        .profilePhotoContainer {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .profilePhoto {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--accent-beige);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0 auto;
+        }
+
+        .changePhotoButton {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+        }
+
+        .profileName {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .profileLevel {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--neutral-white);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        /* Stats - agora usa .card + .sectionTitle */
+
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* Stats - agora usa .statCard, .statValue, .statLabel do components.css */
+
+        /* Forms - agora usa .card + .formGroup, .formLabel, .formInput do components.css */
+
+        /* Action Links - agora usa .card */
+
+        .actionItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(181, 182, 177, 0.3);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: background 0.3s ease;
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .actionItem:last-child {
+            border-bottom: none;
+        }
+
+        .actionItem:hover {
+            background: rgba(58, 74, 58, 0.04);
+        }
+
+        .actionIcon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .actionContent {
+            flex: 1;
+        }
+
+        .actionTitle {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .actionDesc {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .actionArrow {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Settings - agora usa .card */
+
+        .settingItem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(181, 182, 177, 0.3);
+        }
+
+        .settingItem:last-child {
+            border-bottom: none;
+        }
+
+        .settingLabel {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--border-light);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: var(--neutral-white);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(22px);
+        }
+
+        /* Theme Selector */
+        .themeSelect {
+            background: var(--background-lighter);
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .themeSelect:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .themeSelect option {
+            background: var(--neutral-white);
+            color: var(--text-primary);
+            padding: 8px;
+        }
+
+        /* Logout Button */
+        .logoutButton {
+            background: var(--error-color);
+            color: var(--text-primary);
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logoutButton:hover {
+            background: rgba(196, 185, 179, 0.3);
+            border-color: var(--error-color);
+        }
+
+        .logoutButton i {
+            font-size: 16px;
+        }
+
+        /* Save Button - agora usa .btnPrimary do components.css */
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .statsGrid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .statCard {
+                padding: 12px 6px;
+            }
+            
+            .statValue {
+                font-size: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Meu Perfil</h1>
+                <p>Gerencie suas informações pessoais</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Profile Photo Section -->
+        <div class="card profilePhotoSection">
+            <div class="profilePhotoContainer">
+                <div class="profilePhoto">
+                    MJ
+                </div>
+                <button class="changePhotoButton" onclick="changePhoto()">
+                    <i class="mdi mdi-camera"></i>
+                </button>
+            </div>
+            <div class="profileName">Maria José Silva</div>
+            <div class="profileLevel">Nível Prata • 1.250 pontos</div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quickStats">
+            <h2 class="sectionTitle">Meus Números</h2>
+            <div class="statsGrid">
+                <div class="statItem">
+                    <div class="statNumber">68.5</div>
+                    <div class="statLabel">Peso Atual</div>
+                </div>
+                <div class="statItem">
+                    <div class="statNumber">60</div>
+                    <div class="statLabel">Meta (kg)</div>
+                </div>
+                <div class="statItem">
+                    <div class="statNumber">12</div>
+                    <div class="statLabel">Consultas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Data -->
+        <div class="card">
+            <h2 class="sectionTitle">Dados Pessoais</h2>
+            <form>
+                <div class="formGroup">
+                    <label class="formLabel">Nome completo</label>
+                    <div class="inputWrapper">
+                        <input type="text" class="formInput" value="Maria José Silva" placeholder="Digite seu nome">
+                    </div>
+                </div>
+                <div class="formGroup">
+                    <label class="formLabel">Email</label>
+                    <div class="inputWrapper">
+                        <input type="email" class="formInput" value="maria.silva@email.com" placeholder="Digite seu email">
+                    </div>
+                </div>
+                <div class="formGroup">
+                    <label class="formLabel">Telefone</label>
+                    <div class="inputWrapper">
+                        <input type="tel" class="formInput" value="(11) 99999-9999" placeholder="Digite seu telefone">
+                    </div>
+                </div>
+                <div class="formGroup">
+                    <label class="formLabel">Data de nascimento</label>
+                    <div class="inputWrapper">
+                        <input type="date" class="formInput" value="1985-03-15">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Action Links -->
+        <div class="card">
+            <h2 class="sectionTitle">Informações Médicas</h2>
+            
+            <a href="medicalRecord.html" class="actionItem">
+                <div class="actionIcon">
+                    <i class="mdi mdi-file-document"></i>
+                </div>
+                <div class="actionContent">
+                    <div class="actionTitle">Prontuário Digital</div>
+                    <div class="actionDesc">Histórico médico e exames</div>
+                </div>
+                <i class="mdi mdi-chevron-right actionArrow"></i>
+            </a>
+
+            <a href="evolution.html" class="actionItem">
+                <div class="actionIcon">
+                    <i class="mdi mdi-chart-line"></i>
+                </div>
+                <div class="actionContent">
+                    <div class="actionTitle">Evolução e Gráficos</div>
+                    <div class="actionDesc">Progresso e métricas corporais</div>
+                </div>
+                <i class="mdi mdi-chevron-right actionArrow"></i>
+            </a>
+
+            <a href="../reports/monthly.html" class="actionItem">
+                <div class="actionIcon">
+                    <i class="mdi mdi-file-chart"></i>
+                </div>
+                <div class="actionContent">
+                    <div class="actionTitle">Relatórios Mensais</div>
+                    <div class="actionDesc">Análises e progresso consolidado</div>
+                </div>
+                <i class="mdi mdi-chevron-right actionArrow"></i>
+            </a>
+
+            <a href="#" class="actionItem" onclick="exportData()">
+                <div class="actionIcon">
+                    <i class="mdi mdi-download"></i>
+                </div>
+                <div class="actionContent">
+                    <div class="actionTitle">Exportar Dados</div>
+                    <div class="actionDesc">Baixar relatório médico</div>
+                </div>
+                <i class="mdi mdi-chevron-right actionArrow"></i>
+            </a>
+        </div>
+
+        <!-- Settings -->
+        <div class="card">
+            <h2 class="sectionTitle">Configurações</h2>
+            
+            <div class="settingItem">
+                <span class="settingLabel">Notificações Push</span>
+                <div class="toggle active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settingItem">
+                <span class="settingLabel">Lembrete de Check-in</span>
+                <div class="toggle active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settingItem">
+                <span class="settingLabel">Compartilhamento de Dados</span>
+                <div class="toggle" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settingItem">
+                <span class="settingLabel">Sync Apple Health</span>
+                <div class="toggle active" onclick="toggleSetting(this)"></div>
+            </div>
+            
+            <div class="settingItem themeSelector">
+                <span class="settingLabel">Tema da Aplicação</span>
+                <select class="themeSelect" id="themeSelect" onchange="changeTheme(this.value)">
+                    <option value="light">Claro</option>
+                    <option value="dark">Escuro</option>
+                </select>
+            </div>
+            
+            <div class="settingItem logoutItem">
+                <span class="settingLabel">Sair da Conta</span>
+                <button class="logoutButton" onclick="logout()">
+                    <i class="mdi mdi-logout"></i>
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="btnPrimary" onclick="saveProfile()">
+            Salvar Alterações
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        function changePhoto() {
+            alert('Funcionalidade de alterar foto em desenvolvimento.\n\nOpções disponíveis:\n• Câmera\n• Galeria\n• Avatar padrão');
+        }
+
+        function toggleSetting(toggle) {
+            toggle.classList.toggle('active');
+            
+            const setting = toggle.parentElement.querySelector('.settingLabel').textContent;
+            const isActive = toggle.classList.contains('active');
+            
+            // Simulação de salvamento
+            setTimeout(() => {
+                console.log(`Configuração "${setting}" ${isActive ? 'ativada' : 'desativada'}`);
+            }, 300);
+        }
+
+        function saveProfile() {
+            // Simulação de salvamento
+            const button = document.querySelector('.btnPrimary');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Salvando...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.textContent = '✓ Salvo!';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 1500);
+            }, 1000);
+        }
+
+        function exportData() {
+            // Redireciona para página de exportação de relatórios
+            window.location.href = '../reports/export.html';
+        }
+
+        function logout() {
+            // Feedback visual
+            const button = document.querySelector('.logoutButton');
+            button.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Saindo...';
+            button.disabled = true;
+            
+            // Redireciona para login após delay
+            setTimeout(() => {
+                window.location.href = '../auth/login.html';
+            }, 1500);
+        }
+
+        // Máscara para telefone
+        document.querySelector('input[type="tel"]').addEventListener('input', function(e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        // Validação de email removida - usando validação HTML nativa (:invalid/:valid do components.css)
+
+        // Função para trocar tema
+        function changeTheme(themeName) {
+            // Usa a função global do theme.js
+            if (window.switchTheme) {
+                window.switchTheme(themeName);
+                
+                // Salva a preferência no localStorage
+                localStorage.setItem('instituto_dutra_theme', themeName);
+                
+                console.log(`🎨 Tema alterado para: ${themeName}`);
+                
+                // Feedback visual
+                const button = document.querySelector('.btnPrimary');
+                const originalText = button.textContent;
+                button.textContent = '✓ Tema aplicado!';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }
+        }
+
+        // Carrega tema salvo na inicialização
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('instituto_dutra_theme');
+            const themeSelect = document.getElementById('themeSelect');
+            
+            if (savedTheme && themeSelect) {
+                themeSelect.value = savedTheme;
+                
+                // Aplica o tema salvo se for diferente do padrão
+                if (window.switchTheme && savedTheme !== 'light') {
+                    window.switchTheme(savedTheme);
+                }
+            } else {
+                // Define o tema atual como selecionado
+                themeSelect.value = 'light'; // Baseado no theme.js atual
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedTheme();
+        });
+        
+        console.log('Perfil do usuário carregado');
+    </script>
+</body>
+</html>

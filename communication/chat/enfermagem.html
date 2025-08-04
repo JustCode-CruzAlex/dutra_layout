@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Chat Enfermagem</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../../styles/global.css">
+    <script src="../../styles/theme.js"></script>
+    <style>
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chatHeader {
+            background: var(--primary);
+            color: var(--neutral-white);
+            padding: 60px 20px 24px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .chatHeader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            opacity: 0.7;
+        }
+
+        .headerContent {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .backButton {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backButton:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .contactInfo {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contactAvatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            min-width: 48px;
+        }
+
+        .contactDetails h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .contactStatus {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .statusDot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+        }
+
+        .menuButton {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menuButton:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Messages Area */
+        .messagesContainer {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .messageGroup {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .messageGroup.sent {
+            align-items: flex-end;
+        }
+
+        .messageGroup.received {
+            align-items: flex-start;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.sent {
+            background: var(--primary);
+            color: var(--neutral-white);
+            border-bottom-right-radius: 6px;
+        }
+
+        .message.received {
+            background: var(--message-received-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 1px 4px var(--shadow-soft);
+        }
+
+        .messageTime {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message.sent .messageTime {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .messageInfo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .senderAvatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .senderName {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .messageDate {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .messageDate::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: var(--border-light);
+            z-index: 0;
+        }
+
+        .messageDate span {
+            background: var(--background-lighter);
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Image/Document Messages */
+        .messageAttachment {
+            background: var(--message-received-bg);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+            margin-top: 8px;
+        }
+
+        .attachmentPreview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .attachmentIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .attachmentInfo {
+            flex: 1;
+        }
+
+        .attachmentName {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .attachmentSize {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Input Area */
+        .inputArea {
+            background: var(--neutral-white);
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-light);
+            flex-shrink: 0;
+            box-shadow: 0 -2px 12px var(--shadow-soft);
+        }
+
+        .inputContainer {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .attachButton {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .attachButton:hover {
+            background: rgba(58, 74, 58, 0.2);
+        }
+
+        .messageInputWrapper {
+            flex: 1;
+            background: var(--background-lighter);
+            border-radius: 20px;
+            border: 2px solid var(--border-light);
+            display: flex;
+            align-items: flex-end;
+            min-height: 40px;
+            max-height: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .messageInputWrapper:focus-within {
+            border-color: var(--primary);
+        }
+
+        .messageInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 16px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            min-height: 20px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .messageInput::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        .sendButton {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .sendButton:hover {
+            background: var(--primary-light);
+            transform: scale(1.05);
+        }
+
+        .sendButton:disabled {
+            background: var(--border-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Typing Indicator */
+        .typingIndicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            margin: 8px 0;
+        }
+
+        .typingIndicator.show {
+            display: flex;
+        }
+
+        .typingDots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typingDot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: typing 1.4s infinite;
+        }
+
+        .typingDot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typingDot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .typingText {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .chatHeader {
+                padding: 50px 16px 20px;
+            }
+
+            .messagesContainer {
+                padding: 12px 16px;
+            }
+
+            .inputArea {
+                padding: 12px 16px;
+            }
+
+            .message {
+                max-width: 85%;
+                padding: 10px 14px;
+            }
+        }
+
+        /* Scroll personalizado */
+        .messagesContainer::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .messagesContainer::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messagesContainer::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="chatHeader">
+        <div class="headerContent">
+            <button class="backButton" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="contactInfo">
+                <div class="contactAvatar">
+                    <i class="mdi mdi-heart-pulse"></i>
+                </div>
+                <div class="contactDetails">
+                    <h1>Enfermagem</h1>
+                    <div class="contactStatus">
+                        <div class="statusDot"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <button class="menuButton" onclick="showChatMenu()">
+                <i class="mdi mdi-dots-vertical"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messagesContainer" id="messagesContainer">
+        <div class="messageDate">
+            <span>Hoje, 3 de agosto</span>
+        </div>
+
+        <div class="messageGroup received">
+            <div class="messageInfo">
+                <div class="senderAvatar">
+                    <i class="mdi mdi-account"></i>
+                </div>
+                <span class="senderName">Enf. Ana Silva</span>
+            </div>
+            <div class="message received">
+                Oi Maria! Tudo bem? Como está se sentindo hoje após a aplicação do Mounjaro de ontem?
+                <div class="messageTime">09:15</div>
+            </div>
+        </div>
+
+        <div class="messageGroup sent">
+            <div class="message sent">
+                Oi Ana! Estou me sentindo bem, obrigada. Só um pouco de enjoo de manhã, mas já passou.
+                <div class="messageTime">09:32</div>
+            </div>
+        </div>
+
+        <div class="messageGroup received">
+            <div class="message received">
+                Que bom! O enjoo é normal nos primeiros dias. Está bebendo bastante água?
+                <div class="messageTime">09:35</div>
+            </div>
+        </div>
+
+        <div class="messageGroup sent">
+            <div class="message sent">
+                Sim, estou seguindo certinho o que você orientou. 2 litros por dia!
+                <div class="messageTime">09:37</div>
+            </div>
+        </div>
+
+        <div class="messageGroup received">
+            <div class="message received">
+                Perfeito! E o peso? Conseguiu se pesar hoje?
+                <div class="messageTime">09:40</div>
+            </div>
+            <div class="messageAttachment">
+                <div class="attachmentPreview">
+                    <div class="attachmentIcon">
+                        <i class="mdi mdi-file-document"></i>
+                    </div>
+                    <div class="attachmentInfo">
+                        <div class="attachmentName">protocolo_mounjaro.pdf</div>
+                        <div class="attachmentSize">245 KB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="messageGroup sent">
+            <div class="message sent">
+                Consegui sim! Perdi mais 400g desde ontem 🎉
+                <div class="messageTime">10:15</div>
+            </div>
+        </div>
+
+        <div class="messageGroup received">
+            <div class="message received">
+                Maravilhoso! Você está indo super bem. Continue assim! Qualquer coisa é só chamar aqui, ok?
+                <div class="messageTime">10:17</div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typingIndicator" id="typingIndicator">
+            <div class="senderAvatar">
+                <i class="mdi mdi-account"></i>
+            </div>
+            <div class="typingDots">
+                <div class="typingDot"></div>
+                <div class="typingDot"></div>
+                <div class="typingDot"></div>
+            </div>
+            <span class="typingText">Enf. Ana está digitando...</span>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="inputArea">
+        <div class="inputContainer">
+            <button class="attachButton" onclick="showAttachMenu()">
+                <i class="mdi mdi-plus"></i>
+            </button>
+            <div class="messageInputWrapper">
+                <textarea 
+                    class="messageInput" 
+                    id="messageInput" 
+                    placeholder="Digite sua mensagem..."
+                    rows="1"
+                    onkeydown="handleKeyPress(event)"
+                    oninput="adjustTextareaHeight(this)"
+                ></textarea>
+            </div>
+            <button class="sendButton" id="sendButton" onclick="sendMessage()" disabled>
+                <i class="mdi mdi-send"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let messageContainer = document.getElementById('messagesContainer');
+        let messageInput = document.getElementById('messageInput');
+        let sendButton = document.getElementById('sendButton');
+        let typingIndicator = document.getElementById('typingIndicator');
+
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        function showChatMenu() {
+            alert('Menu do chat:\n• Ver perfil\n• Histórico\n• Configurações\n• Reportar problema');
+        }
+
+        function showAttachMenu() {
+            alert('Anexar:\n📷 Foto\n📄 Documento\n📊 Exame\n📍 Localização\n(Demo)');
+        }
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 80) + 'px';
+            
+            // Habilita/desabilita botão de envio
+            sendButton.disabled = textarea.value.trim() === '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Cria mensagem enviada
+            const messageGroup = document.createElement('div');
+            messageGroup.className = 'messageGroup sent';
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message sent';
+            
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+            
+            messageElement.innerHTML = `
+                ${message}
+                <div class="messageTime">${time}</div>
+            `;
+            
+            messageGroup.appendChild(messageElement);
+            
+            // Adiciona antes do indicador de digitação
+            messageContainer.insertBefore(messageGroup, typingIndicator);
+            
+            // Limpa input
+            messageInput.value = '';
+            adjustTextareaHeight(messageInput);
+            
+            // Scroll para baixo
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+            
+            // Simula resposta da enfermagem (demo)
+            setTimeout(() => {
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addNurseResponse();
+                }, 2000);
+            }, 1000);
+        }
+
+        function showTyping() {
+            typingIndicator.classList.add('show');
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.remove('show');
+        }
+
+        function addNurseResponse() {
+            const responses = [
+                'Obrigada por compartilhar! Isso é muito importante para acompanharmos sua evolução.',
+                'Entendi! Vou anotar isso no seu prontuário.',
+                'Perfeito! Continue assim que você vai alcançar seus objetivos.',
+                'Ótimo! Qualquer dúvida estou aqui para te ajudar.',
+                'Muito bem! Dr. Thiago ficará feliz em saber desses resultados.'
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            const messageGroup = document.createElement('div');
+            messageGroup.className = 'messageGroup received';
+            
+            const messageInfo = document.createElement('div');
+            messageInfo.className = 'messageInfo';
+            messageInfo.innerHTML = `
+                <div class="senderAvatar">
+                    <i class="mdi mdi-account"></i>
+                </div>
+                <span class="senderName">Enf. Ana Silva</span>
+            `;
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message received';
+            
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+            
+            messageElement.innerHTML = `
+                ${randomResponse}
+                <div class="messageTime">${time}</div>
+            `;
+            
+            messageGroup.appendChild(messageInfo);
+            messageGroup.appendChild(messageElement);
+            messageContainer.appendChild(messageGroup);
+            
+            // Scroll para baixo
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Auto-scroll inicial
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+
+        // Foco automático no input
+        messageInput.focus();
+    </script>
+</body>
+</html>

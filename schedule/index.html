@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Minha Agenda</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient + .backBtn do components.css */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Quick Stats - mantido local (layout específico) */
+        .quickStats {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .statItem {
+            text-align: center;
+        }
+
+        .statNumber {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Section - agora usa .section/.sectionHeader/.sectionTitle + .btnPrimary.btnSm do components.css */
+        
+        /* Cards precisam de espaçamento */
+        .card {
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 24px;
+        }
+
+        /* Appointment Cards */
+        .appointmentCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .appointmentCard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+
+        .appointmentCard.today {
+            border-left: 4px solid var(--accent-beige);
+        }
+
+        .appointmentCard.upcoming {
+            border-left: 4px solid var(--primary);
+        }
+
+        .appointmentHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .appointmentTime {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .appointmentDate {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .appointmentStatus {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .appointmentStatus.today {
+            background: rgba(154, 131, 100, 0.2);
+            color: var(--accent-beige);
+        }
+
+        .appointmentStatus.upcoming {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .appointmentDetails {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .appointmentIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .appointmentInfo {
+            flex: 1;
+        }
+
+        .appointmentType {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .appointmentDoctor {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .appointmentLocation {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Empty State */
+        .emptyState {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .emptyState i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .emptyState h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .emptyState p {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .header {
+                padding: 50px 16px 24px;
+            }
+
+            .mainContent {
+                padding: 16px;
+            }
+
+            .quickStats {
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .appointmentCard {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Minha Agenda</h1>
+                <p>Consultas e procedimentos agendados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Quick Stats -->
+        <div class="quickStats">
+            <div class="statItem">
+                <div class="statNumber">3</div>
+                <div class="statLabel">Próximas consultas</div>
+            </div>
+            <div class="statItem">
+                <div class="statNumber">2</div>
+                <div class="statLabel">Esta semana</div>
+            </div>
+        </div>
+
+        <!-- Próximas Consultas -->
+        <div class="section">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Próximas Consultas</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="newAppointment()">
+                    <i class="mdi mdi-plus"></i>
+                    Agendar
+                </button>
+            </div>
+
+            <!-- Consulta Hoje -->
+            <div class="appointmentCard today" onclick="viewAppointment('today')">
+                <div class="appointmentHeader">
+                    <div>
+                        <div class="appointmentTime">14:30</div>
+                        <div class="appointmentDate">Hoje, 3 de agosto</div>
+                    </div>
+                    <div class="appointmentStatus today">Hoje</div>
+                </div>
+                <div class="appointmentDetails">
+                    <div class="appointmentIcon">
+                        <i class="mdi mdi-video"></i>
+                    </div>
+                    <div class="appointmentInfo">
+                        <div class="appointmentType">Consulta Médica</div>
+                        <div class="appointmentDoctor">Dr. Thiago Dutra - Endocrinologista</div>
+                        <div class="appointmentLocation">
+                            <i class="mdi mdi-video-outline"></i>
+                            Videochamada
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acompanhamento Nutricional -->
+            <div class="appointmentCard upcoming" onclick="viewAppointment('nutrition')">
+                <div class="appointmentHeader">
+                    <div>
+                        <div class="appointmentTime">10:00</div>
+                        <div class="appointmentDate">Amanhã, 4 de agosto</div>
+                    </div>
+                    <div class="appointmentStatus upcoming">Amanhã</div>
+                </div>
+                <div class="appointmentDetails">
+                    <div class="appointmentIcon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </div>
+                    <div class="appointmentInfo">
+                        <div class="appointmentType">Acompanhamento Nutricional</div>
+                        <div class="appointmentDoctor">Nutricionista - Instituto Dutra</div>
+                        <div class="appointmentLocation">
+                            <i class="mdi mdi-map-marker-outline"></i>
+                            Presencial - Consultório 2
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aplicação Mounjaro -->
+            <div class="appointmentCard upcoming" onclick="viewAppointment('mounjaro')">
+                <div class="appointmentHeader">
+                    <div>
+                        <div class="appointmentTime">09:30</div>
+                        <div class="appointmentDate">Quinta, 8 de agosto</div>
+                    </div>
+                    <div class="appointmentStatus upcoming">5 dias</div>
+                </div>
+                <div class="appointmentDetails">
+                    <div class="appointmentIcon">
+                        <i class="mdi mdi-needle"></i>
+                    </div>
+                    <div class="appointmentInfo">
+                        <div class="appointmentType">Aplicação Mounjaro</div>
+                        <div class="appointmentDoctor">Enfermagem - Instituto Dutra</div>
+                        <div class="appointmentLocation">
+                            <i class="mdi mdi-map-marker-outline"></i>
+                            Presencial - Sala de Procedimentos
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        function newAppointment() {
+            window.location.href = 'book.html';
+        }
+
+        function viewAppointment(id) {
+            const appointments = {
+                'today': 'Consulta Médica com Dr. Thiago hoje às 14:30',
+                'nutrition': 'Acompanhamento Nutricional amanhã às 10:00',
+                'mounjaro': 'Aplicação Mounjaro quinta às 09:30'
+            };
+            
+            alert(`Detalhes: ${appointments[id]}\n\n• Cancelar consulta\n• Reagendar\n• Adicionar ao calendário\n(Demo)`);
+        }
+
+        // Simula atualização em tempo real
+        function updateNextAppointment() {
+            const now = new Date();
+            const nextAppointmentTime = document.querySelector('.appointmentTime');
+            
+            // Simula próxima consulta baseada no horário atual
+            if (now.getHours() < 14) {
+                nextAppointmentTime.textContent = '14:30';
+            } else {
+                nextAppointmentTime.textContent = '10:00';
+                document.querySelector('.appointmentDate').textContent = 'Amanhã, 4 de agosto';
+            }
+        }
+
+        // Inicialização
+        updateNextAppointment();
+    </script>
+</body>
+</html>

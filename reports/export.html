@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Exportação de Dados</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Export Options */
+        .exportSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Format Cards */
+        .formatGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .formatCard {
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: var(--background-lighter);
+        }
+
+        .formatCard:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-soft);
+        }
+
+        .formatCard.selected {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .formatCard.selected::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .formatCard.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .formatIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 24px;
+            margin: 0 auto 16px;
+        }
+
+        .formatTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .formatDescription {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .formatFeatures {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: left;
+        }
+
+        .formatFeatures li {
+            margin-bottom: 4px;
+        }
+
+        /* Data Selection */
+        .dataSelection {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .selectionTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .checkboxGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .checkboxItem {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--neutral-white);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkboxItem:hover {
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .checkboxItem input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkboxLabel {
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkboxIcon {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        /* Period Selection */
+        .periodSelection {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .periodGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .periodOption {
+            padding: 12px;
+            background: var(--neutral-white);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .periodOption:hover,
+        .periodOption.active {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .periodLabel {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .periodRange {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Recipients */
+        .recipientsSection {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .recipientsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recipientItem {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--neutral-white);
+            border-radius: 8px;
+        }
+
+        .recipientAvatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .recipientInfo {
+            flex: 1;
+        }
+
+        .recipientName {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .recipientRole {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .recipientCheck {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        /* Export Summary */
+        .exportSummary {
+            background: rgba(58, 74, 58, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summaryTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summaryList {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summaryList li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summaryList li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Export Actions */
+        .exportActions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .exportActions .btnPrimary {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .exportActions .btnSecondary {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        /* Recent Exports */
+        .recentExports {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .exportsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .exportItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .exportItem:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-soft);
+        }
+
+        .exportItemIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .exportItemContent {
+            flex: 1;
+        }
+
+        .exportItemTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .exportItemDescription {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .exportItemDate {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .exportItemActions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actionBtn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--neutral-white);
+            color: var(--text-primary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .actionBtn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .formatGrid,
+            .checkboxGrid,
+            .periodGrid {
+                grid-template-columns: 1fr;
+            }
+            
+            .exportActions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+        .container > *:nth-child(6) { animation-delay: 0.5s; }
+        .container > *:nth-child(7) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Exportação de Dados</h1>
+                <p>Relatórios médicos para compartilhamento</p>
+            </div>
+            <button class="btnIcon" onclick="showExportHistory()">
+                <i class="mdi mdi-history"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Export Format Selection -->
+        <div class="exportSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-file-document"></i>
+                </div>
+                Escolha o Formato de Exportação
+            </div>
+            
+            <div class="formatGrid">
+                <div class="formatCard selected" onclick="selectFormat(this, 'pdf')">
+                    <div class="formatIcon">
+                        <i class="mdi mdi-file-pdf-box"></i>
+                    </div>
+                    <div class="formatTitle">Relatório PDF</div>
+                    <div class="formatDescription">Relatório médico completo para profissionais de saúde</div>
+                    <ul class="formatFeatures">
+                        <li>• Gráficos de evolução</li>
+                        <li>• Histórico completo</li>
+                        <li>• Análises médicas</li>
+                        <li>• Logo Instituto Dutra</li>
+                    </ul>
+                </div>
+                
+                <div class="formatCard" onclick="selectFormat(this, 'excel')">
+                    <div class="formatIcon">
+                        <i class="mdi mdi-file-excel-box"></i>
+                    </div>
+                    <div class="formatTitle">Planilha Excel</div>
+                    <div class="formatDescription">Dados tabulados para análise personalizada</div>
+                    <ul class="formatFeatures">
+                        <li>• Dados em tabelas</li>
+                        <li>• Gráficos editáveis</li>
+                        <li>• Fórmulas incluídas</li>
+                        <li>• Múltiplas abas</li>
+                    </ul>
+                </div>
+                
+                <div class="formatCard" onclick="selectFormat(this, 'json')">
+                    <div class="formatIcon">
+                        <i class="mdi mdi-code-json"></i>
+                    </div>
+                    <div class="formatTitle">Dados JSON</div>
+                    <div class="formatDescription">Formato técnico para integrações e APIs</div>
+                    <ul class="formatFeatures">
+                        <li>• Estrutura padronizada</li>
+                        <li>• Fácil integração</li>
+                        <li>• Metadados incluídos</li>
+                        <li>• Formato universal</li>
+                    </ul>
+                </div>
+                
+                <div class="formatCard" onclick="selectFormat(this, 'csv')">
+                    <div class="formatIcon">
+                        <i class="mdi mdi-file-delimited"></i>
+                    </div>
+                    <div class="formatTitle">Arquivo CSV</div>
+                    <div class="formatDescription">Dados simples compatível com qualquer sistema</div>
+                    <ul class="formatFeatures">
+                        <li>• Máxima compatibilidade</li>
+                        <li>• Arquivo leve</li>
+                        <li>• Fácil importação</li>
+                        <li>• Dados limpos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Selection -->
+        <div class="exportSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-database"></i>
+                </div>
+                Selecione os Dados para Exportar
+            </div>
+            
+            <div class="dataSelection">
+                <div class="selectionTitle">Informações Pessoais e Métricas</div>
+                <div class="checkboxGrid">
+                    <label class="checkboxItem">
+                        <input type="checkbox" checked>
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-account checkboxIcon"></i>
+                            Dados Pessoais
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox" checked>
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-scale-bathroom checkboxIcon"></i>
+                            Evolução do Peso
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox" checked>
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-calculator checkboxIcon"></i>
+                            Índice de Massa Corporal
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox" checked>
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-human checkboxIcon"></i>
+                            Composição Corporal
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox">
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-heart-pulse checkboxIcon"></i>
+                            Exames Laboratoriais
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox">
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-stethoscope checkboxIcon"></i>
+                            Consultas Médicas
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox">
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-needle checkboxIcon"></i>
+                            Aplicações Mounjaro
+                        </span>
+                    </label>
+                    
+                    <label class="checkboxItem">
+                        <input type="checkbox">
+                        <span class="checkboxLabel">
+                            <i class="mdi mdi-food-apple checkboxIcon"></i>
+                            Acompanhamento Nutricional
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Period Selection -->
+        <div class="exportSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-calendar-range"></i>
+                </div>
+                Período dos Dados
+            </div>
+            
+            <div class="periodSelection">
+                <div class="selectionTitle">Escolha o intervalo de tempo</div>
+                <div class="periodGrid">
+                    <div class="periodOption" onclick="selectPeriod(this, '1month')">
+                        <div class="periodLabel">Último Mês</div>
+                        <div class="periodRange">01 Jan - 31 Jan</div>
+                    </div>
+                    
+                    <div class="periodOption active" onclick="selectPeriod(this, '3months')">
+                        <div class="periodLabel">3 Meses</div>
+                        <div class="periodRange">01 Nov - 31 Jan</div>
+                    </div>
+                    
+                    <div class="periodOption" onclick="selectPeriod(this, '6months')">
+                        <div class="periodLabel">6 Meses</div>
+                        <div class="periodRange">01 Ago - 31 Jan</div>
+                    </div>
+                    
+                    <div class="periodOption" onclick="selectPeriod(this, '1year')">
+                        <div class="periodLabel">1 Ano</div>
+                        <div class="periodRange">01 Fev 2023 - 31 Jan</div>
+                    </div>
+                    
+                    <div class="periodOption" onclick="selectPeriod(this, 'all')">
+                        <div class="periodLabel">Histórico Completo</div>
+                        <div class="periodRange">Desde o início</div>
+                    </div>
+                    
+                    <div class="periodOption" onclick="selectPeriod(this, 'custom')">
+                        <div class="periodLabel">Personalizado</div>
+                        <div class="periodRange">Escolher datas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipients Selection -->
+        <div class="exportSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-account-multiple"></i>
+                </div>
+                Destinatários (Opcional)
+            </div>
+            
+            <div class="recipientsSection">
+                <div class="selectionTitle">Enviar cópia automaticamente para:</div>
+                <div class="recipientsList">
+                    <label class="recipientItem">
+                        <div class="recipientAvatar">
+                            <i class="mdi mdi-stethoscope"></i>
+                        </div>
+                        <div class="recipientInfo">
+                            <div class="recipientName">Dr. Thiago Dutra</div>
+                            <div class="recipientRole">Médico Endocrinologista</div>
+                        </div>
+                        <input type="checkbox" class="recipientCheck" checked>
+                    </label>
+                    
+                    <label class="recipientItem">
+                        <div class="recipientAvatar">
+                            <i class="mdi mdi-food-apple"></i>
+                        </div>
+                        <div class="recipientInfo">
+                            <div class="recipientName">Nutricionista</div>
+                            <div class="recipientRole">Acompanhamento Nutricional</div>
+                        </div>
+                        <input type="checkbox" class="recipientCheck">
+                    </label>
+                    
+                    <label class="recipientItem">
+                        <div class="recipientAvatar">
+                            <i class="mdi mdi-heart-pulse"></i>
+                        </div>
+                        <div class="recipientInfo">
+                            <div class="recipientName">Equipe de Enfermagem</div>
+                            <div class="recipientRole">Suporte e Acompanhamento</div>
+                        </div>
+                        <input type="checkbox" class="recipientCheck">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Summary -->
+        <div class="exportSummary">
+            <div class="summaryTitle">
+                <i class="mdi mdi-information"></i>
+                Resumo da Exportação
+            </div>
+            <ul class="summaryList">
+                <li><strong>Formato:</strong> Relatório PDF Médico</li>
+                <li><strong>Período:</strong> Últimos 3 meses (Nov 2023 - Jan 2024)</li>
+                <li><strong>Dados:</strong> 4 categorias selecionadas</li>
+                <li><strong>Destinatários:</strong> Dr. Thiago Dutra</li>
+                <li><strong>Tamanho estimado:</strong> ~2.5 MB</li>
+                <li><strong>Tempo de geração:</strong> ~30 segundos</li>
+            </ul>
+        </div>
+
+        <!-- Export Actions -->
+        <div class="exportActions">
+            <button class="btnPrimary" onclick="generateReport()">
+                <i class="mdi mdi-download" style="margin-right: 8px;"></i>
+                Gerar e Baixar Relatório
+            </button>
+            
+            <button class="btnSecondary" onclick="previewReport()">
+                <i class="mdi mdi-eye" style="margin-right: 8px;"></i>
+                Visualizar Prévia
+            </button>
+        </div>
+
+        <!-- Recent Exports -->
+        <div class="recentExports">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-history"></i>
+                </div>
+                Exportações Recentes
+            </div>
+            
+            <div class="exportsList">
+                <div class="exportItem">
+                    <div class="exportItemIcon">
+                        <i class="mdi mdi-file-pdf-box"></i>
+                    </div>
+                    <div class="exportItemContent">
+                        <div class="exportItemTitle">Relatório Médico - Janeiro 2024</div>
+                        <div class="exportItemDescription">PDF completo com evolução mensal e análises</div>
+                        <div class="exportItemDate">Gerado há 3 dias • 2.8 MB</div>
+                    </div>
+                    <div class="exportItemActions">
+                        <button class="actionBtn" onclick="downloadReport('jan2024.pdf')">
+                            <i class="mdi mdi-download"></i> Baixar
+                        </button>
+                        <button class="actionBtn" onclick="shareReport('jan2024.pdf')">
+                            <i class="mdi mdi-share"></i> Compartilhar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="exportItem">
+                    <div class="exportItemIcon">
+                        <i class="mdi mdi-file-excel-box"></i>
+                    </div>
+                    <div class="exportItemContent">
+                        <div class="exportItemTitle">Dados Evolutivos - 6 Meses</div>
+                        <div class="exportItemDescription">Planilha Excel com métricas e gráficos</div>
+                        <div class="exportItemDate">Gerado há 1 semana • 1.2 MB</div>
+                    </div>
+                    <div class="exportItemActions">
+                        <button class="actionBtn" onclick="downloadReport('evolution-6m.xlsx')">
+                            <i class="mdi mdi-download"></i> Baixar
+                        </button>
+                        <button class="actionBtn" onclick="shareReport('evolution-6m.xlsx')">
+                            <i class="mdi mdi-share"></i> Compartilhar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="exportItem">
+                    <div class="exportItemIcon">
+                        <i class="mdi mdi-code-json"></i>
+                    </div>
+                    <div class="exportItemContent">
+                        <div class="exportItemTitle">Backup Completo - JSON</div>
+                        <div class="exportItemDescription">Todos os dados em formato técnico</div>
+                        <div class="exportItemDate">Gerado há 2 semanas • 456 KB</div>
+                    </div>
+                    <div class="exportItemActions">
+                        <button class="actionBtn" onclick="downloadReport('backup-complete.json')">
+                            <i class="mdi mdi-download"></i> Baixar
+                        </button>
+                        <button class="actionBtn" onclick="shareReport('backup-complete.json')">
+                            <i class="mdi mdi-share"></i> Compartilhar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        let selectedFormat = 'pdf';
+        let selectedPeriod = '3months';
+        let selectedData = ['personal', 'weight', 'bmi', 'composition'];
+
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = 'monthly.html';
+        }
+
+        // Format Selection
+        function selectFormat(element, format) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.formatCard').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            selectedFormat = format;
+            
+            console.log(`Formato selecionado: ${format}`);
+            updateExportSummary();
+        }
+
+        // Period Selection
+        function selectPeriod(element, period) {
+            // Remove active class from all options
+            document.querySelectorAll('.periodOption').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Add active class to clicked option
+            element.classList.add('active');
+            selectedPeriod = period;
+            
+            console.log(`Período selecionado: ${period}`);
+            
+            if (period === 'custom') {
+                showCustomDatePicker();
+            }
+            
+            updateExportSummary();
+        }
+
+        // Update Export Summary
+        function updateExportSummary() {
+            const formatNames = {
+                'pdf': 'Relatório PDF Médico',
+                'excel': 'Planilha Excel',
+                'json': 'Dados JSON',
+                'csv': 'Arquivo CSV'
+            };
+            
+            const periodNames = {
+                '1month': 'Último mês',
+                '3months': 'Últimos 3 meses',
+                '6months': 'Últimos 6 meses',
+                '1year': 'Último ano',
+                'all': 'Histórico completo',
+                'custom': 'Período personalizado'
+            };
+            
+            // Count selected data categories
+            const checkedBoxes = document.querySelectorAll('.checkboxItem input[type="checkbox"]:checked');
+            const dataCount = checkedBoxes.length;
+            
+            // Count selected recipients
+            const checkedRecipients = document.querySelectorAll('.recipientCheck:checked');
+            const recipientCount = checkedRecipients.length;
+            
+            const summaryList = document.querySelector('.summaryList');
+            summaryList.innerHTML = `
+                <li><strong>Formato:</strong> ${formatNames[selectedFormat]}</li>
+                <li><strong>Período:</strong> ${periodNames[selectedPeriod]}</li>
+                <li><strong>Dados:</strong> ${dataCount} categorias selecionadas</li>
+                <li><strong>Destinatários:</strong> ${recipientCount} selecionado(s)</li>
+                <li><strong>Tamanho estimado:</strong> ~${Math.max(0.5, dataCount * 0.6).toFixed(1)} MB</li>
+                <li><strong>Tempo de geração:</strong> ~${Math.max(15, dataCount * 8)} segundos</li>
+            `;
+        }
+
+        // Actions
+        function showCustomDatePicker() {
+            alert('📅 Seleção de Período Personalizado:\n\n• Data início: Escolher data\n• Data fim: Escolher data\n• Validação automática\n• Limite máximo: 2 anos\n\n(Demo - Implementação futura)');
+        }
+
+        function generateReport() {
+            // Simulate report generation
+            const progressSteps = [
+                'Coletando dados selecionados...',
+                'Gerando gráficos e tabelas...',
+                'Formatando documento final...',
+                'Aplicando identidade visual...',
+                'Finalizando relatório...'
+            ];
+            
+            let currentStep = 0;
+            const interval = setInterval(() => {
+                if (currentStep < progressSteps.length) {
+                    console.log(`${currentStep + 1}/5: ${progressSteps[currentStep]}`);
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    downloadReport('relatorio-' + new Date().getTime() + '.pdf');
+                }
+            }, 1000);
+            
+            alert('🔄 Gerando relatório...\n\nIsto levará alguns segundos.\nVocê será notificado quando estiver pronto!\n\n(Demo)');
+        }
+
+        function previewReport() {
+            alert('👁️ Prévia do Relatório:\n\n• Visualização completa\n• Navegação por páginas\n• Zoom e impressão\n• Editar seleções se necessário\n\n📄 Abrindo visualizador...\n(Demo)');
+        }
+
+        function downloadReport(filename) {
+            alert(`⬇️ Download Iniciado:\n\nArquivo: ${filename}\nFormato: ${selectedFormat.toUpperCase()}\nTamanho: ~2.5 MB\n\n💾 Salvando na pasta Downloads...\n✅ Download concluído!\n(Demo)`);
+        }
+
+        function shareReport(filename) {
+            alert(`📤 Compartilhar Relatório:\n\nArquivo: ${filename}\n\n• Email\n• WhatsApp\n• Link temporário (7 dias)\n• Copiar para área de transferência\n\n📧 Selecione o método de compartilhamento\n(Demo)`);
+        }
+
+        function showExportHistory() {
+            alert('📂 Histórico de Exportações:\n\n• 15 relatórios gerados\n• Últimos 6 meses\n• Total: 42.3 MB\n• Média: 2.8 MB por relatório\n\n🔍 Buscar por período ou formato\n(Demo)');
+        }
+
+        // Event listeners for checkboxes
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'checkbox') {
+                updateExportSummary();
+            }
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            updateExportSummary();
+            console.log('Exportação de dados carregada');
+        });
+    </script>
+</body>
+</html>

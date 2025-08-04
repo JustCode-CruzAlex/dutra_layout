@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Meus Favoritos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para favorites.html */
+        .statsOverview {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .statItem {
+            text-align: center;
+            padding: 12px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+        }
+
+        .statValue {
+            font-size: 20px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Filter Tabs */
+        .filterTabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filterTab {
+            flex: 0 0 auto;
+            padding: 10px 16px;
+            background: var(--neutral-white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .filterTab:hover,
+        .filterTab.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+            border-color: var(--primary);
+        }
+
+        .filterTab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .filterTab.active .count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Empty State */
+        .emptyState {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .emptyStateIcon {
+            margin: 0 auto 16px;
+            opacity: 0.5;
+        }
+
+        .emptyStateTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .emptyStateDescription {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* Favorites List */
+        .favoritesList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .favoriteItem {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .favoriteItem:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .favoriteItem.article::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-beige);
+        }
+
+        .favoriteItem.video::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+        }
+
+        .favoriteHeader {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .favoriteIcon {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .favoriteContent {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .favoriteType {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .favoriteTitle {
+            font-size: 15px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            line-height: 1.3;
+            cursor: pointer;
+        }
+
+        .favoriteTitle:hover {
+            color: var(--primary);
+        }
+
+        .favoriteExcerpt {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .favoriteFooter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .favoriteMeta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .favoriteMeta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .favoriteActions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .favoriteActions button {
+            padding: 6px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-base);
+        }
+
+        .favoriteActions button:hover {
+            background: var(--background-lighter);
+            color: var(--text-primary);
+        }
+
+        .favoriteActions .removeFavorite:hover {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Collections */
+        .collectionsGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .collectionCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .collectionCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .collectionCard.nutrition::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-beige);
+        }
+
+        .collectionCard.exercise::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--text-secondary);
+        }
+
+        .collectionCard.recipes::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--success-color);
+        }
+
+        .collectionCard.wellness::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .collectionHeader {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .collectionIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--neutral-white);
+        }
+
+        .collectionCard.nutrition .collectionIcon {
+            background: var(--accent-beige);
+        }
+
+        .collectionCard.exercise .collectionIcon {
+            background: var(--text-secondary);
+        }
+
+        .collectionCard.recipes .collectionIcon {
+            background: var(--success-color);
+        }
+
+        .collectionCard.wellness .collectionIcon {
+            background: var(--primary);
+        }
+
+        .collectionInfo {
+            flex: 1;
+        }
+
+        .collectionName {
+            font-size: 14px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .collectionCount {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .collectionPreview {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Bulk Actions */
+        .bulkActions {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            display: none;
+        }
+
+        .bulkActions.show {
+            display: block;
+        }
+
+        .bulkActionsHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .selectedCount {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .bulkButtons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .statsGrid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .statItem {
+                padding: 8px;
+            }
+
+            .statValue {
+                font-size: 16px;
+            }
+
+            .collectionsGrid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .filterTabs {
+                gap: 6px;
+            }
+
+            .filterTab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .favoriteHeader {
+                gap: 8px;
+            }
+
+            .favoriteMeta {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .favoriteActions {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Meus Favoritos</h1>
+                <p>Conteúdo salvo para consulta rápida</p>
+            </div>
+            <button class="btnIcon" onclick="toggleSelectMode()">
+                <i class="mdi mdi-select-multiple"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Stats Overview -->
+        <div class="statsOverview" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="statsGrid">
+                <div class="statItem">
+                    <div class="statValue">23</div>
+                    <div class="statLabel">Total Salvos</div>
+                </div>
+                <div class="statItem">
+                    <div class="statValue">15</div>
+                    <div class="statLabel">Artigos</div>
+                </div>
+                <div class="statItem">
+                    <div class="statValue">8</div>
+                    <div class="statLabel">Vídeos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collections -->
+        <div class="section" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Coleções Organizadas</h2>
+                <button class="btnPrimary btnXs btnInline" onclick="createCollection()">
+                    Nova Coleção
+                </button>
+            </div>
+
+            <div class="collectionsGrid">
+                <div class="collectionCard nutrition" onclick="openCollection('nutrition')">
+                    <div class="collectionHeader">
+                        <div class="collectionIcon">
+                            <i class="mdi mdi-food-apple"></i>
+                        </div>
+                        <div class="collectionInfo">
+                            <div class="collectionName">Nutrição</div>
+                            <div class="collectionCount">8 itens</div>
+                        </div>
+                    </div>
+                    <div class="collectionPreview">
+                        Jejum intermitente, Proteínas, Suplementação, Hidratação...
+                    </div>
+                </div>
+
+                <div class="collectionCard exercise" onclick="openCollection('exercise')">
+                    <div class="collectionHeader">
+                        <div class="collectionIcon">
+                            <i class="mdi mdi-dumbbell"></i>
+                        </div>
+                        <div class="collectionInfo">
+                            <div class="collectionName">Exercícios</div>
+                            <div class="collectionCount">5 itens</div>
+                        </div>
+                    </div>
+                    <div class="collectionPreview">
+                        HIIT, Exercícios casa, Cardio vs Musculação...
+                    </div>
+                </div>
+
+                <div class="collectionCard recipes" onclick="openCollection('recipes')">
+                    <div class="collectionHeader">
+                        <div class="collectionIcon">
+                            <i class="mdi mdi-chef-hat"></i>
+                        </div>
+                        <div class="collectionInfo">
+                            <div class="collectionName">Receitas</div>
+                            <div class="collectionCount">6 itens</div>
+                        </div>
+                    </div>
+                    <div class="collectionPreview">
+                        Smoothies detox, Low carb, Receitas práticas...
+                    </div>
+                </div>
+
+                <div class="collectionCard wellness" onclick="openCollection('wellness')">
+                    <div class="collectionHeader">
+                        <div class="collectionIcon">
+                            <i class="mdi mdi-heart-pulse"></i>
+                        </div>
+                        <div class="collectionInfo">
+                            <div class="collectionName">Bem-estar</div>
+                            <div class="collectionCount">4 itens</div>
+                        </div>
+                    </div>
+                    <div class="collectionPreview">
+                        Qualidade do sono, Mindset, Gestão do stress...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filterTabs" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="filterTab active" onclick="filterFavorites(this, 'all')">
+                <i class="mdi mdi-all-inclusive"></i>
+                Todos
+                <span class="count">23</span>
+            </div>
+            <div class="filterTab" onclick="filterFavorites(this, 'article')">
+                <i class="mdi mdi-text-box"></i>
+                Artigos
+                <span class="count">15</span>
+            </div>
+            <div class="filterTab" onclick="filterFavorites(this, 'video')">
+                <i class="mdi mdi-play-circle"></i>
+                Vídeos
+                <span class="count">8</span>
+            </div>
+            <div class="filterTab" onclick="filterFavorites(this, 'recent')">
+                <i class="mdi mdi-clock-outline"></i>
+                Recentes
+                <span class="count">5</span>
+            </div>
+        </div>
+
+        <!-- Bulk Actions (Hidden by default) -->
+        <div class="bulkActions" id="bulkActions">
+            <div class="bulkActionsHeader">
+                <div class="selectedCount" id="selectedCount">0 itens selecionados</div>
+                <button class="btnIcon" onclick="clearSelection()">
+                    <i class="mdi mdi-close"></i>
+                </button>
+            </div>
+            <div class="bulkButtons">
+                <button class="btnSecondary btnXs" onclick="addToCollection()">
+                    <i class="mdi mdi-folder-plus" style="margin-right: 6px;"></i>
+                    Adicionar à Coleção
+                </button>
+                <button class="btnSecondary btnXs" onclick="shareSelected()">
+                    <i class="mdi mdi-share" style="margin-right: 6px;"></i>
+                    Compartilhar
+                </button>
+                <button class="btnSecondary btnXs" onclick="removeSelected()" style="color: var(--error-color);">
+                    <i class="mdi mdi-delete" style="margin-right: 6px;"></i>
+                    Remover
+                </button>
+            </div>
+        </div>
+
+        <!-- Favorites List -->
+        <div class="section" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Conteúdo Salvo</h2>
+                <button class="btnSecondary btnXs btnInline" onclick="sortFavorites()">
+                    <i class="mdi mdi-sort"></i>
+                    Ordenar
+                </button>
+            </div>
+
+            <div class="favoritesList" id="favoritesList">
+                <!-- Article Favorite -->
+                <div class="favoriteItem article" data-type="article" data-id="metabolismo-artigo">
+                    <div class="favoriteHeader">
+                        <div class="favoriteIcon">
+                            <div class="iconContainer" style="background: var(--accent-beige);">
+                                <i class="mdi mdi-text-box" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="favoriteContent">
+                            <div class="favoriteType">
+                                <i class="mdi mdi-text-box"></i>
+                                Artigo
+                            </div>
+                            <div class="favoriteTitle" onclick="openFavorite('metabolismo-artigo')">
+                                Como Acelerar seu Metabolismo de Forma Natural
+                            </div>
+                            <div class="favoriteExcerpt">
+                                Descubra 8 estratégias cientificamente comprovadas para aumentar seu metabolismo e potencializar sua perda de peso de forma saudável.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favoriteFooter">
+                        <div class="favoriteMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Dr. Thiago
+                            </span>
+                            <span>
+                                <i class="mdi mdi-bookmark"></i>
+                                Salvo há 2 dias
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                5 min leitura
+                            </span>
+                        </div>
+                        <div class="favoriteActions">
+                            <button onclick="shareFavorite('metabolismo-artigo')" title="Compartilhar">
+                                <i class="mdi mdi-share"></i>
+                            </button>
+                            <button onclick="addToCollection('metabolismo-artigo')" title="Adicionar à coleção">
+                                <i class="mdi mdi-folder-plus"></i>
+                            </button>
+                            <button class="removeFavorite" onclick="removeFavorite('metabolismo-artigo')" title="Remover dos favoritos">
+                                <i class="mdi mdi-bookmark-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Favorite -->
+                <div class="favoriteItem video" data-type="video" data-id="jejum-video">
+                    <div class="favoriteHeader">
+                        <div class="favoriteIcon">
+                            <div class="iconContainer" style="background: var(--primary);">
+                                <i class="mdi mdi-play-circle" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="favoriteContent">
+                            <div class="favoriteType">
+                                <i class="mdi mdi-play-circle"></i>
+                                Vídeo
+                            </div>
+                            <div class="favoriteTitle" onclick="openFavorite('jejum-video')">
+                                Jejum Intermitente: Mitos e Verdades
+                            </div>
+                            <div class="favoriteExcerpt">
+                                Esclarecimentos científicos sobre jejum intermitente, protocolos recomendados e como implementar de forma segura.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favoriteFooter">
+                        <div class="favoriteMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Dr. Thiago
+                            </span>
+                            <span>
+                                <i class="mdi mdi-bookmark"></i>
+                                Salvo ontem
+                            </span>
+                            <span>
+                                <i class="mdi mdi-play"></i>
+                                8:45 min
+                            </span>
+                        </div>
+                        <div class="favoriteActions">
+                            <button onclick="shareFavorite('jejum-video')" title="Compartilhar">
+                                <i class="mdi mdi-share"></i>
+                            </button>
+                            <button onclick="addToCollection('jejum-video')" title="Adicionar à coleção">
+                                <i class="mdi mdi-folder-plus"></i>
+                            </button>
+                            <button class="removeFavorite" onclick="removeFavorite('jejum-video')" title="Remover dos favoritos">
+                                <i class="mdi mdi-bookmark-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Favorite -->
+                <div class="favoriteItem article" data-type="article" data-id="proteina-artigo">
+                    <div class="favoriteHeader">
+                        <div class="favoriteIcon">
+                            <div class="iconContainer" style="background: var(--accent-beige);">
+                                <i class="mdi mdi-text-box" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="favoriteContent">
+                            <div class="favoriteType">
+                                <i class="mdi mdi-text-box"></i>
+                                Artigo
+                            </div>
+                            <div class="favoriteTitle" onclick="openFavorite('proteina-artigo')">
+                                A Importância da Proteína no Processo de Emagrecimento
+                            </div>
+                            <div class="favoriteExcerpt">
+                                Como o consumo adequado de proteínas pode acelerar sua perda de peso e preservar massa muscular durante o processo.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favoriteFooter">
+                        <div class="favoriteMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Nutricionista
+                            </span>
+                            <span>
+                                <i class="mdi mdi-bookmark"></i>
+                                Salvo há 5 dias
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                3 min leitura
+                            </span>
+                        </div>
+                        <div class="favoriteActions">
+                            <button onclick="shareFavorite('proteina-artigo')" title="Compartilhar">
+                                <i class="mdi mdi-share"></i>
+                            </button>
+                            <button onclick="addToCollection('proteina-artigo')" title="Adicionar à coleção">
+                                <i class="mdi mdi-folder-plus"></i>
+                            </button>
+                            <button class="removeFavorite" onclick="removeFavorite('proteina-artigo')" title="Remover dos favoritos">
+                                <i class="mdi mdi-bookmark-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Favorite -->
+                <div class="favoriteItem video" data-type="video" data-id="exercicios-video">
+                    <div class="favoriteHeader">
+                        <div class="favoriteIcon">
+                            <div class="iconContainer" style="background: var(--primary);">
+                                <i class="mdi mdi-play-circle" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="favoriteContent">
+                            <div class="favoriteType">
+                                <i class="mdi mdi-play-circle"></i>
+                                Vídeo
+                            </div>
+                            <div class="favoriteTitle" onclick="openFavorite('exercicios-video')">
+                                Exercícios em Casa - Sem Equipamentos
+                            </div>
+                            <div class="favoriteExcerpt">
+                                Treino completo que pode ser realizado em casa, sem a necessidade de equipamentos especiais.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favoriteFooter">
+                        <div class="favoriteMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Personal Trainer
+                            </span>
+                            <span>
+                                <i class="mdi mdi-bookmark"></i>
+                                Salvo há 1 semana
+                            </span>
+                            <span>
+                                <i class="mdi mdi-play"></i>
+                                12:30 min
+                            </span>
+                        </div>
+                        <div class="favoriteActions">
+                            <button onclick="shareFavorite('exercicios-video')" title="Compartilhar">
+                                <i class="mdi mdi-share"></i>
+                            </button>
+                            <button onclick="addToCollection('exercicios-video')" title="Adicionar à coleção">
+                                <i class="mdi mdi-folder-plus"></i>
+                            </button>
+                            <button class="removeFavorite" onclick="removeFavorite('exercicios-video')" title="Remover dos favoritos">
+                                <i class="mdi mdi-bookmark-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Favorite -->
+                <div class="favoriteItem article" data-type="article" data-id="sono-artigo">
+                    <div class="favoriteHeader">
+                        <div class="favoriteIcon">
+                            <div class="iconContainer" style="background: var(--accent-beige);">
+                                <i class="mdi mdi-text-box" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="favoriteContent">
+                            <div class="favoriteType">
+                                <i class="mdi mdi-text-box"></i>
+                                Artigo
+                            </div>
+                            <div class="favoriteTitle" onclick="openFavorite('sono-artigo')">
+                                A Relação Entre Qualidade do Sono e Perda de Peso
+                            </div>
+                            <div class="favoriteExcerpt">
+                                Como otimizar seu sono para potencializar a queima de gordura e regular os hormônios da fome.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favoriteFooter">
+                        <div class="favoriteMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Dr. Thiago
+                            </span>
+                            <span>
+                                <i class="mdi mdi-bookmark"></i>
+                                Salvo há 1 semana
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                5 min leitura
+                            </span>
+                        </div>
+                        <div class="favoriteActions">
+                            <button onclick="shareFavorite('sono-artigo')" title="Compartilhar">
+                                <i class="mdi mdi-share"></i>
+                            </button>
+                            <button onclick="addToCollection('sono-artigo')" title="Adicionar à coleção">
+                                <i class="mdi mdi-folder-plus"></i>
+                            </button>
+                            <button class="removeFavorite" onclick="removeFavorite('sono-artigo')" title="Remover dos favoritos">
+                                <i class="mdi mdi-bookmark-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (Initially hidden) -->
+        <div class="emptyState" id="emptyState" style="display: none;">
+            <div class="emptyStateIcon">
+                <div class="iconContainer large" style="background: var(--background-lighter);">
+                    <i class="mdi mdi-bookmark-outline" style="color: var(--text-muted); font-size: 32px;"></i>
+                </div>
+            </div>
+            <div class="emptyStateTitle">Nenhum conteúdo encontrado</div>
+            <div class="emptyStateDescription">
+                Ajuste os filtros ou comece a salvar artigos e vídeos para vê-los aqui organizados.
+            </div>
+            <button class="btnPrimary" onclick="goToBlog()">
+                <i class="mdi mdi-text-box" style="margin-right: 8px;"></i>
+                Explorar Artigos
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+        let selectMode = false;
+        let selectedItems = [];
+
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        function goToBlog() {
+            window.location.href = 'blog.html';
+        }
+
+        // Filter functionality
+        function filterFavorites(element, filter) {
+            // Update active tab
+            document.querySelectorAll('.filterTab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            currentFilter = filter;
+            console.log(`Filtrando favoritos: ${filter}`);
+            
+            const items = document.querySelectorAll('.favoriteItem');
+            let visibleCount = 0;
+            
+            items.forEach(item => {
+                const type = item.dataset.type;
+                let show = false;
+                
+                switch(filter) {
+                    case 'all':
+                        show = true;
+                        break;
+                    case 'article':
+                        show = type === 'article';
+                        break;
+                    case 'video':
+                        show = type === 'video';
+                        break;
+                    case 'recent':
+                        // Show items saved in the last 3 days
+                        show = true; // Simplified for demo
+                        break;
+                }
+                
+                if (show) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Show/hide empty state
+            const emptyState = document.getElementById('emptyState');
+            const favoritesList = document.getElementById('favoritesList');
+            
+            if (visibleCount === 0) {
+                emptyState.style.display = 'block';
+                favoritesList.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                favoritesList.style.display = 'flex';
+            }
+        }
+
+        // Collection actions
+        function openCollection(collectionId) {
+            const collections = {
+                'nutrition': 'Nutrição - 8 itens salvos sobre alimentação e suplementação',
+                'exercise': 'Exercícios - 5 vídeos e artigos sobre atividade física',
+                'recipes': 'Receitas - 6 receitas saudáveis e práticas',
+                'wellness': 'Bem-estar - 4 conteúdos sobre saúde mental e qualidade de vida'
+            };
+
+            const collection = collections[collectionId];
+            if (collection) {
+                alert(`📁 Abrindo coleção:\n\n${collection}\n\n• Visualização organizada\n• Busca dentro da coleção\n• Exportar lista\n• Compartilhar coleção\n\n(Demo)`);
+            }
+        }
+
+        function createCollection() {
+            alert('📁 Criar Nova Coleção:\n\n• Nome da coleção\n• Descrição opcional\n• Escolher cor/ícone\n• Adicionar conteúdo existente\n• Definir privacidade\n\n✨ Organize seu conteúdo do seu jeito!\n(Demo)');
+        }
+
+        // Favorite actions
+        function openFavorite(favoriteId) {
+            const favorites = {
+                'metabolismo-artigo': 'Artigo: Como Acelerar seu Metabolismo',
+                'jejum-video': 'Vídeo: Jejum Intermitente - Mitos e Verdades',
+                'proteina-artigo': 'Artigo: Importância da Proteína',
+                'exercicios-video': 'Vídeo: Exercícios em Casa',
+                'sono-artigo': 'Artigo: Sono e Perda de Peso'
+            };
+
+            const favorite = favorites[favoriteId];
+            if (favorite) {
+                alert(`📖 Abrindo conteúdo salvo:\n\n"${favorite}"\n\n• Continuar de onde parou\n• Fazer anotações\n• Destacar trechos importantes\n• Ganhará pontos XP\n\n(Demo)`);
+            }
+        }
+
+        function shareFavorite(favoriteId) {
+            alert('📱 Compartilhar conteúdo:\n\n• WhatsApp\n• Instagram Stories\n• E-mail\n• Link direto\n• Adicionar comentário pessoal\n\n🎉 Inspire outras pessoas!\n(Demo)');
+        }
+
+        function removeFavorite(favoriteId) {
+            if (confirm('Remover este item dos favoritos?')) {
+                const item = document.querySelector(`[data-id="${favoriteId}"]`);
+                if (item) {
+                    item.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => {
+                        item.remove();
+                        updateStats();
+                    }, 300);
+                }
+            }
+        }
+
+        function addToCollection(favoriteId) {
+            alert('📁 Adicionar à Coleção:\n\n• Nutrição\n• Exercícios\n• Receitas\n• Bem-estar\n• + Criar nova coleção\n\n📋 Mantenha seu conteúdo organizado!\n(Demo)');
+        }
+
+        // Bulk actions
+        function toggleSelectMode() {
+            selectMode = !selectMode;
+            const bulkActions = document.getElementById('bulkActions');
+            
+            if (selectMode) {
+                bulkActions.classList.add('show');
+                // Add selection checkboxes to items
+                console.log('Modo seleção ativado');
+            } else {
+                bulkActions.classList.remove('show');
+                clearSelection();
+                console.log('Modo seleção desativado');
+            }
+        }
+
+        function clearSelection() {
+            selectedItems = [];
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selectedCount = document.getElementById('selectedCount');
+            selectedCount.textContent = `${selectedItems.length} itens selecionados`;
+        }
+
+        function addToCollection() {
+            if (selectedItems.length === 0) return;
+            alert(`📁 Adicionar ${selectedItems.length} itens à coleção:\n\n• Escolher coleção existente\n• Criar nova coleção\n• Organização automática\n\n(Demo)`);
+        }
+
+        function shareSelected() {
+            if (selectedItems.length === 0) return;
+            alert(`📱 Compartilhar ${selectedItems.length} itens:\n\n• Lista personalizada\n• Adicionar descrição\n• Múltiplas plataformas\n• Link de coleção temporária\n\n(Demo)`);
+        }
+
+        function removeSelected() {
+            if (selectedItems.length === 0) return;
+            if (confirm(`Remover ${selectedItems.length} itens dos favoritos?`)) {
+                alert('🗑️ Itens removidos com sucesso!\n\nPossível desfazer por 10 segundos...\n\n(Demo)');
+                clearSelection();
+            }
+        }
+
+        // Other actions
+        function sortFavorites() {
+            alert('📊 Ordenar favoritos:\n\n• Mais recentes\n• Mais antigos\n• Tipo de conteúdo\n• Autor\n• Duração/tamanho\n• Mais acessados\n\n(Demo)');
+        }
+
+        function updateStats() {
+            // Update stats after item removal
+            console.log('Atualizando estatísticas...');
+        }
+
+        // CSS for fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(-100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

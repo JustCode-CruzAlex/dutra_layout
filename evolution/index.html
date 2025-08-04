@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Dashboard Métricas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Period Selector */
+        .periodSelector {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 4px;
+            margin-top: 16px;
+        }
+
+        .periodButton {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .periodButton.active {
+            background: var(--neutral-white);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Overview Stats */
+        .overviewStats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .statCard {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statCard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .statIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 24px;
+            margin: 0 auto 16px;
+        }
+
+        .statValue {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .statChange {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .statChange.positive {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .statChange.negative {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Metrics Section - agora usa .card */
+        .metricsSection {
+            padding: 24px;
+        }
+        
+        /* Cards precisam de espaçamento */
+        .card {
+            margin-bottom: 20px;
+        }
+        
+        /* .sectionTitle - agora vem do components.css */
+        .sectionTitle {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Progress Rings */
+        .progressRings {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .progressRing {
+            text-align: center;
+            position: relative;
+        }
+
+        .ringContainer {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 12px;
+        }
+
+        .ringBackground,
+        .ringProgress {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .ringBackground {
+            background: var(--border-light);
+        }
+
+        .ringProgress {
+            background: conic-gradient(var(--primary) var(--progress, 0%), var(--border-light) var(--progress, 0%));
+            mask: radial-gradient(circle at center, transparent 28px, black 30px);
+        }
+
+        .ringValue {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .ringLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Detailed Grid */
+        .detailedMetrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .metricItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .metricInfo h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .metricInfo p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .metricValue {
+            text-align: right;
+        }
+
+        .metricValue .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .metricValue .unit {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Body Composition Chart */
+        .bodyChart {
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .chartTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .bodySegments {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            height: 120px;
+            margin-bottom: 16px;
+        }
+
+        .bodySegment {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--primary-light));
+            margin: 0 4px;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .bodySegment::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .segmentLabels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Goals Section */
+        .goalsSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .goalItem {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .goalItem:last-child {
+            border-bottom: none;
+        }
+
+        .goalIcon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .goalContent {
+            flex: 1;
+        }
+
+        .goalTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .goalProgress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .goalBar {
+            flex: 1;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .goalFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .goalPercent {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .overviewStats {
+                grid-template-columns: 1fr;
+            }
+            
+            .progressRings {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            
+            .detailedMetrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .ringContainer {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .ringBackground,
+            .ringProgress {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes ringFill {
+            from { --progress: 0%; }
+            to { --progress: var(--final-progress); }
+        }
+
+        .ringProgress {
+            animation: ringFill 1.5s ease-out 0.8s both;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Dashboard Métricas</h1>
+                <p>Análise completa da sua evolução</p>
+            </div>
+        </div>
+        
+        <div class="periodSelector">
+            <button class="periodButton" onclick="setPeriod('1m')">1M</button>
+            <button class="periodButton active" onclick="setPeriod('3m')">3M</button>
+            <button class="periodButton" onclick="setPeriod('6m')">6M</button>
+            <button class="periodButton" onclick="setPeriod('1y')">1A</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Overview Stats -->
+        <div class="overviewStats">
+            <div class="statCard">
+                <div class="statIcon">
+                    <i class="mdi mdi-scale-bathroom"></i>
+                </div>
+                <div class="statValue">-8.5kg</div>
+                <div class="statLabel">Peso Perdido</div>
+                <div class="statChange positive">
+                    <i class="mdi mdi-trending-down"></i>
+                    -2.1kg este mês
+                </div>
+            </div>
+            
+            <div class="statCard">
+                <div class="statIcon">
+                    <i class="mdi mdi-target"></i>
+                </div>
+                <div class="statValue">65%</div>
+                <div class="statLabel">Meta Atingida</div>
+                <div class="statChange positive">
+                    <i class="mdi mdi-trending-up"></i>
+                    +15% este mês
+                </div>
+            </div>
+        </div>
+
+        <!-- Body Composition */
+        <div class="card metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-human"></i>
+                </div>
+                Composição Corporal
+            </div>
+            
+            <div class="progressRings">
+                <div class="progressRing">
+                    <div class="ringContainer">
+                        <div class="ringBackground"></div>
+                        <div class="ringProgress" style="--final-progress: 72%;"></div>
+                        <div class="ringValue">28.4%</div>
+                    </div>
+                    <div class="ringLabel">Gordura</div>
+                </div>
+                
+                <div class="progressRing">
+                    <div class="ringContainer">
+                        <div class="ringBackground"></div>
+                        <div class="ringProgress" style="--final-progress: 85%;"></div>
+                        <div class="ringValue">42.1%</div>
+                    </div>
+                    <div class="ringLabel">Músculo</div>
+                </div>
+                
+                <div class="progressRing">
+                    <div class="ringContainer">
+                        <div class="ringBackground"></div>
+                        <div class="ringProgress" style="--final-progress: 60%;"></div>
+                        <div class="ringValue">58.2%</div>
+                    </div>
+                    <div class="ringLabel">Água</div>
+                </div>
+            </div>
+            
+            <div class="bodyChart">
+                <div class="chartTitle">Evolução Semanal</div>
+                <div class="bodySegments">
+                    <div class="bodySegment" style="height: 85%;" data-value="29.2%"></div>
+                    <div class="bodySegment" style="height: 82%;" data-value="28.8%"></div>
+                    <div class="bodySegment" style="height: 78%;" data-value="28.5%"></div>
+                    <div class="bodySegment" style="height: 75%;" data-value="28.2%"></div>
+                    <div class="bodySegment" style="height: 70%;" data-value="28.0%"></div>
+                    <div class="bodySegment" style="height: 65%;" data-value="27.8%"></div>
+                    <div class="bodySegment" style="height: 60%;" data-value="27.4%"></div>
+                </div>
+                <div class="segmentLabels">
+                    <span>Seg</span>
+                    <span>Ter</span>
+                    <span>Qua</span>
+                    <span>Qui</span>
+                    <span>Sex</span>
+                    <span>Sáb</span>
+                    <span>Dom</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="card metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-chart-line"></i>
+                </div>
+                Métricas Detalhadas
+            </div>
+            
+            <div class="detailedMetrics">
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Peso Atual</h4>
+                        <p>Última medição</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">68.5</span>
+                        <span class="unit">kg</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>IMC</h4>
+                        <p>Índice massa corporal</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">25.4</span>
+                        <span class="unit">kg/m²</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Gordura Visceral</h4>
+                        <p>Nível interno</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">8</span>
+                        <span class="unit">nível</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Massa Muscular</h4>
+                        <p>Músculos esquelético</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">28.8</span>
+                        <span class="unit">kg</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Taxa Metabólica</h4>
+                        <p>Calorias base diária</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">1.542</span>
+                        <span class="unit">kcal</span>
+                    </div>
+                </div>
+                
+                <div class="metricItem">
+                    <div class="metricInfo">
+                        <h4>Idade Corporal</h4>
+                        <p>Equivalente biológico</p>
+                    </div>
+                    <div class="metricValue">
+                        <span class="value">32</span>
+                        <span class="unit">anos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card metricsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-flash"></i>
+                </div>
+                Ações Rápidas
+            </div>
+            
+            <div class="detailedMetrics">
+                <a href="charts.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Gráficos Interativos</h4>
+                        <p>Progressão temporal detalhada</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-chart-line" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+                
+                <a href="videos.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Vídeos Evolução</h4>
+                        <p>Spotify Wrapped automático</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-video" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+                
+                <a href="../gamification/achievements.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Conquistas</h4>
+                        <p>Marcos atingidos</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-trophy" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+                
+                <a href="../profile/evolution.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Evolução Básica</h4>
+                        <p>Gráficos no perfil</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-chart-box" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+                
+                <a href="../reports/monthly.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Relatórios Mensais</h4>
+                        <p>Análises consolidadas</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-file-chart" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+                
+                <a href="../reports/export.html" class="metricItem" style="text-decoration: none; cursor: pointer;">
+                    <div class="metricInfo">
+                        <h4>Exportar Dados</h4>
+                        <p>Compartilhar com médicos</p>
+                    </div>
+                    <div class="metricValue">
+                        <i class="mdi mdi-download" style="color: var(--primary); font-size: 24px;"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Goals Progress -->
+        <div class="goalsSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-flag"></i>
+                </div>
+                Metas de Evolução
+            </div>
+            
+            <div class="goalItem">
+                <div class="goalIcon">
+                    <i class="mdi mdi-scale-bathroom"></i>
+                </div>
+                <div class="goalContent">
+                    <div class="goalTitle">Meta de Peso: 65kg</div>
+                    <div class="goalProgress">
+                        <div class="goalBar">
+                            <div class="goalFill" style="width: 65%;"></div>
+                        </div>
+                        <div class="goalPercent">65%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="goalItem">
+                <div class="goalIcon">
+                    <i class="mdi mdi-calculator"></i>
+                </div>
+                <div class="goalContent">
+                    <div class="goalTitle">Meta IMC: 22.0</div>
+                    <div class="goalProgress">
+                        <div class="goalBar">
+                            <div class="goalFill" style="width: 58%;"></div>
+                        </div>
+                        <div class="goalPercent">58%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="goalItem">
+                <div class="goalIcon">
+                    <i class="mdi mdi-human"></i>
+                </div>
+                <div class="goalContent">
+                    <div class="goalTitle">Meta Gordura: 22%</div>
+                    <div class="goalProgress">
+                        <div class="goalBar">
+                            <div class="goalFill" style="width: 72%;"></div>
+                        </div>
+                        <div class="goalPercent">72%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="goalItem">
+                <div class="goalIcon">
+                    <i class="mdi mdi-arm-flex"></i>
+                </div>
+                <div class="goalContent">
+                    <div class="goalTitle">Meta Músculo: 32kg</div>
+                    <div class="goalProgress">
+                        <div class="goalBar">
+                            <div class="goalFill" style="width: 90%;"></div>
+                        </div>
+                        <div class="goalPercent">90%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        function setPeriod(period) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.periodButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            console.log(`Período selecionado: ${period}`);
+            
+            // Simula mudança de dados
+            updateChartData(period);
+        }
+
+        function updateChartData(period) {
+            const segments = document.querySelectorAll('.bodySegment');
+            const rings = document.querySelectorAll('.ringProgress');
+            
+            // Animação de fade out/in
+            segments.forEach(segment => {
+                segment.style.opacity = '0.3';
+                setTimeout(() => {
+                    // Simula novos dados baseados no período
+                    const randomHeight = Math.floor(Math.random() * 40) + 60;
+                    segment.style.height = randomHeight + '%';
+                    segment.style.opacity = '1';
+                }, 300);
+            });
+            
+            // Reinicia animação dos anéis
+            rings.forEach(ring => {
+                ring.style.animation = 'none';
+                setTimeout(() => {
+                    ring.style.animation = 'ringFill 1.5s ease-out both';
+                }, 100);
+            });
+        }
+
+        // Inicialização
+        console.log('Dashboard de métricas carregado');
+        
+        // Animação inicial das barras de meta
+        setTimeout(() => {
+            document.querySelectorAll('.goalFill').forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 100);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

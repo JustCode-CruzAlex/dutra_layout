@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Histórico Médico</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para history.html */
+        .filterTabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filterTab {
+            flex: 0 0 auto;
+            padding: 10px 16px;
+            border-radius: var(--radius-full);
+            background: var(--background-lighter);
+            color: var(--text-muted);
+            border: none;
+            font-size: 14px;
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+        }
+
+        .filterTab.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+        }
+
+        .filterTab:hover:not(.active) {
+            background: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        /* Timeline */
+        .medicalTimeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .medicalTimeline::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--border-light);
+            border-radius: 2px;
+        }
+
+        .timelineGroup {
+            margin-bottom: 32px;
+        }
+
+        .timelineMonth {
+            font-size: 18px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 8px;
+            position: relative;
+        }
+
+        .timelineMonth::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--neutral-white);
+            box-shadow: 0 0 0 1px var(--border-light);
+        }
+
+        .historyItem {
+            position: relative;
+            margin-bottom: 16px;
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+        }
+
+        .historyItem:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .historyItem::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 20px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-beige);
+            border-radius: 50%;
+            border: 2px solid var(--neutral-white);
+        }
+
+        .historyItem.exam::before {
+            background: var(--primary);
+        }
+
+        .historyItem.treatment::before {
+            background: var(--text-secondary);
+        }
+
+        .historyItem.consultation::before {
+            background: var(--success-color);
+        }
+
+        .historyHeader {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .historyIcon {
+            margin-right: 12px;
+        }
+
+        .historyInfo {
+            flex: 1;
+        }
+
+        .historyTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .historyDate {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .historyStatus {
+            font-size: 11px;
+            font-weight: var(--font-weight-medium);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .historyStatus.completed {
+            background: rgba(154, 131, 100, 0.2);
+            color: var(--accent-beige);
+        }
+
+        .historyStatus.scheduled {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .historyStatus.pending {
+            background: var(--background-lighter);
+            color: var(--text-muted);
+        }
+
+        .historyContent {
+            margin-top: 12px;
+        }
+
+        .historyDescription {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .historyDoctor {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .historyActions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .historyActions .btnSecondary {
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+
+        /* Export Section */
+        .exportSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .exportHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .exportTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .exportActions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Stats Overview */
+        .statsOverview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .statCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .statValue {
+            font-size: 20px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .statLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .medicalTimeline {
+                padding-left: 32px;
+            }
+
+            .medicalTimeline::before {
+                left: 12px;
+            }
+
+            .timelineMonth::before {
+                left: -28px;
+            }
+
+            .historyItem::before {
+                left: -28px;
+            }
+
+            .exportActions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .statsOverview {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Histórico Médico</h1>
+                <p>Timeline completa dos seus procedimentos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Stats Overview -->
+        <div class="statsOverview" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="statCard">
+                <div class="statValue">24</div>
+                <div class="statLabel">Consultas</div>
+            </div>
+            <div class="statCard">
+                <div class="statValue">18</div>
+                <div class="statLabel">Exames</div>
+            </div>
+            <div class="statCard">
+                <div class="statValue">12</div>
+                <div class="statLabel">Tratamentos</div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="exportSection" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="exportHeader">
+                <h3 class="exportTitle">Exportar Histórico</h3>
+                <div class="exportActions">
+                    <button class="btnPrimary btnSm" onclick="exportPDF()">
+                        <i class="mdi mdi-file-pdf-box" style="margin-right: 6px;"></i>
+                        PDF
+                    </button>
+                    <button class="btnSecondary btnSm" onclick="exportExcel()">
+                        <i class="mdi mdi-file-excel" style="margin-right: 6px;"></i>
+                        Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filterTabs" style="animation: fadeInUp 1.0s ease-out;">
+            <button class="filterTab active" onclick="filterHistory('all')" data-filter="all">
+                Todos
+            </button>
+            <button class="filterTab" onclick="filterHistory('consultation')" data-filter="consultation">
+                Consultas
+            </button>
+            <button class="filterTab" onclick="filterHistory('exam')" data-filter="exam">
+                Exames
+            </button>
+            <button class="filterTab" onclick="filterHistory('treatment')" data-filter="treatment">
+                Tratamentos
+            </button>
+        </div>
+
+        <!-- Timeline -->
+        <div class="medicalTimeline" style="animation: fadeInUp 1.2s ease-out;">
+            <!-- Agosto 2024 -->
+            <div class="timelineGroup">
+                <div class="timelineMonth">Agosto 2024</div>
+
+                <!-- Consulta Hoje -->
+                <div class="historyItem consultation" data-type="consultation">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--success-color);">
+                                <i class="mdi mdi-stethoscope" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Consulta Médica</h4>
+                            <p class="historyDate">03 de agosto, 14:30</p>
+                        </div>
+                        <div class="historyStatus scheduled">Agendado</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Acompanhamento mensal - Evolução do tratamento
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Dr. Thiago Dutra - Endocrinologista
+                        </div>
+                    </div>
+                </div>
+
+                <!-- InBody -->
+                <div class="historyItem exam" data-type="exam">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--primary);">
+                                <i class="mdi mdi-scale-bathroom" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">InBody - Bioimpedância</h4>
+                            <p class="historyDate">02 de agosto, 09:00</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Composição corporal: 28.2% gordura, 65.8kg massa muscular
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Enfermagem - Instituto Dutra
+                        </div>
+                        <div class="historyActions">
+                            <button class="btnSecondary" onclick="viewResult('inbody-aug-2024')">
+                                <i class="mdi mdi-eye" style="margin-right: 4px;"></i>
+                                Ver Resultado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Julho 2024 -->
+            <div class="timelineGroup">
+                <div class="timelineMonth">Julho 2024</div>
+
+                <!-- Soroterapia -->
+                <div class="historyItem treatment" data-type="treatment">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--text-secondary);">
+                                <i class="mdi mdi-water-pump" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Soroterapia Vitamínica</h4>
+                            <p class="historyDate">28 de julho, 15:30</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Soro vitamínico premium + magnésio - Sessão de 45min
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Dr. Thiago Dutra - Medicina Integrativa
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mounjaro -->
+                <div class="historyItem treatment" data-type="treatment">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--primary);">
+                                <i class="mdi mdi-needle" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Aplicação Mounjaro</h4>
+                            <p class="historyDate">25 de julho, 09:30</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Semaglutida 2.5mg - Aplicação subcutânea
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Enfermagem Especializada
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hemograma -->
+                <div class="historyItem exam" data-type="exam">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--accent-beige);">
+                                <i class="mdi mdi-water" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Hemograma Completo</h4>
+                            <p class="historyDate">15 de julho, 08:00</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Exame de sangue - Todos os parâmetros normais
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Dr. Thiago Dutra - Análise
+                        </div>
+                        <div class="historyActions">
+                            <button class="btnSecondary" onclick="viewResult('hemograma-jul-2024')">
+                                <i class="mdi mdi-file-document" style="margin-right: 4px;"></i>
+                                Ver Laudo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body G -->
+                <div class="historyItem exam" data-type="exam">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--text-secondary);">
+                                <i class="mdi mdi-human" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Body G - Scanner 3D</h4>
+                            <p class="historyDate">10 de julho, 11:00</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Escaneamento 3D completo - Evolução da silhueta
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Técnico Especializado
+                        </div>
+                        <div class="historyActions">
+                            <button class="btnSecondary" onclick="view3DEvolution('bodyg-jul-2024')">
+                                <i class="mdi mdi-rotate-3d" style="margin-right: 4px;"></i>
+                                Ver 3D
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Junho 2024 -->
+            <div class="timelineGroup">
+                <div class="timelineMonth">Junho 2024</div>
+
+                <div class="historyItem consultation" data-type="consultation">
+                    <div class="historyHeader">
+                        <div class="historyIcon">
+                            <div class="iconContainer" style="background: var(--success-color);">
+                                <i class="mdi mdi-stethoscope" style="color: white; font-size: 16px;"></i>
+                            </div>
+                        </div>
+                        <div class="historyInfo">
+                            <h4 class="historyTitle">Consulta Inicial</h4>
+                            <p class="historyDate">15 de junho, 10:00</p>
+                        </div>
+                        <div class="historyStatus completed">Concluído</div>
+                    </div>
+                    <div class="historyContent">
+                        <div class="historyDescription">
+                            Avaliação inicial e definição do protocolo de tratamento
+                        </div>
+                        <div class="historyDoctor">
+                            <i class="mdi mdi-account-circle"></i>
+                            Dr. Thiago Dutra - Endocrinologista
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Filter functionality
+        function filterHistory(type) {
+            // Atualizar tabs ativas
+            document.querySelectorAll('.filterTab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.filter === type) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Filtrar itens
+            document.querySelectorAll('.historyItem').forEach(item => {
+                if (type === 'all' || item.dataset.type === type) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Esconder grupos vazios
+            document.querySelectorAll('.timelineGroup').forEach(group => {
+                const visibleItems = group.querySelectorAll('.historyItem[style="display: block"], .historyItem:not([style*="display: none"])');
+                if (visibleItems.length === 0) {
+                    group.style.display = 'none';
+                } else {
+                    group.style.display = 'block';
+                }
+            });
+        }
+
+        // Export functions
+        function exportPDF() {
+            alert('📄 Exportando histórico médico em PDF:\n\n• Timeline completa\n• Todos os resultados\n• Laudos anexados\n• Gráficos de evolução\n\n✅ Download iniciado! (Demo)');
+        }
+
+        function exportExcel() {
+            alert('📊 Exportando dados em Excel:\n\n• Planilha estruturada\n• Dados filtráveis\n• Gráficos integrados\n• Formato para análise\n\n✅ Download iniciado! (Demo)');
+        }
+
+        // View functions
+        function viewResult(examId) {
+            const exams = {
+                'inbody-aug-2024': 'InBody 02/08:\n\n• Peso: 78.2kg\n• Gordura: 28.2%\n• Massa muscular: 65.8kg\n• Taxa metabólica: 1.650 kcal\n• Água corporal: 43.1L',
+                'hemograma-jul-2024': 'Hemograma 15/07:\n\n• Hemoglobina: 14.2 g/dL ✅\n• Hematócrito: 42.5% ✅\n• Leucócitos: 7.200/mm³ ✅\n• Plaquetas: 280.000/mm³ ✅\n• Todos os valores normais',
+            };
+            
+            alert(`📋 ${exams[examId] || 'Resultado do exame'}\n\n(Demo)`);
+        }
+
+        function view3DEvolution(scanId) {
+            alert('🎬 Evolução 3D Body G:\n\n👤 Comparação visual\n📐 Medições precisas\n📊 Progresso detalhado\n🎥 Vídeo 360° disponível\n\n(Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

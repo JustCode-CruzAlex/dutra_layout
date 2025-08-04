@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Bem-estar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para wellbeing.html */
+        .checkinCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .checkinTitle {
+            font-size: 18px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .moodScale {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .moodButton {
+            flex: 1;
+            padding: 16px 8px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            background: var(--background-lighter);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-align: center;
+            position: relative;
+        }
+
+        .moodButton:hover,
+        .moodButton.active {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .moodIcon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .moodLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .moodButton.active .moodLabel {
+            color: var(--primary);
+        }
+
+        .checkinActions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Mood Chart */
+        .moodChart {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chartHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chartTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .periodSelector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .periodBtn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            background: var(--background-lighter);
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .periodBtn.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+            border-color: var(--primary);
+        }
+
+        .chartContainer {
+            height: 200px;
+            position: relative;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .chartLine {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            height: 120px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120"><polyline points="0,80 50,60 100,40 150,50 200,30 250,45 300,25" fill="none" stroke="%23556B55" stroke-width="3" stroke-linecap="round"/><circle cx="0" cy="80" r="4" fill="%23556B55"/><circle cx="50" cy="60" r="4" fill="%23556B55"/><circle cx="100" cy="40" r="4" fill="%23556B55"/><circle cx="150" cy="50" r="4" fill="%23556B55"/><circle cx="200" cy="30" r="4" fill="%23556B55"/><circle cx="250" cy="45" r="4" fill="%23556B55"/><circle cx="300" cy="25" r="4" fill="%23556B55"/></svg>') no-repeat center;
+            background-size: 100% 100%;
+        }
+
+        .chartLabels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Insights */
+        .insightsGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .insightCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .insightIcon {
+            margin-bottom: 12px;
+        }
+
+        .insightValue {
+            font-size: 20px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .insightLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Reminders */
+        .remindersCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .remindersHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .remindersTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .remindersList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reminderItem {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+        }
+
+        .reminderItem:hover {
+            background: var(--border-light);
+        }
+
+        .reminderIcon {
+            margin-right: 12px;
+        }
+
+        .reminderInfo {
+            flex: 1;
+        }
+
+        .reminderText {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .reminderTime {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .reminderAction {
+            padding: 6px 12px;
+            background: var(--primary);
+            color: var(--neutral-white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .reminderAction:hover {
+            background: var(--primary-light);
+        }
+
+        /* Goals */
+        .goalsCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .goalItem {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .goalItem:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .goalHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goalName {
+            font-size: 14px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+        }
+
+        .goalValue {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .goalProgress {
+            width: 100%;
+            height: 6px;
+            background: var(--background-lighter);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .goalProgressFill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+
+        /* Suggestions */
+        .suggestionsCard {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .suggestionsCard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .suggestionsTitle {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .suggestionText {
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .moodScale {
+                gap: 8px;
+            }
+
+            .moodButton {
+                padding: 12px 4px;
+            }
+
+            .moodIcon {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+
+            .insightsGrid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .checkinActions {
+                flex-direction: column;
+            }
+
+            .periodSelector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Bem-estar</h1>
+                <p>Acompanhe sua saúde emocional e física</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Check-in Diário -->
+        <div class="checkinCard" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="checkinTitle">
+                <div class="iconContainer" style="background: var(--primary);">
+                    <i class="mdi mdi-heart-pulse" style="color: white; font-size: 16px;"></i>
+                </div>
+                Como você está se sentindo hoje?
+            </div>
+
+            <div class="moodScale">
+                <button class="moodButton" onclick="selectMood(this, 1)" data-mood="1">
+                    <span class="moodIcon">😔</span>
+                    <div class="moodLabel">Ruim</div>
+                </button>
+                <button class="moodButton" onclick="selectMood(this, 2)" data-mood="2">
+                    <span class="moodIcon">😐</span>
+                    <div class="moodLabel">Ok</div>
+                </button>
+                <button class="moodButton active" onclick="selectMood(this, 3)" data-mood="3">
+                    <span class="moodIcon">🙂</span>
+                    <div class="moodLabel">Bem</div>
+                </button>
+                <button class="moodButton" onclick="selectMood(this, 4)" data-mood="4">
+                    <span class="moodIcon">😊</span>
+                    <div class="moodLabel">Ótimo</div>
+                </button>
+                <button class="moodButton" onclick="selectMood(this, 5)" data-mood="5">
+                    <span class="moodIcon">🤩</span>
+                    <div class="moodLabel">Incrível</div>
+                </button>
+            </div>
+
+            <div class="checkinActions">
+                <button class="btnPrimary" onclick="saveCheckin()">
+                    <i class="mdi mdi-check" style="margin-right: 8px;"></i>
+                    Salvar Check-in
+                </button>
+                <button class="btnSecondary" onclick="addNote()">
+                    <i class="mdi mdi-note-text" style="margin-right: 8px;"></i>
+                    Adicionar Nota
+                </button>
+            </div>
+        </div>
+
+        <!-- Gráfico de Humor -->
+        <div class="moodChart" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="chartHeader">
+                <h3 class="chartTitle">Evolução do Humor</h3>
+                <div class="periodSelector">
+                    <button class="periodBtn active" onclick="changePeriod(this, '7d')">7D</button>
+                    <button class="periodBtn" onclick="changePeriod(this, '1m')">1M</button>
+                    <button class="periodBtn" onclick="changePeriod(this, '3m')">3M</button>
+                </div>
+            </div>
+            <div class="chartContainer">
+                <div class="chartLine"></div>
+            </div>
+            <div class="chartLabels">
+                <span>Seg</span>
+                <span>Ter</span>
+                <span>Qua</span>
+                <span>Qui</span>
+                <span>Sex</span>
+                <span>Sáb</span>
+                <span>Dom</span>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="insightsGrid" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="insightCard">
+                <div class="insightIcon">
+                    <div class="iconContainer" style="background: var(--accent-beige);">
+                        <i class="mdi mdi-trending-up" style="color: white; font-size: 16px;"></i>
+                    </div>
+                </div>
+                <div class="insightValue">78%</div>
+                <div class="insightLabel">Dias positivos</div>
+            </div>
+            <div class="insightCard">
+                <div class="insightIcon">
+                    <div class="iconContainer" style="background: var(--primary);">
+                        <i class="mdi mdi-calendar-heart" style="color: white; font-size: 16px;"></i>
+                    </div>
+                </div>
+                <div class="insightValue">23</div>
+                <div class="insightLabel">Sequência</div>
+            </div>
+        </div>
+
+        <!-- Lembretes -->
+        <div class="remindersCard" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="remindersHeader">
+                <h3 class="remindersTitle">Lembretes de Hoje</h3>
+                <button class="btnPrimary btnSm btnInline" onclick="addReminder()">
+                    Adicionar
+                </button>
+            </div>
+            
+            <div class="remindersList">
+                <div class="reminderItem">
+                    <div class="reminderIcon">
+                        <div class="iconContainer" style="background: var(--primary);">
+                            <i class="mdi mdi-pill" style="color: white; font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div class="reminderInfo">
+                        <div class="reminderText">Mounjaro - Aplicação semanal</div>
+                        <div class="reminderTime">Quinta-feira, 09:30</div>
+                    </div>
+                    <button class="reminderAction" onclick="completeReminder(this)">
+                        Feito
+                    </button>
+                </div>
+                
+                <div class="reminderItem">
+                    <div class="reminderIcon">
+                        <div class="iconContainer" style="background: var(--accent-beige);">
+                            <i class="mdi mdi-water" style="color: white; font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div class="reminderInfo">
+                        <div class="reminderText">Hidratação - Beber 2L de água</div>
+                        <div class="reminderTime">Durante o dia</div>
+                    </div>
+                    <button class="reminderAction" onclick="completeReminder(this)">
+                        Feito
+                    </button>
+                </div>
+
+                <div class="reminderItem">
+                    <div class="reminderIcon">
+                        <div class="iconContainer" style="background: var(--text-secondary);">
+                            <i class="mdi mdi-walk" style="color: white; font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div class="reminderInfo">
+                        <div class="reminderText">Exercício - Caminhada 30min</div>
+                        <div class="reminderTime">Manhã ou tarde</div>
+                    </div>
+                    <button class="reminderAction" onclick="completeReminder(this)">
+                        Feito
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metas de Bem-estar -->
+        <div class="goalsCard" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Metas de Bem-estar</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="editGoals()">
+                    Editar
+                </button>
+            </div>
+
+            <div class="goalItem">
+                <div class="goalHeader">
+                    <span class="goalName">Check-in diário</span>
+                    <span class="goalValue">23/30 dias</span>
+                </div>
+                <div class="goalProgress">
+                    <div class="goalProgressFill" style="width: 77%;"></div>
+                </div>
+            </div>
+
+            <div class="goalItem">
+                <div class="goalHeader">
+                    <span class="goalName">Humor positivo</span>
+                    <span class="goalValue">18/23 dias</span>
+                </div>
+                <div class="goalProgress">
+                    <div class="goalProgressFill" style="width: 78%;"></div>
+                </div>
+            </div>
+
+            <div class="goalItem">
+                <div class="goalHeader">
+                    <span class="goalName">Exercícios semanais</span>
+                    <span class="goalValue">3/4 sessões</span>
+                </div>
+                <div class="goalProgress">
+                    <div class="goalProgressFill" style="width: 75%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sugestões -->
+        <div class="suggestionsCard" style="animation: fadeInUp 1.6s ease-out;">
+            <h3 class="suggestionsTitle">
+                <i class="mdi mdi-lightbulb" style="margin-right: 8px;"></i>
+                Sugestão de Hoje
+            </h3>
+            <div class="suggestionText">
+                Você está com uma sequência incrível de 23 dias! Continue mantendo seus check-ins regulares. Que tal experimentar uma sessão de meditação de 10 minutos hoje?
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMood = 3;
+
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Mood selection
+        function selectMood(button, mood) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.moodButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to selected button
+            button.classList.add('active');
+            currentMood = mood;
+        }
+
+        function saveCheckin() {
+            const moodLabels = {
+                1: 'muito mal',
+                2: 'mal', 
+                3: 'neutro',
+                4: 'bem',
+                5: 'muito bem'
+            };
+            
+            alert(`✅ Check-in salvo!\n\nHumor: ${moodLabels[currentMood]}\nData: ${new Date().toLocaleDateString('pt-BR')}\n\nContinue cuidando do seu bem-estar! (Demo)`);
+        }
+
+        function addNote() {
+            alert('📝 Abrindo editor de notas:\n\n• Descreva como foi seu dia\n• Anote sentimentos e eventos\n• Acompanhe padrões emocionais\n• Compartilhe com sua equipe médica\n\n(Demo)');
+        }
+
+        // Chart period
+        function changePeriod(button, period) {
+            document.querySelectorAll('.periodBtn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            console.log(`Mudando período do gráfico para: ${period}`);
+        }
+
+        // Reminders
+        function addReminder() {
+            alert('🔔 Tipos de Lembrete:\n\n• Medicação\n• Exercícios\n• Hidratação\n• Check-in diário\n• Consultas médicas\n• Hábitos saudáveis\n\n(Demo)');
+        }
+
+        function completeReminder(button) {
+            const item = button.parentElement;
+            button.style.display = 'none';
+            
+            const checkIcon = document.createElement('i');
+            checkIcon.className = 'mdi mdi-check-circle';
+            checkIcon.style.color = 'var(--success-color)';
+            checkIcon.style.fontSize = '18px';
+            
+            item.appendChild(checkIcon);
+            item.style.opacity = '0.6';
+            
+            setTimeout(() => {
+                item.style.display = 'none';
+            }, 2000);
+        }
+
+        // Goals
+        function editGoals() {
+            alert('🎯 Editar Metas de Bem-estar:\n\n• Check-in diário (meta atual: 30 dias)\n• Humor positivo (meta: 80% dos dias)\n• Exercícios semanais (meta: 4x)\n• Hidratação diária (meta: 2L)\n\nPersonalize suas metas! (Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

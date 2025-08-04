@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Evolução e Gráficos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - agora usa .headerGradient.rounded + .backBtn.small */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Progress Summary */
+        .progressSummary {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            text-align: center;
+        }
+
+        .progressTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .progressStats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progressCard {
+            text-align: center;
+        }
+
+        .progressValue {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .progressLabel {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .progressBar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progressFill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .progressText {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Chart Sections */
+        .chartSection {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Mock Chart */
+        .mockChart {
+            position: relative;
+            height: 200px;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .chartArea {
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(58, 74, 58, 0.03) 0%,
+                rgba(58, 74, 58, 0.08) 100%
+            );
+            position: relative;
+        }
+
+        .chartLine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .chartSvg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chartPath {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Bar Chart */
+        .barChart {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            height: 100%;
+            padding: 20px 16px;
+            gap: 8px;
+        }
+
+        .chartBar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--primary-light));
+            border-radius: 4px 4px 0 0;
+            min-height: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chartBar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .chartDots {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .chartDot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--neutral-white);
+            box-shadow: 0 2px 6px var(--shadow-soft);
+            z-index: 2;
+        }
+
+        .chartDot:nth-child(1) { bottom: 15%; left: 5%; }
+        .chartDot:nth-child(2) { bottom: 25%; left: 15%; }
+        .chartDot:nth-child(3) { bottom: 20%; left: 25%; }
+        .chartDot:nth-child(4) { bottom: 40%; left: 35%; }
+        .chartDot:nth-child(5) { bottom: 50%; left: 45%; }
+        .chartDot:nth-child(6) { bottom: 55%; left: 55%; }
+        .chartDot:nth-child(7) { bottom: 60%; left: 65%; }
+        .chartDot:nth-child(8) { bottom: 65%; left: 75%; }
+        .chartDot:nth-child(9) { bottom: 70%; left: 85%; }
+        .chartDot:nth-child(10) { bottom: 75%; left: 95%; }
+
+        .chartLabels {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Period Selector */
+        .periodSelector {
+            display: flex;
+            background: var(--background-lighter);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .periodButton {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .periodButton.active {
+            background: var(--neutral-white);
+            color: var(--primary);
+            box-shadow: 0 2px 4px var(--shadow-soft);
+        }
+
+        /* Metrics Cards */
+        .metricsGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metricCard {
+            background: var(--neutral-white);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px var(--shadow-soft);
+        }
+
+        .metricIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            margin: 0 auto 12px;
+        }
+
+        .metricValue {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .metricLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .metricChange {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .metricChange.positive {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .metricChange.negative {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Milestones */
+        .milestones {
+            background: var(--neutral-white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+        }
+
+        .milestone {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .milestone:last-child {
+            border-bottom: none;
+        }
+
+        .milestoneIcon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--success-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .milestoneContent {
+            flex: 1;
+        }
+
+        .milestoneTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .milestoneDesc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .milestoneDate {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Bottom Navigation - agora vem do components.css */
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .progressStats {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .metricsGrid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mockChart {
+                height: 160px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container > *:nth-child(2) { animation-delay: 0.1s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.3s; }
+        .container > *:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes progressFill {
+            from { width: 0%; }
+            to { width: var(--progress-width); }
+        }
+
+        .progressFill {
+            animation: progressFill 1s ease-out 0.5s both;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient rounded">
+        <div class="headerContent">
+            <button class="backBtn small" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Evolução e Gráficos</h1>
+                <p>Acompanhe seu progresso visual</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Progress Summary -->
+        <div class="progressSummary">
+            <div class="progressTitle">Resumo da Evolução</div>
+            <div class="progressStats">
+                <div class="progressCard">
+                    <div class="progressValue">-8.5kg</div>
+                    <div class="progressLabel">Peso Perdido</div>
+                </div>
+                <div class="progressCard">
+                    <div class="progressValue">68 dias</div>
+                    <div class="progressLabel">Em Tratamento</div>
+                </div>
+            </div>
+            
+            <div class="progressBar">
+                <div class="progressFill" style="--progress-width: 65%; width: 65%;"></div>
+            </div>
+            <div class="progressText">65% da meta atingida (Meta: -13kg)</div>
+        </div>
+
+        <!-- Metrics Overview -->
+        <div class="metricsGrid">
+            <div class="metricCard">
+                <div class="metricIcon">
+                    <i class="mdi mdi-scale-bathroom"></i>
+                </div>
+                <div class="metricValue">68.5</div>
+                <div class="metricLabel">Peso Atual (kg)</div>
+                <div class="metricChange positive">-2.1kg este mês</div>
+            </div>
+            
+            <div class="metricCard">
+                <div class="metricIcon">
+                    <i class="mdi mdi-calculator"></i>
+                </div>
+                <div class="metricValue">25.4</div>
+                <div class="metricLabel">IMC</div>
+                <div class="metricChange positive">-1.2 este mês</div>
+            </div>
+            
+            <div class="metricCard">
+                <div class="metricIcon">
+                    <i class="mdi mdi-heart-pulse"></i>
+                </div>
+                <div class="metricValue">92</div>
+                <div class="metricLabel">Glicemia (mg/dL)</div>
+                <div class="metricChange positive">-16 desde início</div>
+            </div>
+            
+            <div class="metricCard">
+                <div class="metricIcon">
+                    <i class="mdi mdi-run"></i>
+                </div>
+                <div class="metricValue">8.520</div>
+                <div class="metricLabel">Passos/dia (média)</div>
+                <div class="metricChange positive">+1.2k este mês</div>
+            </div>
+        </div>
+
+        <!-- Weight Chart -->
+        <div class="chartSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-chart-line"></i>
+                </div>
+                Evolução do Peso
+            </div>
+            
+            <div class="periodSelector">
+                <button class="periodButton" onclick="setPeriod('1m')">1M</button>
+                <button class="periodButton active" onclick="setPeriod('3m')">3M</button>
+                <button class="periodButton" onclick="setPeriod('6m')">6M</button>
+                <button class="periodButton" onclick="setPeriod('1y')">1A</button>
+            </div>
+            
+            <div class="mockChart">
+                <div class="chartArea">
+                    <div class="chartLine">
+                        <svg class="chartSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path class="chartPath" d="M 5,85 L 15,75 L 25,80 L 35,60 L 45,50 L 55,45 L 65,40 L 75,35 L 85,30 L 95,25" />
+                        </svg>
+                    </div>
+                    <div class="chartDots">
+                        <div class="chartDot" style="bottom: 15%; left: 5%;"></div>
+                        <div class="chartDot" style="bottom: 25%; left: 15%;"></div>
+                        <div class="chartDot" style="bottom: 20%; left: 25%;"></div>
+                        <div class="chartDot" style="bottom: 40%; left: 35%;"></div>
+                        <div class="chartDot" style="bottom: 50%; left: 45%;"></div>
+                        <div class="chartDot" style="bottom: 55%; left: 55%;"></div>
+                        <div class="chartDot" style="bottom: 60%; left: 65%;"></div>
+                        <div class="chartDot" style="bottom: 65%; left: 75%;"></div>
+                        <div class="chartDot" style="bottom: 70%; left: 85%;"></div>
+                        <div class="chartDot" style="bottom: 75%; left: 95%;"></div>
+                    </div>
+                </div>
+                <div class="chartLabels">
+                    <span>Jun</span>
+                    <span>Jun</span>
+                    <span>Jul</span>
+                    <span>Jul</span>
+                    <span>Ago</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMC Chart -->
+        <div class="chartSection">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-calculator-variant"></i>
+                </div>
+                Histórico do IMC
+            </div>
+            
+            <div class="mockChart">
+                <div class="chartArea">
+                    <div class="barChart">
+                        <div class="chartBar" style="height: 85%;" data-value="28.2"></div>
+                        <div class="chartBar" style="height: 82%;" data-value="27.8"></div>
+                        <div class="chartBar" style="height: 78%;" data-value="27.2"></div>
+                        <div class="chartBar" style="height: 75%;" data-value="26.8"></div>
+                        <div class="chartBar" style="height: 70%;" data-value="26.2"></div>
+                        <div class="chartBar" style="height: 65%;" data-value="25.8"></div>
+                        <div class="chartBar" style="height: 60%;" data-value="25.4"></div>
+                    </div>
+                </div>
+                <div class="chartLabels">
+                    <span>Jun</span>
+                    <span>Jun</span>
+                    <span>Jul</span>
+                    <span>Jul</span>
+                    <span>Ago</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+                <span><strong>Inicial:</strong> 28.2</span>
+                <span><strong>Atual:</strong> 25.4</span>
+                <span><strong>Meta:</strong> 22.0</span>
+            </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="milestones">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-trophy"></i>
+                </div>
+                Conquistas Recentes
+            </div>
+            
+            <div class="milestone">
+                <div class="milestoneIcon">
+                    <i class="mdi mdi-medal"></i>
+                </div>
+                <div class="milestoneContent">
+                    <div class="milestoneTitle">Meta de 5kg Atingida!</div>
+                    <div class="milestoneDesc">Primeira meta importante do tratamento conquistada</div>
+                    <div class="milestoneDate">15 de julho, 2024</div>
+                </div>
+            </div>
+            
+            <div class="milestone">
+                <div class="milestoneIcon">
+                    <i class="mdi mdi-heart"></i>
+                </div>
+                <div class="milestoneContent">
+                    <div class="milestoneTitle">Glicemia Normalizada</div>
+                    <div class="milestoneDesc">Valores dentro da faixa normal pela primeira vez</div>
+                    <div class="milestoneDate">12 de julho, 2024</div>
+                </div>
+            </div>
+            
+            <div class="milestone">
+                <div class="milestoneIcon">
+                    <i class="mdi mdi-run-fast"></i>
+                </div>
+                <div class="milestoneContent">
+                    <div class="milestoneTitle">8.000 Passos/Dia</div>
+                    <div class="milestoneDesc">Meta de atividade física diária consistente</div>
+                    <div class="milestoneDate">10 de julho, 2024</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="index.html" class="navItem active">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function setPeriod(period) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.periodButton').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            console.log(`Período selecionado: ${period}`);
+            
+            // Simula mudança de dados no gráfico
+            const chartLine = document.querySelector('.chartLine');
+            chartLine.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                chartLine.style.opacity = '1';
+            }, 300);
+        }
+
+        // Inicialização
+        console.log('Gráficos de evolução carregados');
+    </script>
+</body>
+</html>

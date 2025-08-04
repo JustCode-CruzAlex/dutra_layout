@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Blog Educativo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para blog.html */
+        .searchContainer {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .searchInput {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            background: var(--background-lighter);
+            font-size: 14px;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .searchInput:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--neutral-white);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .searchContainer {
+            position: relative;
+        }
+
+        .searchIcon {
+            position: absolute;
+            left: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* Categories */
+        .categoriesGrid {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .categoryChip {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            background: var(--neutral-white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .categoryChip:hover,
+        .categoryChip.active {
+            background: var(--primary);
+            color: var(--neutral-white);
+            border-color: var(--primary);
+        }
+
+        /* Featured Article */
+        .featuredArticle {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featuredArticle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .featuredBadge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .featuredTitle {
+            font-size: 20px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .featuredExcerpt {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .featuredMeta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .featuredAuthor {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .featuredAuthor .iconContainer {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Articles List */
+        .articlesList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .articleCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            display: flex;
+            gap: 16px;
+        }
+
+        .articleCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .articleThumbnail {
+            width: 80px;
+            height: 80px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .articleContent {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .articleCategory {
+            font-size: 10px;
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .articleTitle {
+            font-size: 15px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .articleExcerpt {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 8px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .articleMeta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .articleMeta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Load More */
+        .loadMore {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Popular Topics */
+        .popularTopics {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .topicsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .topicItem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .topicItem:last-child {
+            border-bottom: none;
+        }
+
+        .topicItem:hover {
+            color: var(--primary);
+        }
+
+        .topicName {
+            font-size: 13px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+        }
+
+        .topicCount {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--background-lighter);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .featuredTitle {
+                font-size: 18px;
+            }
+
+            .articleCard {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .articleThumbnail {
+                width: 100%;
+                height: 60px;
+            }
+
+            .categoriesGrid {
+                gap: 8px;
+            }
+
+            .categoryChip {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Blog Educativo</h1>
+                <p>Artigos sobre saúde, nutrição e bem-estar</p>
+            </div>
+            <button class="btnIcon" onclick="toggleBookmarks()">
+                <i class="mdi mdi-bookmark-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Search -->
+        <div class="searchContainer" style="animation: fadeInUp 0.6s ease-out;">
+            <i class="mdi mdi-magnify searchIcon"></i>
+            <input type="text" class="searchInput" placeholder="Buscar artigos..." onkeyup="searchArticles(this.value)">
+        </div>
+
+        <!-- Categories -->
+        <div class="categoriesGrid" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="categoryChip active" onclick="filterCategory(this, 'all')">Todos</div>
+            <div class="categoryChip" onclick="filterCategory(this, 'nutricao')">Nutrição</div>
+            <div class="categoryChip" onclick="filterCategory(this, 'exercicio')">Exercício</div>
+            <div class="categoryChip" onclick="filterCategory(this, 'saude')">Saúde</div>
+            <div class="categoryChip" onclick="filterCategory(this, 'receitas')">Receitas</div>
+            <div class="categoryChip" onclick="filterCategory(this, 'bem-estar')">Bem-estar</div>
+        </div>
+
+        <!-- Featured Article -->
+        <div class="featuredArticle" style="animation: fadeInUp 1.0s ease-out;" onclick="openArticle('featured-metabolismo')">
+            <div class="featuredBadge">
+                <i class="mdi mdi-star"></i>
+                Destaque
+            </div>
+            <h2 class="featuredTitle">Como Acelerar seu Metabolismo de Forma Natural</h2>
+            <p class="featuredExcerpt">
+                Descubra 8 estratégias cientificamente comprovadas para aumentar seu metabolismo e potencializar sua perda de peso de forma saudável e sustentável.
+            </p>
+            <div class="featuredMeta">
+                <div class="featuredAuthor">
+                    <div class="iconContainer small" style="background: var(--primary);">
+                        <i class="mdi mdi-stethoscope" style="color: white; font-size: 12px;"></i>
+                    </div>
+                    Dr. Thiago Dutra
+                </div>
+                <div>
+                    <i class="mdi mdi-clock-outline"></i>
+                    5 min • 2 dias atrás
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Topics -->
+        <div class="section" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Tópicos Populares</h2>
+            </div>
+            
+            <div class="popularTopics">
+                <div class="topicsList">
+                    <div class="topicItem" onclick="filterCategory(null, 'jejum-intermitente')">
+                        <span class="topicName">Jejum Intermitente</span>
+                        <span class="topicCount">12 artigos</span>
+                    </div>
+                    <div class="topicItem" onclick="filterCategory(null, 'suplementacao')">
+                        <span class="topicName">Suplementação</span>
+                        <span class="topicCount">8 artigos</span>
+                    </div>
+                    <div class="topicItem" onclick="filterCategory(null, 'receitas-fit')">
+                        <span class="topicName">Receitas Fit</span>
+                        <span class="topicCount">15 artigos</span>
+                    </div>
+                    <div class="topicItem" onclick="filterCategory(null, 'exercicios-casa')">
+                        <span class="topicName">Exercícios em Casa</span>
+                        <span class="topicCount">6 artigos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Articles List -->
+        <div class="section" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Artigos Recentes</h2>
+                <button class="btnPrimary btnMd btnInline" onclick="viewAllArticles()">
+                    Ver todos
+                </button>
+            </div>
+
+            <div class="articlesList" id="articlesList">
+                <!-- Article 1 -->
+                <div class="articleCard" data-category="nutricao" onclick="openArticle('proteina-emagrecimento')">
+                    <div class="articleThumbnail">
+                        <div class="iconContainer" style="background: var(--accent-beige);">
+                            <i class="mdi mdi-food-drumstick" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="articleContent">
+                        <div class="articleCategory">Nutrição</div>
+                        <h3 class="articleTitle">A Importância da Proteína no Processo de Emagrecimento</h3>
+                        <p class="articleExcerpt">
+                            Entenda como o consumo adequado de proteínas pode acelerar sua perda de peso e preservar massa muscular durante o processo.
+                        </p>
+                        <div class="articleMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Nutricionista
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                3 min
+                            </span>
+                            <span>
+                                <i class="mdi mdi-heart-outline"></i>
+                                24 likes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 2 -->
+                <div class="articleCard" data-category="saude" onclick="openArticle('hidratacao-metabolismo')">
+                    <div class="articleThumbnail">
+                        <div class="iconContainer" style="background: var(--primary-light);">
+                            <i class="mdi mdi-water" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="articleContent">
+                        <div class="articleCategory">Saúde</div>
+                        <h3 class="articleTitle">Hidratação Adequada: O Segredo do Metabolismo Acelerado</h3>
+                        <p class="articleExcerpt">
+                            Descubra como a água influencia diretamente seu metabolismo e quantos litros você realmente precisa consumir por dia.
+                        </p>
+                        <div class="articleMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Dr. Thiago
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                4 min
+                            </span>
+                            <span>
+                                <i class="mdi mdi-heart-outline"></i>
+                                18 likes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 3 -->
+                <div class="articleCard" data-category="exercicio" onclick="openArticle('exercicios-cardio')">
+                    <div class="articleThumbnail">
+                        <div class="iconContainer" style="background: var(--text-secondary);">
+                            <i class="mdi mdi-run" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="articleContent">
+                        <div class="articleCategory">Exercício</div>
+                        <h3 class="articleTitle">Cardio vs Musculação: Qual é Melhor para Emagrecer?</h3>
+                        <p class="articleExcerpt">
+                            Comparação científica entre exercícios cardiovasculares e musculação para uma estratégia de emagrecimento eficaz.
+                        </p>
+                        <div class="articleMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Personal Trainer
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                6 min
+                            </span>
+                            <span>
+                                <i class="mdi mdi-heart-outline"></i>
+                                32 likes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 4 -->
+                <div class="articleCard" data-category="receitas" onclick="openArticle('receita-smoothie')">
+                    <div class="articleThumbnail">
+                        <div class="iconContainer" style="background: var(--success-color);">
+                            <i class="mdi mdi-blender" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="articleContent">
+                        <div class="articleCategory">Receitas</div>
+                        <h3 class="articleTitle">5 Smoothies Detox para Acelerar a Perda de Peso</h3>
+                        <p class="articleExcerpt">
+                            Receitas práticas e deliciosas de smoothies ricos em nutrientes para potencializar seus resultados.
+                        </p>
+                        <div class="articleMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Nutricionista
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                2 min
+                            </span>
+                            <span>
+                                <i class="mdi mdi-heart-outline"></i>
+                                41 likes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 5 -->
+                <div class="articleCard" data-category="bem-estar" onclick="openArticle('sono-emagrecimento')">
+                    <div class="articleThumbnail">
+                        <div class="iconContainer" style="background: var(--primary);">
+                            <i class="mdi mdi-sleep" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="articleContent">
+                        <div class="articleCategory">Bem-estar</div>
+                        <h3 class="articleTitle">A Relação Entre Qualidade do Sono e Perda de Peso</h3>
+                        <p class="articleExcerpt">
+                            Como otimizar seu sono para potencializar a queima de gordura e regular os hormônios da fome.
+                        </p>
+                        <div class="articleMeta">
+                            <span>
+                                <i class="mdi mdi-account"></i>
+                                Dr. Thiago
+                            </span>
+                            <span>
+                                <i class="mdi mdi-clock-outline"></i>
+                                5 min
+                            </span>
+                            <span>
+                                <i class="mdi mdi-heart-outline"></i>
+                                29 likes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load More -->
+        <div class="loadMore">
+            <button class="btnSecondary" onclick="loadMoreArticles()">
+                <i class="mdi mdi-refresh" style="margin-right: 8px;"></i>
+                Carregar Mais Artigos
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = 'all';
+
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Search functionality
+        function searchArticles(query) {
+            console.log(`Buscando artigos: "${query}"`);
+            if (query.length > 2) {
+                // Simulate search
+                filterArticles(query.toLowerCase());
+            } else {
+                showAllArticles();
+            }
+        }
+
+        function filterArticles(query) {
+            const articles = document.querySelectorAll('.articleCard');
+            articles.forEach(article => {
+                const title = article.querySelector('.articleTitle').textContent.toLowerCase();
+                const excerpt = article.querySelector('.articleExcerpt').textContent.toLowerCase();
+                const category = article.querySelector('.articleCategory').textContent.toLowerCase();
+                
+                if (title.includes(query) || excerpt.includes(query) || category.includes(query)) {
+                    article.style.display = 'flex';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        }
+
+        function showAllArticles() {
+            const articles = document.querySelectorAll('.articleCard');
+            articles.forEach(article => {
+                article.style.display = 'flex';
+            });
+            
+            // Remove no results message if it exists
+            const noResults = document.querySelector('.noResults');
+            if (noResults) {
+                noResults.remove();
+            }
+        }
+
+        // Category filtering
+        function filterCategory(element, category) {
+            // Update active category chip
+            if (element) {
+                document.querySelectorAll('.categoryChip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                element.classList.add('active');
+            }
+            
+            currentCategory = category;
+            console.log(`Filtrando por categoria: ${category}`);
+            
+            if (category === 'all') {
+                showAllArticles();
+                return;
+            }
+            
+            const articles = document.querySelectorAll('.articleCard');
+            let visibleCount = 0;
+            
+            articles.forEach(article => {
+                const articleCategory = article.dataset.category;
+                if (category === 'all' || articleCategory === category) {
+                    article.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+            
+            // Show feedback to user
+            const articlesList = document.getElementById('articlesList');
+            if (visibleCount === 0) {
+                if (!document.querySelector('.noResults')) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'noResults';
+                    noResults.style.cssText = 'text-align: center; padding: 40px 20px; color: var(--text-muted);';
+                    noResults.innerHTML = `<i class="mdi mdi-text-box-search" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><br>Nenhum artigo encontrado em "${category.charAt(0).toUpperCase() + category.slice(1)}"`;
+                    articlesList.appendChild(noResults);
+                }
+            } else {
+                const noResults = document.querySelector('.noResults');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+        }
+
+        // Article actions
+        function openArticle(articleId) {
+            const articles = {
+                'featured-metabolismo': {
+                    title: 'Como Acelerar seu Metabolismo de Forma Natural',
+                    content: 'Artigo completo sobre metabolismo...'
+                },
+                'proteina-emagrecimento': {
+                    title: 'A Importância da Proteína no Processo de Emagrecimento',
+                    content: 'Artigo sobre proteínas...'
+                },
+                'hidratacao-metabolismo': {
+                    title: 'Hidratação Adequada: O Segredo do Metabolismo Acelerado',
+                    content: 'Artigo sobre hidratação...'
+                }
+            };
+
+            const article = articles[articleId];
+            if (article) {
+                alert(`📖 Abrindo artigo:\n\n"${article.title}"\n\n${article.content}\n\n💾 Artigo será salvo nos favoritos\n⭐ Ganhará 10 pontos XP\n(Demo)`);
+            }
+        }
+
+        function viewAllArticles() {
+            alert('📚 Navegando para biblioteca completa:\n\n• 150+ artigos disponíveis\n• Filtros avançados\n• Histórico de leitura\n• Downloads offline\n\n(Demo)');
+        }
+
+        function loadMoreArticles() {
+            alert('📄 Carregando mais artigos:\n\n• Próximos 10 artigos\n• Baseado em suas preferências\n• Sugestões personalizadas\n• Conteúdo mais recente\n\n(Demo)');
+        }
+
+        function toggleBookmarks() {
+            window.location.href = 'favorites.html';
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

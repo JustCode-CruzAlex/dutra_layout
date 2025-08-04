@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Fazer Upgrade</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Current Plan Banner */
+        .currentPlanBanner {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary);
+        }
+
+        .currentPlanHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .currentPlanTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .currentPlanBadge {
+            background: var(--primary);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .currentPlanDetails {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .currentPlanPrice {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Plans Grid */
+        .plansContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .planCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .planCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .planCard.recommended {
+            border: 2px solid var(--accent-beige);
+        }
+
+        .planCard.premium {
+            border: 2px solid var(--primary);
+        }
+
+        .recommendedBadge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 1;
+        }
+
+        .planHeader {
+            padding: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--neutral-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .planHeader::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .planCard.basic .planHeader {
+            background: linear-gradient(135deg, #B5B6B1 0%, #8A8F88 100%);
+        }
+
+        .planCard.plus .planHeader {
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+        }
+
+        .planCard.premium .planHeader {
+            background: linear-gradient(135deg, #FFD700 0%, var(--accent-beige) 100%);
+        }
+
+        .planIcon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .planName {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .planTagline {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .planPricing {
+            padding: 24px;
+            background: var(--background-lighter);
+            text-align: center;
+        }
+
+        .planPrice {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .planPrice span {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .planPeriod {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .planDiscount {
+            background: var(--success-color);
+            color: var(--neutral-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .planBenefits {
+            padding: 24px;
+        }
+
+        .benefitsList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .benefitItem {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .benefitItem:last-child {
+            border-bottom: none;
+        }
+
+        .benefitIcon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .benefitText {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .benefitValue {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .planAction {
+            padding: 20px;
+        }
+
+        .selectButton {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: var(--neutral-white);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .selectButton:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-button);
+        }
+
+        .selectButton.premium {
+            background: linear-gradient(135deg, #FFD700 0%, var(--accent-beige) 100%);
+        }
+
+        .selectButton.disabled {
+            background: var(--border-light);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .selectButton.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Comparison Section */
+        .comparisonSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .comparisonTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparisonTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparisonTable th {
+            padding: 12px;
+            background: var(--background-lighter);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: left;
+        }
+
+        .comparisonTable td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .comparisonTable td.center {
+            text-align: center;
+        }
+
+        .checkIcon {
+            color: var(--success-color);
+            font-size: 18px;
+        }
+
+        .closeIcon {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* FAQ Section */
+        .faqSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .faqTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .faqItem {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 16px;
+        }
+
+        .faqItem:last-child {
+            border-bottom: none;
+        }
+
+        .faqQuestion {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faqAnswer {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .planPrice {
+                font-size: 28px;
+            }
+
+            .planName {
+                font-size: 20px;
+            }
+
+            .comparisonTable {
+                font-size: 12px;
+            }
+
+            .comparisonTable th,
+            .comparisonTable td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Fazer Upgrade</h1>
+                <p>Escolha o melhor plano para sua jornada</p>
+            </div>
+            <button class="btnIcon" onclick="showComparison()">
+                <i class="mdi mdi-compare"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Current Plan -->
+        <div class="currentPlanBanner" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="currentPlanHeader">
+                <div class="currentPlanTitle">Seu Plano Atual</div>
+                <div class="currentPlanBadge">VIP</div>
+            </div>
+            <div class="currentPlanDetails">Transformação Premium • 6 meses</div>
+            <div class="currentPlanPrice">R$ 1.200/mês</div>
+        </div>
+
+        <!-- Plans -->
+        <div class="plansContainer">
+            <!-- Basic Plan -->
+            <div class="planCard basic" style="animation: fadeInUp 0.8s ease-out;">
+                <div class="planHeader">
+                    <div class="planIcon">
+                        <i class="mdi mdi-leaf"></i>
+                    </div>
+                    <div class="planName">Essencial</div>
+                    <div class="planTagline">Comece sua transformação</div>
+                </div>
+                <div class="planPricing">
+                    <div class="planPrice">R$ 499<span>/mês</span></div>
+                    <div class="planPeriod">Cobrado mensalmente</div>
+                </div>
+                <div class="planBenefits">
+                    <ul class="benefitsList">
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Consultas médicas</span>
+                            <span class="benefitValue">1/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Bioimpedância</span>
+                            <span class="benefitValue">1/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Conteúdo básico</span>
+                            <span class="benefitValue">Limitado</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-close"></i>
+                            </div>
+                            <span class="benefitText">Mounjaro</span>
+                            <span class="benefitValue">—</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-close"></i>
+                            </div>
+                            <span class="benefitText">Soroterapia</span>
+                            <span class="benefitValue">—</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="planAction">
+                    <button class="selectButton disabled" onclick="selectPlan('basic')">
+                        Downgrade Indisponível
+                    </button>
+                </div>
+            </div>
+
+            <!-- Plus Plan -->
+            <div class="planCard plus recommended" style="animation: fadeInUp 1.0s ease-out;">
+                <div class="recommendedBadge">Recomendado</div>
+                <div class="planHeader">
+                    <div class="planIcon">
+                        <i class="mdi mdi-star"></i>
+                    </div>
+                    <div class="planName">Plus</div>
+                    <div class="planTagline">Resultados acelerados</div>
+                </div>
+                <div class="planPricing">
+                    <div class="planPrice">R$ 899<span>/mês</span></div>
+                    <div class="planPeriod">Economize R$ 180 no trimestre</div>
+                    <div class="planDiscount">15% OFF no trimestre</div>
+                </div>
+                <div class="planBenefits">
+                    <ul class="benefitsList">
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Consultas médicas</span>
+                            <span class="benefitValue">2/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Mounjaro</span>
+                            <span class="benefitValue">2/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Soroterapia</span>
+                            <span class="benefitValue">1/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Bioimpedância</span>
+                            <span class="benefitValue">2/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Conteúdo premium</span>
+                            <span class="benefitValue">Parcial</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="planAction">
+                    <button class="selectButton disabled" onclick="selectPlan('plus')">
+                        Downgrade Indisponível
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIP Plan (Current) -->
+            <div class="planCard vip" style="animation: fadeInUp 1.2s ease-out;">
+                <div class="currentPlanBadge" style="position: absolute; top: 16px; right: 16px; z-index: 1;">Plano Atual</div>
+                <div class="planHeader">
+                    <div class="planIcon">
+                        <i class="mdi mdi-crown"></i>
+                    </div>
+                    <div class="planName">VIP</div>
+                    <div class="planTagline">Transformação completa</div>
+                </div>
+                <div class="planPricing">
+                    <div class="planPrice">R$ 1.200<span>/mês</span></div>
+                    <div class="planPeriod">Economize R$ 720 no semestre</div>
+                    <div class="planDiscount">10% OFF no semestre</div>
+                </div>
+                <div class="planBenefits">
+                    <ul class="benefitsList">
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Consultas médicas</span>
+                            <span class="benefitValue">Ilimitadas</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Mounjaro</span>
+                            <span class="benefitValue">4/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Soroterapia</span>
+                            <span class="benefitValue">2/mês</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Implante hormonal</span>
+                            <span class="benefitValue">2/ano</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Conteúdo premium</span>
+                            <span class="benefitValue">Ilimitado</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="planAction">
+                    <button class="selectButton" onclick="renewPlan()">
+                        Renovar Plano
+                    </button>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="planCard premium" style="animation: fadeInUp 1.4s ease-out;">
+                <div class="recommendedBadge" style="background: linear-gradient(135deg, #FFD700, #FFA500);">Exclusivo</div>
+                <div class="planHeader">
+                    <div class="planIcon">
+                        <i class="mdi mdi-diamond"></i>
+                    </div>
+                    <div class="planName">Diamond</div>
+                    <div class="planTagline">Experiência ultra premium</div>
+                </div>
+                <div class="planPricing">
+                    <div class="planPrice">R$ 2.499<span>/mês</span></div>
+                    <div class="planPeriod">Economize R$ 3.000 no ano</div>
+                    <div class="planDiscount">20% OFF anual</div>
+                </div>
+                <div class="planBenefits">
+                    <ul class="benefitsList">
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Tudo do VIP</span>
+                            <span class="benefitValue">✓</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Personal trainer</span>
+                            <span class="benefitValue">2x/semana</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Nutricionista VIP</span>
+                            <span class="benefitValue">Semanal</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Atendimento 24/7</span>
+                            <span class="benefitValue">WhatsApp</span>
+                        </li>
+                        <li class="benefitItem">
+                            <div class="benefitIcon">
+                                <i class="mdi mdi-check"></i>
+                            </div>
+                            <span class="benefitText">Spa & Massagem</span>
+                            <span class="benefitValue">2/mês</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="planAction">
+                    <button class="selectButton premium" onclick="selectPlan('diamond')">
+                        Fazer Upgrade
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faqSection" style="animation: fadeInUp 1.6s ease-out;">
+            <div class="faqTitle">Perguntas Frequentes</div>
+            
+            <div class="faqItem">
+                <div class="faqQuestion" onclick="toggleFaq(this)">
+                    Como funciona o upgrade?
+                    <i class="mdi mdi-chevron-down"></i>
+                </div>
+                <div class="faqAnswer">
+                    O valor proporcional do seu plano atual será creditado automaticamente. Você paga apenas a diferença para o novo plano, calculada pro-rata pelos dias restantes.
+                </div>
+            </div>
+            
+            <div class="faqItem">
+                <div class="faqQuestion" onclick="toggleFaq(this)">
+                    Posso fazer downgrade?
+                    <i class="mdi mdi-chevron-down"></i>
+                </div>
+                <div class="faqAnswer">
+                    Sim, mas apenas no final do período contratado. O downgrade imediato não está disponível para planos com compromisso semestral ou anual.
+                </div>
+            </div>
+            
+            <div class="faqItem">
+                <div class="faqQuestion" onclick="toggleFaq(this)">
+                    Existe fidelidade?
+                    <i class="mdi mdi-chevron-down"></i>
+                </div>
+                <div class="faqAnswer">
+                    Planos trimestrais têm 3 meses de fidelidade, semestrais 6 meses e anuais 12 meses. Após o período, você pode alterar ou cancelar sem multas.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = 'plan.html';
+        }
+
+        // Plan selection
+        function selectPlan(planType) {
+            const plans = {
+                'basic': { name: 'Essencial', price: 'R$ 499/mês' },
+                'plus': { name: 'Plus', price: 'R$ 899/mês' },
+                'vip': { name: 'VIP', price: 'R$ 1.200/mês' },
+                'diamond': { name: 'Diamond', price: 'R$ 2.499/mês' }
+            };
+
+            const plan = plans[planType];
+            if (!plan) return;
+
+            if (planType === 'basic' || planType === 'plus') {
+                alert('Downgrade Indisponível\n\nVocê possui um plano com fidelidade de 6 meses.\n\nPara fazer downgrade:\n• Aguarde o fim do período\n• Ou entre em contato com suporte\n\nWhatsApp: (11) 98765-4321\n\n(Demo)');
+                return;
+            }
+
+            if (planType === 'diamond') {
+                const confirmed = confirm(`Upgrade para Plano ${plan.name}\n\n${plan.price}\n\nBenefícios exclusivos:\n• Personal trainer 2x/semana\n• Nutricionista VIP semanal\n• Atendimento 24/7\n• Spa & Massagem mensal\n• Tudo do plano VIP incluído\n\nConfirmar upgrade?\n\n(Demo)`);
+                
+                if (confirmed) {
+                    alert('Upgrade Realizado!\n\nParabéns! Você agora é Diamond.\n\n• Ativação imediata\n• Cobrança proporcional\n• Consultor dedicado entrará em contato\n\nConfirmação enviada por email\n\n(Demo)');
+                }
+            }
+        }
+
+        function renewPlan() {
+            alert('Renovar Plano VIP\n\nRenovação Antecipada:\n• 10% de desconto\n• 1 mês bônus\n• Consulta extra grátis\n\nValor: R$ 6.480 (6 meses)\nDesconto: R$ 648\nTotal: R$ 5.832\n\nConfirmar renovação?\n\n(Demo)');
+        }
+
+        function showComparison() {
+            alert('Comparação de Planos\n\nESSENCIAL (R$ 499)\n• 1 consulta/mês\n• Bioimpedância mensal\n\nPLUS (R$ 899)\n• 2 consultas/mês\n• 2 Mounjaro/mês\n• 1 Soroterapia/mês\n\nVIP (R$ 1.200)\n• Consultas ilimitadas\n• 4 Mounjaro/mês\n• 2 Soroterapia/mês\n• Implante hormonal\n\nDIAMOND (R$ 2.499)\n• Tudo do VIP\n• Personal trainer\n• Nutricionista VIP\n• Atendimento 24/7\n• Spa mensal\n\n(Demo)');
+        }
+
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.mdi');
+            
+            if (answer.style.display === 'none' || !answer.style.display) {
+                answer.style.display = 'block';
+                icon.classList.remove('mdi-chevron-down');
+                icon.classList.add('mdi-chevron-up');
+            } else {
+                answer.style.display = 'none';
+                icon.classList.remove('mdi-chevron-up');
+                icon.classList.add('mdi-chevron-down');
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Hide all FAQ answers initially
+            document.querySelectorAll('.faqAnswer').forEach(answer => {
+                answer.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

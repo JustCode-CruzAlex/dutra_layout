@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Configurações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Profile Card */
+        .profileCard {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            color: var(--neutral-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profileCard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .profileHeader {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .profileAvatar {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .profileInfo {
+            flex: 1;
+        }
+
+        .profileName {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profileEmail {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .profilePlan {
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .editButton {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: var(--neutral-white);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editButton:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Settings Sections */
+        .settingsSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* Settings Items */
+        .settingsList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .settingItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settingItem:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .settingContent {
+            flex: 1;
+        }
+
+        .settingTitle {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .settingDescription {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Toggle Switch */
+        .toggleSwitch {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--border-light);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggleSwitch.active {
+            background: var(--primary);
+        }
+
+        .toggleKnob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: var(--neutral-white);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggleSwitch.active .toggleKnob {
+            transform: translateX(20px);
+        }
+
+        /* Settings Links */
+        .settingLink {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .settingLink:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .settingLink:hover {
+            background: var(--background-lighter);
+            margin: 0 -16px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+        }
+
+        .settingLinkIcon {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Theme Selector */
+        .themeSelector {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .themeOption {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--background-lighter);
+        }
+
+        .themeOption.active {
+            border-color: var(--primary);
+            background: rgba(58, 74, 58, 0.1);
+        }
+
+        .themeOption:hover {
+            border-color: var(--primary);
+        }
+
+        .themeIcon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            display: block;
+            color: var(--text-primary);
+        }
+
+        .themeOption.active .themeIcon {
+            color: var(--primary);
+        }
+
+        .themeLabel {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Quick Actions */
+        .quickActions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .actionCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .actionCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .actionIcon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 24px;
+        }
+
+        .actionTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .actionDescription {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Logout Button */
+        .logoutButton {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: #C4B9B3;
+            border: 2px solid #C4B9B3;
+            border-radius: var(--radius-full);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .logoutButton:hover {
+            background: #C4B9B3;
+            color: var(--neutral-white);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-button);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .quickActions {
+                grid-template-columns: 1fr;
+            }
+
+            .themeSelector {
+                flex-direction: column;
+            }
+
+            .profileHeader {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .editButton {
+                margin-top: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Configurações</h1>
+                <p>Personalize sua experiência</p>
+            </div>
+            <button class="btnIcon" onclick="resetSettings()">
+                <i class="mdi mdi-refresh"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Profile Card -->
+        <div class="profileCard" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="profileHeader">
+                <div class="profileAvatar">M</div>
+                <div class="profileInfo">
+                    <div class="profileName">Maria Silva</div>
+                    <div class="profileEmail">maria.silva@email.com</div>
+                    <div class="profilePlan">Plano VIP • 127 dias restantes</div>
+                </div>
+                <button class="editButton" onclick="window.location.href='../profile/index.html'">
+                    Editar Perfil
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quickActions" style="animation: fadeInUp 0.8s ease-out;">
+            <a href="health.html" class="actionCard">
+                <div class="actionIcon">
+                    <i class="mdi mdi-heart-pulse"></i>
+                </div>
+                <div class="actionTitle">Integração Health</div>
+                <div class="actionDescription">Apple & Google</div>
+            </a>
+            <a href="support.html" class="actionCard">
+                <div class="actionIcon">
+                    <i class="mdi mdi-help-circle"></i>
+                </div>
+                <div class="actionTitle">Suporte</div>
+                <div class="actionDescription">FAQ & Contato</div>
+            </a>
+        </div>
+
+        <!-- Notificações -->
+        <div class="settingsSection" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-bell"></i>
+                </div>
+                Notificações
+            </div>
+            
+            <div class="settingsList">
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Notificações Push</div>
+                        <div class="settingDescription">Receber alertas no dispositivo</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Lembretes de Consulta</div>
+                        <div class="settingDescription">1 hora antes da consulta</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Medicações</div>
+                        <div class="settingDescription">Lembretes de Mounjaro e outros</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Check-in Diário</div>
+                        <div class="settingDescription">"Como me sinto hoje" às 9h</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Conquistas</div>
+                        <div class="settingDescription">Badges e recompensas desbloqueadas</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Email</div>
+                        <div class="settingDescription">Relatórios semanais e novidades</div>
+                    </div>
+                    <div class="toggleSwitch" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aparência -->
+        <div class="settingsSection" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-palette"></i>
+                </div>
+                Aparência
+            </div>
+            
+            <div class="settingsList">
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Tema do App</div>
+                        <div class="settingDescription">Escolha entre os temas claros</div>
+                        <div class="themeSelector">
+                            <div class="themeOption" onclick="changeTheme('light')">
+                                <i class="mdi mdi-white-balance-sunny themeIcon"></i>
+                                <span class="themeLabel">Light 1</span>
+                            </div>
+                            <div class="themeOption active" onclick="changeTheme('light2')">
+                                <i class="mdi mdi-brightness-5 themeIcon"></i>
+                                <span class="themeLabel">Light 2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacidade -->
+        <div class="settingsSection" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-shield-check"></i>
+                </div>
+                Privacidade & Dados
+            </div>
+            
+            <div class="settingsList">
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Compartilhamento de Dados</div>
+                        <div class="settingDescription">Com Apple Health e Google Fit</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Analytics</div>
+                        <div class="settingDescription">Ajudar a melhorar o app</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+                <div class="settingItem">
+                    <div class="settingContent">
+                        <div class="settingTitle">Backup Automático</div>
+                        <div class="settingDescription">Sincronizar dados na nuvem</div>
+                    </div>
+                    <div class="toggleSwitch active" onclick="toggleSetting(this)">
+                        <div class="toggleKnob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links Rápidos -->
+        <div class="settingsSection" style="animation: fadeInUp 1.6s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-link"></i>
+                </div>
+                Links Rápidos
+            </div>
+            
+            <div class="settingsList">
+                <a href="plan.html" class="settingLink">
+                    <div class="settingContent">
+                        <div class="settingTitle">Meu Plano</div>
+                        <div class="settingDescription">Gerenciar assinatura e benefícios</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+                <a href="../profile/medicalRecord.html" class="settingLink">
+                    <div class="settingContent">
+                        <div class="settingTitle">Prontuário Digital</div>
+                        <div class="settingDescription">Histórico médico completo</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+                <a href="../health/exams.html" class="settingLink">
+                    <div class="settingContent">
+                        <div class="settingTitle">Upload de Exames</div>
+                        <div class="settingDescription">Digitalizar e organizar</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+                <a href="../evolution/index.html" class="settingLink">
+                    <div class="settingContent">
+                        <div class="settingTitle">Minha Evolução</div>
+                        <div class="settingDescription">Progresso e métricas</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Conta -->
+        <div class="settingsSection" style="animation: fadeInUp 1.8s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-account-cog"></i>
+                </div>
+                Conta
+            </div>
+            
+            <div class="settingsList">
+                <a href="#" class="settingLink" onclick="changePassword()">
+                    <div class="settingContent">
+                        <div class="settingTitle">Alterar Senha</div>
+                        <div class="settingDescription">Atualizar credenciais de acesso</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+                <a href="#" class="settingLink" onclick="exportData()">
+                    <div class="settingContent">
+                        <div class="settingTitle">Exportar Dados</div>
+                        <div class="settingDescription">Download de informações pessoais</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+                <a href="#" class="settingLink" onclick="deleteAccount()">
+                    <div class="settingContent">
+                        <div class="settingTitle">Excluir Conta</div>
+                        <div class="settingDescription">Remover permanentemente</div>
+                    </div>
+                    <i class="mdi mdi-chevron-right settingLinkIcon"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <div style="animation: fadeInUp 2.0s ease-out;">
+            <button class="logoutButton" onclick="logout()">
+                <i class="mdi mdi-logout"></i> Sair da Conta
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem active">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado - Corrigido
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light2';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Update theme selector - verifica se existem os elementos primeiro
+            const themeOptions = document.querySelectorAll('.themeOption');
+            if (themeOptions.length > 0) {
+                themeOptions.forEach(option => {
+                    option.classList.remove('active');
+                });
+                
+                // Busca a opção correta e marca como ativa
+                const activeOption = document.querySelector(`[onclick="changeTheme('${savedTheme}')"]`);
+                if (activeOption) {
+                    activeOption.classList.add('active');
+                }
+            }
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = '../profile/index.html';
+        }
+
+        // Toggle Settings
+        function toggleSetting(toggle) {
+            toggle.classList.toggle('active');
+            const settingTitle = toggle.parentElement.querySelector('.settingTitle').textContent;
+            const isActive = toggle.classList.contains('active');
+            console.log(`${settingTitle}: ${isActive ? 'Ativado' : 'Desativado'}`);
+        }
+
+        // Change Theme - Consistente com perfil e outras páginas
+        function changeTheme(theme) {
+            // Remove active de todas as opções
+            document.querySelectorAll('.themeOption').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Adiciona active na opção selecionada
+            event.target.closest('.themeOption').classList.add('active');
+            
+            // Aplica o tema usando data-theme (padrão do projeto)
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('instituto-dutra-theme', theme);
+            
+            // Se existe a função do theme.js, usa também (para compatibilidade)
+            if (typeof window.switchTheme === 'function') {
+                window.switchTheme(theme);
+            }
+            
+            console.log(`Tema alterado para: ${theme}`);
+        }
+
+        // Settings Actions
+        function resetSettings() {
+            const confirmed = confirm('Restaurar Configurações Padrão\n\nIsso irá:\n• Ativar todas as notificações\n• Definir tema Light 2\n• Redefinir preferências\n• Manter dados do perfil\n\nConfirmar restauração?\n\n(Demo)');
+            
+            if (confirmed) {
+                // Reset all toggles to active
+                document.querySelectorAll('.toggleSwitch').forEach(toggle => {
+                    toggle.classList.add('active');
+                });
+                
+                // Reset theme to light2 (padrão)
+                document.documentElement.setAttribute('data-theme', 'light2');
+                localStorage.setItem('instituto-dutra-theme', 'light2');
+                loadTheme();
+                
+                alert('Configurações restauradas!\n\nTodas as preferências foram redefinidas para os valores padrão.\n\n(Demo)');
+            }
+        }
+
+        function changePassword() {
+            alert('Alterar Senha\n\nPara alterar sua senha:\n\n1. Digite sua senha atual\n2. Insira a nova senha\n3. Confirme a nova senha\n4. Verifique por email\n\nLink enviado para:\nmaria.silva@email.com\n\n(Demo)');
+        }
+
+        function exportData() {
+            alert('Exportar Dados Pessoais\n\nIncluído no download:\n• Dados do perfil\n• Histórico médico\n• Evolução e métricas\n• Mensagens do chat\n• Configurações\n\nFormato: JSON + PDF\nEnviado por email em até 24h\n\n(Demo)');
+        }
+
+        function deleteAccount() {
+            const confirmed = confirm('ATENÇÃO: EXCLUIR CONTA PERMANENTEMENTE\n\nIsso irá remover TODOS os dados:\n• Perfil e configurações\n• Histórico médico\n• Conversas do chat\n• Evolução e métricas\n• Agendamentos\n\nESTA AÇÃO NÃO PODE SER DESFEITA\n\nTem certeza absoluta?\n\n(Demo)');
+            
+            if (confirmed) {
+                const doubleConfirm = confirm('ÚLTIMA CONFIRMAÇÃO\n\nDigite "EXCLUIR" para confirmar:\n\n[Em um app real, seria um campo de texto]\n\nExcluir conta definitivamente?\n\n(Demo)');
+                
+                if (doubleConfirm) {
+                    alert('Solicitação Enviada\n\nSua conta será excluída em 30 dias.\n\nDurante esse período:\n• Você pode cancelar a exclusão\n• Os dados ficam inacessíveis\n• Email de confirmação enviado\n\nDúvidas: (11) 98765-4321\n\n(Demo)');
+                }
+            }
+        }
+
+        function logout() {
+            const confirmed = confirm('Sair da Conta\n\nVocê será desconectado do aplicativo.\n\nDados salvos localmente:\n• Configurações\n• Tema preferido\n• Cache de imagens\n\nConfirmar logout?\n\n(Demo)');
+            
+            if (confirmed) {
+                // Simulate logout
+                alert('Logout realizado!\n\nVocê foi desconectado com sucesso.\n\nRedirecionando para tela de login...\n\n(Demo)');
+                setTimeout(() => {
+                    window.location.href = '../auth/login.html';
+                }, 1500);
+            }
+        }
+
+        // Inicialização - Carrega tema corretamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carrega tema salvo ou padrão
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light2';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Atualiza interface do seletor de tema
+            loadTheme();
+            
+            console.log(`Página carregada com tema: ${savedTheme}`);
+        });
+    </script>
+</body>
+</html>

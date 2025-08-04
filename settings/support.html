@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Suporte</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* Support Options */
+        .supportGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .supportCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .supportCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .supportCard.priority {
+            border: 2px solid var(--accent-beige);
+        }
+
+        .supportCard.priority::before {
+            content: 'Urgente';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent-beige);
+            color: var(--neutral-white);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .supportIcon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--accent-beige) 0%, var(--primary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 28px;
+        }
+
+        .supportTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .supportDescription {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .supportTime {
+            font-size: 11px;
+            color: var(--accent-beige);
+            font-weight: 600;
+        }
+
+        /* Settings Section */
+        .settingsSection {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sectionTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sectionIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(58, 74, 58, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* FAQ */
+        .faqList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faqItem {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faqItem.expanded {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(58, 74, 58, 0.1);
+        }
+
+        .faqQuestion {
+            padding: 16px;
+            background: var(--background-lighter);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faqItem.expanded .faqQuestion {
+            background: rgba(58, 74, 58, 0.05);
+        }
+
+        .faqQuestionText {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .faqIcon {
+            color: var(--text-muted);
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .faqItem.expanded .faqIcon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .faqAnswer {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faqItem.expanded .faqAnswer {
+            padding: 16px;
+            max-height: 200px;
+        }
+
+        .faqAnswerText {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Status System */
+        .systemStatus {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .statusHeader {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .statusIndicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        .statusIndicator.warning {
+            background: var(--accent-beige);
+        }
+
+        .statusIndicator.error {
+            background: var(--error-color);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .statusTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .statusDescription {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .statusList {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .statusItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .statusItem:last-child {
+            border-bottom: none;
+        }
+
+        .statusItemName {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .statusItemStatus {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .statusItemStatus.operational {
+            background: rgba(58, 74, 58, 0.2);
+            color: var(--primary);
+        }
+
+        .statusItemStatus.maintenance {
+            background: rgba(154, 131, 100, 0.2);
+            color: var(--accent-beige);
+        }
+
+        .statusItemStatus.issue {
+            background: rgba(196, 185, 179, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Quick Links */
+        .quickLinksList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quickLink {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .quickLink:hover {
+            background: rgba(58, 74, 58, 0.05);
+            transform: translateX(4px);
+        }
+
+        .quickLinkContent {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .quickLinkIcon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-white);
+            font-size: 18px;
+        }
+
+        .quickLinkInfo {
+            flex: 1;
+        }
+
+        .quickLinkTitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .quickLinkDesc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .quickLinkArrow {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Feedback Form */
+        .feedbackForm {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feedbackTextarea {
+            min-height: 100px;
+            padding: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            background: var(--background-lighter);
+            font-size: 14px;
+            color: var(--text-primary);
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .feedbackTextarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--neutral-white);
+            box-shadow: 0 0 0 3px rgba(58, 74, 58, 0.1);
+        }
+
+        .feedbackSubmit {
+            padding: 16px;
+            background: var(--primary);
+            color: var(--neutral-white);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .feedbackSubmit:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-button);
+        }
+
+        /* App Info */
+        .appInfo {
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .appInfoGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .appInfoItem {
+            text-align: center;
+        }
+
+        .appInfoLabel {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .appInfoValue {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .supportGrid {
+                grid-template-columns: 1fr;
+            }
+
+            .appInfoGrid {
+                grid-template-columns: 1fr;
+            }
+
+            .quickLinkContent {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .quickLink {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .quickLinkArrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Suporte</h1>
+                <p>Estamos aqui para ajudar você</p>
+            </div>
+            <button class="btnIcon" onclick="showSupportGuide()">
+                <i class="mdi mdi-information-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Support Options -->
+        <div class="supportGrid" style="animation: fadeInUp 0.6s ease-out;">
+            <a href="#" class="supportCard priority" onclick="openWhatsApp()">
+                <div class="supportIcon">
+                    <i class="mdi mdi-whatsapp"></i>
+                </div>
+                <div class="supportTitle">WhatsApp</div>
+                <div class="supportDescription">Chat direto com nossa equipe</div>
+                <div class="supportTime">24/7 disponível</div>
+            </a>
+            <a href="../communication/chat/enfermagem.html" class="supportCard">
+                <div class="supportIcon">
+                    <i class="mdi mdi-chat"></i>
+                </div>
+                <div class="supportTitle">Chat do App</div>
+                <div class="supportDescription">Converse com enfermagem</div>
+                <div class="supportTime">Online agora</div>
+            </a>
+            <a href="#" class="supportCard" onclick="callSupport()">
+                <div class="supportIcon">
+                    <i class="mdi mdi-phone"></i>
+                </div>
+                <div class="supportTitle">Telefone</div>
+                <div class="supportDescription">(11) 98765-4321</div>
+                <div class="supportTime">Seg-Sex 8h-18h</div>
+            </a>
+            <a href="#" class="supportCard" onclick="sendEmail()">
+                <div class="supportIcon">
+                    <i class="mdi mdi-email"></i>
+                </div>
+                <div class="supportTitle">Email</div>
+                <div class="supportDescription">suporte@institutodutra.com</div>
+                <div class="supportTime">Resposta em 2h</div>
+            </a>
+        </div>
+
+        <!-- System Status -->
+        <div class="systemStatus" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="statusHeader">
+                <div class="statusIndicator"></div>
+                <div>
+                    <div class="statusTitle">Todos os Sistemas Operacionais</div>
+                    <div class="statusDescription">Última verificação: há 2 minutos</div>
+                </div>
+            </div>
+            
+            <div class="statusList">
+                <div class="statusItem">
+                    <div class="statusItemName">Chat em Tempo Real</div>
+                    <div class="statusItemStatus operational">Operacional</div>
+                </div>
+                <div class="statusItem">
+                    <div class="statusItemName">Agendamento AMIGO</div>
+                    <div class="statusItemStatus operational">Operacional</div>
+                </div>
+                <div class="statusItem">
+                    <div class="statusItemName">Apple Health Sync</div>
+                    <div class="statusItemStatus operational">Operacional</div>
+                </div>
+                <div class="statusItem">
+                    <div class="statusItemName">Upload de Exames</div>
+                    <div class="statusItemStatus maintenance">Manutenção</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="settingsSection" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-frequently-asked-questions"></i>
+                </div>
+                Perguntas Frequentes
+            </div>
+            
+            <div class="faqList">
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Como agendar uma consulta?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            Vá em "Agenda" no menu inferior, toque em "Agendar Consulta", escolha o tipo de consulta, selecione data e horário disponível. A confirmação é automática via sistema AMIGO.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Como conectar meu Apple Health?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            Vá em Configurações > Integração Health, toque em "Conectar Apple Health". Você será direcionado ao app Saúde para autorizar o compartilhamento dos dados selecionados.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Como fazer upload de exames?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            Na tela inicial, toque no card "Upload de Exames" ou vá em Perfil > Exames. Use a câmera ou selecione da galeria. O OCR reconhece automaticamente texto e valores dos exames.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Como funciona o sistema de pontos?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            Você ganha pontos XP por atividades: check-in diário (10 pts), consultas (50 pts), exercícios (20 pts), metas atingidas (100 pts). Use os pontos para trocar por benefícios na aba Recompensas.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Como alterar meu plano?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            No dashboard, toque em "Meu Plano" > "Fazer Upgrade". Compare os benefícios dos planos disponíveis. Upgrades são imediatos, downgrades só no final do período de fidelidade.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faqItem" onclick="toggleFaq(this)">
+                    <div class="faqQuestion">
+                        <div class="faqQuestionText">Posso cancelar meu plano?</div>
+                        <i class="mdi mdi-chevron-down faqIcon"></i>
+                    </div>
+                    <div class="faqAnswer">
+                        <div class="faqAnswerText">
+                            Sim, mas respeitando o período de fidelidade. Planos semestrais têm 6 meses de fidelidade. Após esse período, você pode cancelar sem multas através do WhatsApp ou email.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="settingsSection" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-link"></i>
+                </div>
+                Links Úteis
+            </div>
+            
+            <div class="quickLinksList">
+                <a href="#" class="quickLink" onclick="openTutorial()">
+                    <div class="quickLinkContent">
+                        <div class="quickLinkIcon">
+                            <i class="mdi mdi-school"></i>
+                        </div>
+                        <div class="quickLinkInfo">
+                            <div class="quickLinkTitle">Tutorial do App</div>
+                            <div class="quickLinkDesc">Aprenda a usar todas as funcionalidades</div>
+                        </div>
+                    </div>
+                    <i class="mdi mdi-chevron-right quickLinkArrow"></i>
+                </a>
+                <a href="#" class="quickLink" onclick="openTerms()">
+                    <div class="quickLinkContent">
+                        <div class="quickLinkIcon">
+                            <i class="mdi mdi-file-document"></i>
+                        </div>
+                        <div class="quickLinkInfo">
+                            <div class="quickLinkTitle">Termos de Uso</div>
+                            <div class="quickLinkDesc">Leia nossos termos e condições</div>
+                        </div>
+                    </div>
+                    <i class="mdi mdi-chevron-right quickLinkArrow"></i>
+                </a>
+                <a href="#" class="quickLink" onclick="openPrivacy()">
+                    <div class="quickLinkContent">
+                        <div class="quickLinkIcon">
+                            <i class="mdi mdi-shield-check"></i>
+                        </div>
+                        <div class="quickLinkInfo">
+                            <div class="quickLinkTitle">Política de Privacidade</div>
+                            <div class="quickLinkDesc">Como protegemos seus dados</div>
+                        </div>
+                    </div>
+                    <i class="mdi mdi-chevron-right quickLinkArrow"></i>
+                </a>
+                <a href="#" class="quickLink" onclick="openChangelog()">
+                    <div class="quickLinkContent">
+                        <div class="quickLinkIcon">
+                            <i class="mdi mdi-update"></i>
+                        </div>
+                        <div class="quickLinkInfo">
+                            <div class="quickLinkTitle">Novidades</div>
+                            <div class="quickLinkDesc">Últimas atualizações e melhorias</div>
+                        </div>
+                    </div>
+                    <i class="mdi mdi-chevron-right quickLinkArrow"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="settingsSection" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionTitle">
+                <div class="sectionIcon">
+                    <i class="mdi mdi-message-text"></i>
+                </div>
+                Envie seu Feedback
+            </div>
+            
+            <div class="feedbackForm">
+                <textarea 
+                    class="feedbackTextarea" 
+                    placeholder="Conte-nos sua experiência, sugestões ou problemas encontrados..."
+                    id="feedbackText"
+                ></textarea>
+                <button class="feedbackSubmit" onclick="submitFeedback()">
+                    <i class="mdi mdi-send"></i> Enviar Feedback
+                </button>
+            </div>
+        </div>
+
+        <!-- App Info -->
+        <div class="appInfo" style="animation: fadeInUp 1.6s ease-out;">
+            <div class="appInfoGrid">
+                <div class="appInfoItem">
+                    <div class="appInfoLabel">Versão do App</div>
+                    <div class="appInfoValue">2.1.4</div>
+                </div>
+                <div class="appInfoItem">
+                    <div class="appInfoLabel">Build</div>
+                    <div class="appInfoValue">240815</div>
+                </div>
+                <div class="appInfoItem">
+                    <div class="appInfoLabel">Última Atualização</div>
+                    <div class="appInfoValue">15/08/2024</div>
+                </div>
+                <div class="appInfoItem">
+                    <div class="appInfoLabel">Suporte</div>
+                    <div class="appInfoValue">iOS 13+ / Android 8+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottomNav">
+        <a href="../index.html" class="navItem">
+            <i class="mdi mdi-home navIcon"></i>
+            <span class="navLabel">Home</span>
+        </a>
+        <a href="../schedule/index.html" class="navItem">
+            <i class="mdi mdi-calendar navIcon"></i>
+            <span class="navLabel">Agenda</span>
+        </a>
+        <a href="../communication/index.html" class="navItem">
+            <i class="mdi mdi-chat navIcon"></i>
+            <span class="navLabel">Chat</span>
+        </a>
+        <a href="../profile/index.html" class="navItem active">
+            <i class="mdi mdi-account navIcon"></i>
+            <span class="navLabel">Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // FAQ Toggle
+        function toggleFaq(faqItem) {
+            // Close all other FAQ items
+            document.querySelectorAll('.faqItem').forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current item
+            faqItem.classList.toggle('expanded');
+        }
+
+        // Support Actions
+        function openWhatsApp() {
+            alert('WhatsApp Instituto Dutra\n\nSerá aberto o WhatsApp para:\n(11) 98765-4321\n\nNosso atendimento 24/7 está pronto para ajudar com:\n• Dúvidas sobre tratamento\n• Problemas técnicos\n• Agendamentos urgentes\n• Emergências médicas\n\nAbrir WhatsApp?\n\n(Demo)');
+        }
+
+        function callSupport() {
+            alert('Ligar para Suporte\n\n(11) 98765-4321\n\nHorário de atendimento:\n• Segunda a Sexta: 8h às 18h\n• Sábado: 8h às 12h\n• Domingo: Emergências apenas\n\nPara emergências fora do horário, use WhatsApp\n\nFazer ligação?\n\n(Demo)');
+        }
+
+        function sendEmail() {
+            alert('Email Suporte\n\nsuporte@institutodutra.com\n\nPara agilizar o atendimento, inclua:\n• Seu nome completo\n• Número de telefone\n• Descrição detalhada do problema\n• Screenshots se aplicável\n\nTempo de resposta: até 2 horas\n\nAbrir app de email?\n\n(Demo)');
+        }
+
+        function showSupportGuide() {
+            alert('Guia de Suporte\n\nEMERGÊNCIAS:\n• Use WhatsApp 24/7\n• Ligue: (11) 98765-4321\n\nDÚVIDAS GERAIS:\n• Consulte o FAQ primeiro\n• Chat do app (enfermagem)\n• Email com detalhes\n\nPROBLEMAS TÉCNICOS:\n• Verifique conexão internet\n• Reinicie o app\n• Atualize para última versão\n\nDICA: FAQ resolve 80% das dúvidas!\n\n(Demo)');
+        }
+
+        // Quick Links
+        function openTutorial() {
+            alert('Tutorial do App\n\nTutoriais disponíveis:\n\nBásico do App\n• Como navegar\n• Configurar perfil\n• Conectar Health\n\nFuncionalidades Médicas\n• Agendar consultas\n• Upload de exames\n• Chat com equipe\n\nGamificação\n• Sistema de pontos\n• Conquistas\n• Rankings\n\nSeria direcionado para vídeos/guias\n\n(Demo)');
+        }
+
+        function openTerms() {
+            alert('Termos de Uso\n\nÚltima atualização: 15/08/2024\n\nPrincipais pontos:\n• Uso responsável da plataforma\n• Privacidade de dados médicos\n• Responsabilidades do usuário\n• Política de cancelamento\n• Direitos autorais\n\nDocumento completo seria exibido em nova tela\n\n(Demo)');
+        }
+
+        function openPrivacy() {
+            alert('Política de Privacidade\n\nComo protegemos seus dados:\n\n• Criptografia end-to-end\n• Servidores seguros no Brasil\n• Acesso restrito à equipe médica\n• Não compartilhamos com terceiros\n• Backup automático seguro\n• Direito ao esquecimento\n\nLGPD compliance total\n\nPolítica completa seria exibida\n\n(Demo)');
+        }
+
+        function openChangelog() {
+            alert('Novidades - Versão 2.1.4\n\nNOVAS FUNCIONALIDADES:\n• Sistema de recompensas XP\n• Vídeos automáticos de evolução\n• Integração melhorada com Apple Health\n\nCORREÇÕES:\n• Chat mais estável\n• Upload de exames mais rápido\n• Sincronização otimizada\n\nMELHORIAS:\n• Interface mais intuitiva\n• Tema escuro aprimorado\n• Performance geral\n\n(Demo)');
+        }
+
+        function submitFeedback() {
+            const feedbackText = document.getElementById('feedbackText').value.trim();
+            
+            if (!feedbackText) {
+                alert('Campo Obrigatório\n\nPor favor, escreva seu feedback antes de enviar.\n\nSuas sugestões são muito importantes para melhorarmos o app!\n\n(Demo)');
+                return;
+            }
+            
+            // Clear textarea
+            document.getElementById('feedbackText').value = '';
+            
+            alert('Feedback Enviado!\n\nObrigado por sua contribuição!\n\nSeu feedback foi enviado para nossa equipe de desenvolvimento.\n\nVocê receberá uma confirmação por email\nResponderemos em até 24h se necessário\n\nSua opinião nos ajuda a melhorar!\n\n(Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>

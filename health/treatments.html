@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Dutra - Tratamentos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../styles/global.css">
+    <script src="../styles/theme.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+
+        /* Header - usa componentes globais */
+        .headerTitle {
+            flex: 1;
+        }
+        
+        .headerTitle h1 {
+            color: var(--neutral-white);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .headerTitle p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .mainContent {
+            padding: 20px;
+        }
+
+        /* CSS específico para treatments.html */
+        .treatmentCard {
+            background: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+        }
+
+        .treatmentCard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .treatmentHeader {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .treatmentIcon {
+            margin-right: 14px;
+        }
+
+        .treatmentTitle {
+            flex: 1;
+        }
+
+        .treatmentTitle h3 {
+            font-size: 16px;
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .treatmentTitle p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .treatmentStatus {
+            font-size: 12px;
+            font-weight: var(--font-weight-medium);
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .treatmentStatus.active {
+            background: rgba(154, 131, 100, 0.2);
+            color: var(--accent-beige);
+        }
+
+        .treatmentStatus.scheduled {
+            background: rgba(58, 74, 58, 0.1);
+            color: var(--primary);
+        }
+
+        .treatmentStatus.completed {
+            background: var(--background-lighter);
+            color: var(--text-muted);
+        }
+
+        .treatmentContent {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .treatmentMetric {
+            text-align: center;
+            padding: 12px;
+            background: var(--background-lighter);
+            border-radius: var(--radius-md);
+        }
+
+        .treatmentMetric .value {
+            font-size: 20px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .treatmentMetric .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .treatmentActions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .treatmentActions .btnPrimary,
+        .treatmentActions .btnSecondary {
+            flex: 1;
+        }
+
+        /* Next Dose Card */
+        .nextDoseCard {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--neutral-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nextDoseCard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .nextDoseCard .doseTime {
+            font-size: 22px;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: 8px;
+        }
+
+        .nextDoseCard .doseDate {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+
+        .nextDoseCard .doseLocation {
+            font-size: 14px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Progress Ring */
+        .progressRing {
+            width: 80px;
+            height: 80px;
+            margin: 0;
+            position: relative;
+        }
+
+        .progressRing svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progressRing .progress-bg {
+            fill: none;
+            stroke: var(--background-lighter);
+            stroke-width: 6;
+        }
+
+        .progressRing .progress-fill {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 188;
+            stroke-dashoffset: 56;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .progressRing .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progressRing .progress-value {
+            font-size: 18px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+
+        .progressRing .progress-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Timeline */
+        .treatmentTimeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .treatmentTimeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-light);
+        }
+
+        .timelineItem {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+        }
+
+        .timelineItem::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .timelineItem.completed::before {
+            background: var(--success-color);
+        }
+
+        .timelineItem.upcoming::before {
+            background: var(--border-light);
+            border: 2px solid var(--primary);
+        }
+
+        .timelineDate {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .timelineContent {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .timelineLocation {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .treatmentContent {
+                grid-template-columns: 1fr;
+            }
+
+            .treatmentActions {
+                flex-direction: column;
+            }
+
+            .nextDoseCard .doseTime {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="headerGradient">
+        <div class="headerContent">
+            <button class="backBtn" onclick="goBack()">
+                <i class="mdi mdi-arrow-left"></i>
+            </button>
+            <div class="headerTitle">
+                <h1>Tratamentos</h1>
+                <p>Acompanhe seus procedimentos e terapias</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mainContent">
+        <!-- Próxima Aplicação Mounjaro -->
+        <div class="nextDoseCard" style="animation: fadeInUp 0.6s ease-out;">
+            <div style="position: relative; z-index: 1;">
+                <div class="doseTime">Próxima Aplicação</div>
+                <div class="doseDate">Quinta-feira, 8 de agosto • 09:30</div>
+                <div class="doseLocation">
+                    <i class="mdi mdi-map-marker"></i>
+                    Instituto Dutra - Sala de Procedimentos
+                </div>
+            </div>
+        </div>
+
+        <!-- Mounjaro Section -->
+        <div class="section" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Mounjaro (Semaglutida)</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="viewMounjaroHistory()">
+                    Histórico
+                </button>
+            </div>
+
+            <div class="treatmentCard">
+                <div class="treatmentHeader">
+                    <div class="treatmentIcon">
+                        <div class="iconContainer" style="background: var(--primary);">
+                            <i class="mdi mdi-needle" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="treatmentTitle">
+                        <h3>Tratamento Ativo</h3>
+                        <p>Aplicação semanal • 2.5mg</p>
+                    </div>
+                    <div class="treatmentStatus active">Ativo</div>
+                </div>
+
+                <div class="treatmentContent">
+                    <div class="treatmentMetric">
+                        <div class="value">12</div>
+                        <div class="label">Aplicações</div>
+                    </div>
+                    <div class="treatmentMetric">
+                        <div class="value">8.5kg</div>
+                        <div class="label">Redução</div>
+                    </div>
+                </div>
+
+                <div class="treatmentActions">
+                    <button class="btnPrimary" onclick="scheduleInjection()">
+                        <i class="mdi mdi-calendar-plus" style="margin-right: 8px;"></i>
+                        Reagendar
+                    </button>
+                    <button class="btnSecondary" onclick="viewProtocol()">
+                        <i class="mdi mdi-file-document" style="margin-right: 8px;"></i>
+                        Protocolo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Soroterapia Section -->
+        <div class="section" style="animation: fadeInUp 1.0s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Soroterapia</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="bookSeotherapy()">
+                    Agendar
+                </button>
+            </div>
+
+            <div class="treatmentCard">
+                <div class="treatmentHeader">
+                    <div class="treatmentIcon">
+                        <div class="iconContainer" style="background: var(--accent-beige);">
+                            <i class="mdi mdi-water-pump" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="treatmentTitle">
+                        <h3>Soro Vitamínico Premium</h3>
+                        <p>Última sessão: 28 de julho</p>
+                    </div>
+                    <div class="treatmentStatus scheduled">Agendado</div>
+                </div>
+
+                <div class="treatmentContent">
+                    <div class="treatmentMetric">
+                        <div class="value">8</div>
+                        <div class="label">Sessões</div>
+                    </div>
+                    <div class="treatmentMetric">
+                        <div class="value">15 Ago</div>
+                        <div class="label">Próxima</div>
+                    </div>
+                </div>
+
+                <div class="treatmentTimeline">
+                    <div class="timelineItem completed">
+                        <div class="timelineDate">28 Jul 2024</div>
+                        <div class="timelineContent">Soro Vitamínico + Magnésio</div>
+                        <div class="timelineLocation">Dr. Thiago Dutra</div>
+                    </div>
+                    <div class="timelineItem completed">
+                        <div class="timelineDate">14 Jul 2024</div>
+                        <div class="timelineContent">Soro Detox Hepático</div>
+                        <div class="timelineLocation">Dr. Thiago Dutra</div>
+                    </div>
+                    <div class="timelineItem upcoming">
+                        <div class="timelineDate">15 Ago 2024</div>
+                        <div class="timelineContent">Soro Antioxidante Agendado</div>
+                        <div class="timelineLocation">14:00 • Sala VIP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- InBody Section -->
+        <div class="section" style="animation: fadeInUp 1.2s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">InBody - Bioimpedância</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="scheduleInBody()">
+                    Agendar
+                </button>
+            </div>
+
+            <div class="treatmentCard">
+                <div class="treatmentHeader">
+                    <div class="treatmentIcon">
+                        <div class="progressRing">
+                            <svg>
+                                <circle class="progress-bg" cx="40" cy="40" r="30"></circle>
+                                <circle class="progress-fill" cx="40" cy="40" r="30"></circle>
+                            </svg>
+                            <div class="progress-text">
+                                <div class="progress-value">70%</div>
+                                <div class="progress-label">Meta</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="treatmentTitle">
+                        <h3>Última Análise</h3>
+                        <p>02 de agosto • Enfermagem</p>
+                    </div>
+                </div>
+
+                <div class="treatmentContent">
+                    <div class="treatmentMetric">
+                        <div class="value">28.2%</div>
+                        <div class="label">Gordura</div>
+                    </div>
+                    <div class="treatmentMetric">
+                        <div class="value">65.8kg</div>
+                        <div class="label">M. Muscular</div>
+                    </div>
+                </div>
+
+                <div class="treatmentActions">
+                    <button class="btnPrimary" onclick="viewInBodyHistory()">
+                        <i class="mdi mdi-chart-line" style="margin-right: 8px;"></i>
+                        Ver Evolução
+                    </button>
+                    <button class="btnSecondary" onclick="downloadInBodyReport()">
+                        <i class="mdi mdi-download" style="margin-right: 8px;"></i>
+                        Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body G Section -->
+        <div class="section" style="animation: fadeInUp 1.4s ease-out;">
+            <div class="sectionHeader">
+                <h2 class="sectionTitle">Body G - Scanner 3D</h2>
+                <button class="btnPrimary btnSm btnInline" onclick="scheduleBodyG()">
+                    Agendar
+                </button>
+            </div>
+
+            <div class="treatmentCard">
+                <div class="treatmentHeader">
+                    <div class="treatmentIcon">
+                        <div class="iconContainer" style="background: var(--text-secondary);">
+                            <i class="mdi mdi-human" style="color: white; font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="treatmentTitle">
+                        <h3>Silhueta 3D Evolution</h3>
+                        <p>Última sessão: 15 de julho</p>
+                    </div>
+                    <div class="treatmentStatus completed">Concluído</div>
+                </div>
+
+                <div class="treatmentContent">
+                    <div class="treatmentMetric">
+                        <div class="value">4</div>
+                        <div class="label">Escaneamentos</div>
+                    </div>
+                    <div class="treatmentMetric">
+                        <div class="value">-12cm</div>
+                        <div class="label">Cintura</div>
+                    </div>
+                </div>
+
+                <div class="treatmentActions">
+                    <button class="btnPrimary" onclick="view3DEvolution()">
+                        <i class="mdi mdi-rotate-3d" style="margin-right: 8px;"></i>
+                        Ver Evolução 3D
+                    </button>
+                    <button class="btnSecondary" onclick="shareEvolution()">
+                        <i class="mdi mdi-share" style="margin-right: 8px;"></i>
+                        Compartilhar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de temas integrado
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('instituto-dutra-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Navegação
+        function goBack() {
+            window.history.back();
+        }
+
+        // Mounjaro functions  
+        function scheduleInjection() {
+            alert('Reagendamento de Mounjaro:\n\n• Data: 8 de agosto, 09:30\n• Local: Sala de Procedimentos\n• Enfermagem especializada\n\nConfirmar reagendamento? (Demo)');
+        }
+
+        function viewProtocol() {
+            alert('Protocolo Mounjaro 2.5mg:\n\n• Aplicação semanal subcutânea\n• Jejum de 2h recomendado\n• Hidratação adequada\n• Acompanhamento médico mensal\n\n(Demo)');
+        }
+
+        function viewMounjaroHistory() {
+            window.location.href = 'history.html';
+        }
+
+        // Soroterapia functions
+        function bookSeotherapy() {
+            alert('Tipos de Soro Disponíveis:\n\n💎 Premium Vitamínico - R$ 350\n🌿 Detox Hepático - R$ 280\n⚡ Antioxidante - R$ 420\n🧬 Hidratação + Eletrólitos - R$ 180\n\n(Demo)');
+        }
+
+        // InBody functions
+        function scheduleInBody() {
+            alert('Agendar Bioimpedância InBody:\n\n📅 Próximas disponibilidades:\n• 12 Ago - 08:00\n• 15 Ago - 14:30\n• 19 Ago - 10:15\n\n💡 Jejum de 4h recomendado\n(Demo)');
+        }
+
+        function viewInBodyHistory() {
+            alert('Evolução InBody:\n\n📊 02 Ago: 28.2% gordura, 65.8kg músculo\n📊 15 Jul: 29.8% gordura, 64.2kg músculo\n📊 01 Jul: 31.2% gordura, 63.1kg músculo\n📊 15 Jun: 32.8% gordura, 62.3kg músculo\n\n📈 Tendência: Melhorando!\n(Demo)');
+        }
+
+        function downloadInBodyReport() {
+            alert('📄 Relatório InBody completo será baixado:\n\n• Composição corporal detalhada\n• Gráficos de evolução\n• Recomendações personalizadas\n• Comparações com padrões ideais\n\n(Demo)');
+        }
+
+        // Body G functions
+        function scheduleBodyG() {
+            alert('Agendar Scanner 3D Body G:\n\n📅 Disponibilidades:\n• 20 Ago - 09:00\n• 25 Ago - 15:00\n• 30 Ago - 11:30\n\n👤 Escaneamento 360° completo\n⏱️ Duração: 15 minutos\n(Demo)');
+        }
+
+        function view3DEvolution() {
+            alert('🎬 Evolução 3D:\n\n👤 15 Jul → Hoje\n📐 Redução cintura: -12cm\n📐 Redução quadril: -8cm\n📐 Ganho músc. braços: +2cm\n\n🎥 Vídeo 360° disponível!\n(Demo)');
+        }
+
+        function shareEvolution() {
+            alert('📱 Compartilhar Evolução:\n\n✨ Vídeo "antes/depois" criado\n📱 Otimizado para Instagram Stories\n💬 WhatsApp Status\n📧 Email personalizado\n\n🎉 Sua transformação inspirará muitos!\n(Demo)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>
